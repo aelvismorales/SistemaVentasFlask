@@ -1,6 +1,3 @@
-from asyncore import loop
-from itertools import product
-import re
 from flask import Flask, render_template, request,flash,session,redirect,url_for
 from flask_wtf.csrf import CSRFProtect
 from config import DevelopmentConfig
@@ -17,6 +14,7 @@ csrf.init_app(app)
 
 with app.app_context():
     db.create_all()
+	
 
 
 @app.before_request
@@ -36,7 +34,6 @@ def beforerequest():
 		#if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
 	#		flash('No tienes acceso a esta sección',category='error')
 		#	return redirect(url_for('buscar_producto'))
-
 		if session.get('rol') =='vendedor' and request.endpoint == 'editar_id':
 			flash('No tienes acceso a esta sección',category='error')
 			return redirect(url_for('buscar_producto'))
@@ -205,7 +202,7 @@ def add():
 		total_venta=0
 		producto=Producto.query.get(id)
 		if cantidad and id and request.method == 'POST':
-			if product is not None:
+			if producto is not None:
 				DictProducts={str(id):{'id':id,'name':producto.nombre_producto,'precio':producto.precio_venta_producto,'cantidad':cantidad,'precio_individual':producto.precio_venta_producto*cantidad}}
 
 				if 'producto' in session:
