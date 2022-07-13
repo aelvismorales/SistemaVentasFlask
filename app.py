@@ -27,9 +27,10 @@ def beforerequest():
 		loge=True
 	if 'producto' in session:
 		produ=True
-	if 'username' not in session and request.endpoint != 'login':
-		print('login redirect')
-		return redirect(url_for('login'))
+	#if 'username' not in session and request.endpoint != 'login':
+	#	print('login redirect')
+	#	return redirect(url_for('login'))
+	
 	if 'rol' in session:
 		#if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
 	#		flash('No tienes acceso a esta sección',category='error')
