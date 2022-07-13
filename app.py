@@ -33,9 +33,9 @@ def beforerequest():
 		print('login redirect')
 		return redirect(url_for('login'))
 	if 'rol' in session:
-		if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
-			flash('No tienes acceso a esta sección',category='error')
-			return redirect(url_for('buscar_producto'))
+		#if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
+	#		flash('No tienes acceso a esta sección',category='error')
+		#	return redirect(url_for('buscar_producto'))
 
 		if session.get('rol') =='vendedor' and request.endpoint == 'editar_id':
 			flash('No tienes acceso a esta sección',category='error')
@@ -286,4 +286,4 @@ def imprimir():
 
 		
 if __name__=='main':
-	app.run(debug=True)
+	app.run(debug=False)
