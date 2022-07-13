@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    
+    <link href="static/css/imprimir.css" rel="stylesheet">
+    <title>Sistema Ventas</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+              <h3> Ferreteria Peralvillo E.I.R.L</h3>
+              <p> RUC: 10459826134 </p>
+              <p> Telefono: 987456321 </p>
+              <p><strong>Cliente</strong> {{session['nombre_comprador']}}</p>
+              <p><strong>Direccion:</strong>  {{session['direccion_comprador']}}</p>
+              <table class="table table-sm">
+                <thead>
+                  <th scope="col">#</th>
+                  <th scope="col">Cantidad</th>
+                  <th scope="col">Producto</th>
+                  <!-- <th scope="col">Precio</th> -->
+                  <th scope="col">Sub Total</th>
+
+                </thead>
+                <tbody>
+                  {% for key,product in session['producto'].items() %}
+                  <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{product.cantidad}}</td>
+                    <td>{{product.name}}</td>
+                    <td>{{product.precio_individual}}</td>
+                  </tr>
+                  {%endfor%}
+                  <tr>
+                    <td colspan="3" align="right"> <strong>Total:</strong></td>
+                    <td> <strong>{{session['total_venta']}}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </body>
+          </div>
+        </div>
+      </div>
+</html>

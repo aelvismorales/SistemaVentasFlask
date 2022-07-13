@@ -1,0 +1,107 @@
+{% extends 'base.html' %} 
+
+{% block navbar %}
+  {% if log %}
+    <li class="nav-item">
+        <a class="nav-link" href="producto"><strong>Crear Productos</strong></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="buscar"><strong>Buscar Productos</strong></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="logout"><strong>Log out</strong></a>
+    </li>
+  {%endif%}
+{% endblock %}
+
+{% block content %}
+{% from "macro.html" import render_field %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <form class="form-inline" id="buscarForm" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                            {{render_field(buscar_form.nombreproducto,class="form-control",placeholder="Search")}}
+                        <p class="help-block text-danger"></p>
+                    </div>
+                    <div id="success"></div>
+                    <div class="row">
+                        <div class="form-group cols=xs=12">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+    
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre Producto</th>
+                        <th scope="col">Precio Costo</th>
+                        <th scope="col">Precio Venta</th>
+                        <th scope="col">Editar</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%for producto in productos%}
+                        <tr>
+                        <th scope="row">{{producto.id}}</th>
+                        <td>{{producto.nombre_producto}}</td>
+                        <td>{{producto.precio_costo_producto}}</td>
+                        <td>{{producto.precio_venta_producto}}</td>
+                        <td> 
+                        <a class="btn btn-success" href="{{ url_for('editar', id=producto.id) }}">update</a>
+                        </td>
+                        </tr>
+                    {% endfor %}
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+    <!-- Modal
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Producto:{{producto.nombre_producto}} </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form class="form-inline" id="buscarForm" method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                  <div class="row control-group">
+                  <div class="form-group col-xs-12 floating-label-form-group controls">
+                          {{ render_field(editar_form.id_producto,value="{{producto.id}}")}}
+                          
+                          {{render_field(editar_form.nombreproducto,class="form-control",placeholder="{{producto.nombre_producto}}")}}
+
+                          {{render_field(editar_form.precio_costo_producto,class="form-control",placeholder="{{producto.precio_costo_producto}}")}}
+                          
+                          {{render_field(editar_form.precio_venta_producto,class="form-control",placeholder="{{producto.precio_venta_producto}}")}}
+
+                      <p class="help-block text-danger"></p>
+                  </div>
+                  <div id="success"></div>
+                  <div class="row">
+                      <div class="form-group cols=xs=12">
+                      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                      </div>
+                  </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div> -->

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>Sistema Ventas</title>
+    <link href="static/css/formularios.css" rel="stylesheet">
+
+  </head>
+  <body>
+    {% from "macro.html" import render_field %}
+    <div class="crear-cuenta-contenedor">
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        
+          {{render_field(form_usuario.username,class="form-usuario")}}
+          {{render_field(form_usuario.password,class="form-usuario")}}
+          {{render_field(form_usuario.rol,class="form-usuario")}}
+        
+          <button type="submit">Enviar</button>
+      </form>
+
+    </div>
+  </body>
+</html>

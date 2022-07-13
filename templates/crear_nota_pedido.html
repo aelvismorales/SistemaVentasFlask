@@ -1,0 +1,80 @@
+{%extends 'base.html' %}
+{% block navbar %}
+  {% if log==True %}
+    <li class="nav-item">
+        <a class="nav-link" href="producto"><strong>Crear Productos</strong></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="buscar"><strong>Buscar Productos</strong></a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-link" href="logout"><strong>Log out</strong></a>
+    </li>    
+
+  {%endif%}
+{% endblock %}
+
+{% block content %}
+{% from "macro.html" import render_field %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <h3>Nota de Pedido</h3>
+            <form class="form-inline" id="buscarForm" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    {{render_field(form_nota.nombre_comprador)}}
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    {{render_field(form_nota.direccion_comprador)}}
+                    <!-- {{render_field(form_nota.cantidad)}} -->
+                    <p class="help-block text-danger"></p>
+                </div>
+                
+                <div id="success"></div>
+                <div class="row">
+                    <div class="form-group cols=xs=12">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Guardar Datos</button>
+                    </div>
+                </div>
+            
+            <table class="table table-sm">
+                <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Nombre Producto</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Sub Total</th>
+                    <th scope="col">Delete</th>
+
+                </thead>
+                <tbody>
+                        {% for key,product in session['producto'].items() %}
+                            <tr>
+                                <td>{{loop.index}} </td>
+                                {% for field in form_nota.cantidad %}
+                                <td>{{field.cantidad}}</td>
+                                {% endfor %}
+                                <td>{{product.name}}</td>
+                                <td>{{product.precio}}</td>
+                                {% set subtotal = product.precio|float * form_nota.cantidad|int %}
+                                <td> {{ "%.2f"|format(subtotal)}}</td>
+                                <td>{{product.precio_individual}}</td>
+                            </tr>
+                        {% endfor %}
+                        
+                        <tr>
+                            <td colspan="2" align="right"> Total:</td>
+                            <td> {{session['total_venta']}}</td>
+                        </tr>
+                </tbody>
+            </table>
+        </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

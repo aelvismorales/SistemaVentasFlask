@@ -1,0 +1,169 @@
+{%extends 'base.html' %}
+{% block navbar %}
+  {% if log==True %}
+    <li class="nav-item">
+        <a class="nav-link" href="producto"><strong>Crear Productos</strong></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="buscar"><strong>Buscar Productos</strong></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link disabled" href="crearnotapedido"><strong>Nota Pedido</strong></a>
+      </li>
+    <li class="nav-item">
+      <a class="nav-link" href="logout"><strong>Log out</strong></a>
+    </li>    
+
+  {%endif%}
+{% endblock %}
+
+{% block content %}
+{% from "macro.html" import render_field %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <form class="form-inline" id="buscarForm" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                            {{render_field(buscar_form.nombreproducto,class="form-control",placeholder="Search")}}
+                        <p class="help-block text-danger"></p>
+                    </div>
+                    <div id="success"></div>
+                    <div class="row">
+                        <div class="form-group cols=xs=12">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">       
+        
+            <div class="product-item">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre Producto</th>
+                                <th scope="col">Precio Costo</th>
+                                <th scope="col">Precio Venta</th>
+                                <th scope="col">Fecha Actualizacion</th>
+                                <th scope="col">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for producto in productos%}
+                            <form method="post" action="/add">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                <tr>
+                                    <th scope="row">{{producto.id}}</th>
+                                    <td>{{producto.nombre_producto}}</td>
+                                    <td>{{producto.precio_costo_producto}}</td>
+                                    <td>{{producto.precio_venta_producto}}</td>
+                                    <td>{{producto.get_fecha_actualizacion_producto()}}</td>
+                                    
+                                    <td> 
+                                        <input type="hidden" name="code" value="{{ producto.id }}"/>
+                                        <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
+                                        <input type="submit" value="Agregar a Nota de Pedido" class="btnAddAction" />
+                                    </td>
+                                    <td> 
+                                        <a class="btn btn-success" href="{{ url_for('editar_id', id=producto.id) }}">Actualizar</a>
+                                    </td>
+                                </tr>
+                            </form>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                
+            </div> 
+    </div>  
+
+    {% if prd==True %}
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <h3>Nota de Pedido</h3>
+                    <form class="form-inline" id="buscarForm" method="POST" action="/crearnotapedido">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                        <div class="row control-group">
+                        <div class="form-group col-xs-12 floating-label-form-group controls">
+                            <label>Comprador </label>
+                            <input type="text" class="nota-comprador" name="comprador_name" required/> 
+                            <!-- <input type="submit" value="Actualizar Cantidad" class="btnGetComprador" /> -->
+                            <p class="help-block text-danger"></p>
+                        </div>
+                        <div class="form-group col-xs-12 floating-label-form-group controls">
+                            <label>Direccion </label>
+                            <input type="text" class="nota-direccion_comprador" name="direccion_comprador" required/> 
+                            <!-- <input type="submit" value="Actualizar Cantidad" class="btnGetDirecComprador" /> -->
+                            <!-- <p class="help-block text-danger"></p> -->
+                        </div>
+                        <br> 
+                        <div id="success"></div>
+                        <div class="row">
+                            <div class="form-group cols=xs=12">
+                                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Crear Nota Pedido</button>
+                            </div>
+                        </div>
+                    </form>
+                    <br> 
+                    <a id="btnEmpty"  href="{{ url_for('.empty_cart') }}">Vaciar Nota de Pedido</a>
+
+                        <table class="table table-sm">
+                            <thead>
+                                <th scope="col">#</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Nombre Producto</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Sub Total</th>
+                                <th scope="col">Delete</th>
+            
+                            </thead>
+                            <tbody>
+                                    {% for key,product in session['producto'].items() %}
+                                        <form method="post" action="/updateproduct">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                                <tr>
+                                                    <td>{{loop.index}} </td>
+                                                    <td>
+                                                        <input type="hidden" name="code" value="{{key}}" />
+                                                        <input type="text" class="product-quantity" name="quantity" value="{{product.cantidad}}" size="4" /> 
+                                                        <input type="submit" value="Actualizar Cantidad" class="btnUpdtCant" />
+                                                    </td>
+                                        </form>
+                                                    <td>{{product.name}}</td>
+                                                    <td>{{product.precio}}</td>
+                                                    <!-- {% set subtotal = product.precio|float * product.cantidad|int %}
+                                                    <td> {{ "%.2f"|format(subtotal)}}</td> -->
+                                                    <td>{{product.precio_individual}}</td>
+
+                                                    <form method="post" action="/delete">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                                        <td>
+                                                            <input type="hidden" name="code" value="{{product.id}}" />
+                                                            <input type="submit" value="Eliminar" class="btnDeletePrd" />
+                                                        </td>
+                                                    </form>
+                                                </tr>
+                                    
+                                    {% endfor %}
+
+                                    <tr>
+                                        <td colspan="5" align="right"> Total:</td>
+                                        <td> {{session['total_venta']}}</td>
+                                    </tr>
+                            </tbody>
+                        </table>
+
+                        <a class="btn btn-primary" href="{{ url_for('imprimir') }}" target="_blank" >Imprimir</a>
+                
+                </div>
+            </div>
+        </div>
+    {%endif%}
+{% endblock %}
