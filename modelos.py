@@ -7,8 +7,8 @@ db=SQLAlchemy()
 
 class Usuario(db.Model):
     __tablename__="usuario"
-    id=db.Column(db.Integer,primary_key=True,unique=True)
-    nombre_usuario=db.Column(db.String(50))
+    id=db.Column(db.Integer,primary_key=True)
+    nombre_usuario=db.Column(db.String(50),unique=True)
     contrasena_usuario=db.Column(db.String(102))
     fecha_creacion=db.Column(db.DateTime,default=datetime.now)
     rol_usuario=db.Column(db.String(20))
