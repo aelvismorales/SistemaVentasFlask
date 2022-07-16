@@ -1,6 +1,5 @@
 import click
 from modelos import *
-from flask.cli import AppGroup
 import pandas as pd
 @click.command('crear-db')
 def create_db():

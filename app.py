@@ -4,7 +4,7 @@ from config import DevelopmentConfig
 from modelos import *
 import formularios
 import json 
-
+import pandas as pd
 import commands
 from datetime import datetime
 #-------------------------------------------------------------------------------------------------------
@@ -23,6 +23,14 @@ with app.app_context():
 commands.init_app(app)
 
 #-------------------------------------------------------------------------------------------------------
+@app.before_first_request
+def before_first_request():
+	prd=pd.read_csv('ferreteria_data.csv')
+	for i in prd.index:
+            productos=Producto(prd['Material'][i],prd['COSTO'][i],prd['PRECIO PUBLICO'][i])
+            db.session.add(productos)
+            db.session.commit()
+#-------------------------------------------------------------------------------------------------------
 # Verificaciones de sesion del usuario.
 @app.before_request
 def beforerequest():
@@ -34,14 +42,14 @@ def beforerequest():
 		loge=True
 	if 'producto' in session:
 		produ=True
-	if 'username' not in session and request.endpoint != 'login':
+	#if 'username' not in session and request.endpoint != 'login':
 
-		return redirect(url_for('login'))
+	#	return redirect(url_for('login'))
 	
 	if 'rol' in session:
-		if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
-			flash('No tienes acceso a esta sección',category='error')
-			return redirect(url_for('buscar_producto'))
+		#if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
+		#	flash('No tienes acceso a esta sección',category='error')
+		#	return redirect(url_for('buscar_producto'))
 		if session.get('rol') =='vendedor' and request.endpoint == 'editar_id':
 			flash('No tienes acceso a esta sección',category='error')
 			return redirect(url_for('buscar_producto'))
