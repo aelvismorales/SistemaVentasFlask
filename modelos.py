@@ -79,7 +79,20 @@ class Nota_de_Pedido(db.Model):
     nombre_producto=db.Column(db.String(9999))
     total_venta=db.Column(db.Float)
     direccion_comprador=db.Column(db.String(200))
-    
+
+    def get_id(self):
+        return self.id
+    def get_fecha(self):
+        return self.fecha_creacion.strftime('%x')
+    def get_nombre_producto(self):
+        return self.nombre_producto
+    def get_nombre_comprador(self):
+        return self.nombre_comprador
+    def get_direccion(self):
+        return self.direccion_comprador
+    def get_total_venta(self):
+        return self.total_venta
+        
     #cantidad=db.Column(db.Float)
     #db.ForeignKey('producto.id')
     #producto_id=db.Column(db.Integer,nullable=False)

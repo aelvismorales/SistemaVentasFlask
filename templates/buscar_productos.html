@@ -5,10 +5,10 @@
         <a class="nav-link" href="producto"><strong>Crear Productos</strong></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="buscar"><strong>Buscar Productos</strong></a>
+      <a class="nav-link active" href="buscar"><strong>Buscar Productos</strong></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link disabled" href="crearnotapedido"><strong>Nota Pedido</strong></a>
+        <a class="nav-link" href="vernotapedido"><strong>Ver Notas de Pedido</strong></a>
       </li>
     <li class="nav-item">
       <a class="nav-link" href="logout"><strong>Log out</strong></a>
@@ -84,25 +84,24 @@
 
     {% if prd==True %}
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+    
                     <h3>Nota de Pedido</h3>
                     <form class="form-inline" id="buscarForm" method="POST" action="/crearnotapedido">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                         <div class="row control-group">
                         <div class="form-group col-xs-12 floating-label-form-group controls">
-                            <label>Comprador </label>
+                            <label>Nombre del comprador: </label>
                             <input type="text" class="nota-comprador" name="comprador_name" required/> 
                             <!-- <input type="submit" value="Actualizar Cantidad" class="btnGetComprador" /> -->
                             <p class="help-block text-danger"></p>
                         </div>
                         <div class="form-group col-xs-12 floating-label-form-group controls">
-                            <label>Direccion </label>
+                            <label>Direccion: </label>
                             <input type="text" class="nota-direccion_comprador" name="direccion_comprador" required/> 
                             <!-- <input type="submit" value="Actualizar Cantidad" class="btnGetDirecComprador" /> -->
                             <!-- <p class="help-block text-danger"></p> -->
                         </div>
+                        <br>
                         <br> 
                         <div id="success"></div>
                         <div class="row">
@@ -112,9 +111,11 @@
                         </div>
                     </form>
                     <br> 
+                    <br> 
                     <a id="btnEmpty"  href="{{ url_for('.empty_cart') }}">Vaciar Nota de Pedido</a>
 
-                        <table class="table table-sm">
+                    <div class="table-responsive-xxl">
+                        <table class="table align-middle">
                             <thead>
                                 <th scope="col">#</th>
                                 <th scope="col">Cantidad</th>
@@ -132,16 +133,21 @@
                                                     <td>{{loop.index}} </td>
                                                     <td>
                                                         <input type="hidden" name="code" value="{{key}}" />
-                                                        <input type="text" class="product-quantity" name="quantity" value="{{product.cantidad}}" size="4" /> 
+                                                        <input type="text" class="product-quantity" name="quantity" value="{{product.cantidad}}" size="2" /> 
                                                         <input type="submit" value="Actualizar Cantidad" class="btnUpdtCant" />
                                                     </td>
                                         </form>
                                                     <td>{{product.name}}</td>
-                                                    <td>{{product.precio}}</td>
-                                                    <!-- {% set subtotal = product.precio|float * product.cantidad|int %}
-                                                    <td> {{ "%.2f"|format(subtotal)}}</td> -->
+                                                    <form method="post" action="/updateprice">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                                            
+                                                                <td>
+                                                                    <input type="hidden" name="code" value="{{key}}" />
+                                                                    <input type="text" class="product-price" name="price" value="{{product.precio}}" size="2" /> 
+                                                                    <input type="submit" value="Actualizar Precio" class="btnUpdtPrice" />
+                                                                </td>
+                                                    </form>
                                                     <td>{{product.precio_individual}}</td>
-
                                                     <form method="post" action="/delete">
                                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                                         <td>
@@ -154,16 +160,14 @@
                                     {% endfor %}
 
                                     <tr>
-                                        <td colspan="5" align="right"> Total:</td>
+                                        <td colspan="4" align="right"> Total:</td>
                                         <td> {{session['total_venta']}}</td>
                                     </tr>
                             </tbody>
                         </table>
 
                         <a class="btn btn-primary" href="{{ url_for('imprimir') }}" target="_blank" >Imprimir</a>
-                
-                </div>
-            </div>
-        </div>
+                    </div>
+
     {%endif%}
 {% endblock %}

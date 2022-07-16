@@ -1,10 +1,14 @@
-from flask import Flask, render_template, request,flash,session,redirect,url_for
+from flask import Flask, render_template, request,flash,session,redirect,url_for,jsonify
 from flask_wtf.csrf import CSRFProtect
 from config import DevelopmentConfig
 from modelos import *
 import formularios
 import json 
 
+import commands
+from datetime import datetime
+#-------------------------------------------------------------------------------------------------------
+# Iniciar la aplicación
 app=Flask(__name__)
 app.config.from_object(DevelopmentConfig)
 
@@ -15,8 +19,11 @@ csrf.init_app(app)
 with app.app_context():
     db.create_all()
 	
+#Lista de comandos
+commands.init_app(app)
 
-
+#-------------------------------------------------------------------------------------------------------
+# Verificaciones de sesion del usuario.
 @app.before_request
 def beforerequest():
 	global loge
@@ -27,18 +34,18 @@ def beforerequest():
 		loge=True
 	if 'producto' in session:
 		produ=True
-	#if 'username' not in session and request.endpoint != 'login':
-	#	print('login redirect')
-	#	return redirect(url_for('login'))
+	if 'username' not in session and request.endpoint != 'login':
+
+		return redirect(url_for('login'))
 	
 	if 'rol' in session:
-		#if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
-	#		flash('No tienes acceso a esta sección',category='error')
-		#	return redirect(url_for('buscar_producto'))
+		if session.get('rol')!='jefe' and request.endpoint == 'crear_cuenta':
+			flash('No tienes acceso a esta sección',category='error')
+			return redirect(url_for('buscar_producto'))
 		if session.get('rol') =='vendedor' and request.endpoint == 'editar_id':
 			flash('No tienes acceso a esta sección',category='error')
 			return redirect(url_for('buscar_producto'))
-
+#-------------------------------------------------------------------------------------------------------
 @app.route('/')
 def index():
 	return render_template('index.html',log=loge)	
@@ -123,7 +130,6 @@ def crear_producto():
 def editar_id(id):
 	producto=Producto.query.get(id)
 	editar_producto=formularios.EditarProducto(request.form)
-	print('1')
 	if request.method=='POST' and editar_producto.validate(): 	
 		producto.nombre_producto=editar_producto.nombre__producto.data
 		producto.precio_costo_producto=editar_producto.precio_costo_producto.data
@@ -169,13 +175,14 @@ def crear_nota_pedido():
 		if nombre_comprador and direccion_comprador and request.method == 'POST':
 			datos_producto_json= json.dumps(session['producto'])
 			nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador)
-
 			session['nombre_comprador']=nombre_comprador
 			session['direccion_comprador']=direccion_comprador
 
 			if nota is not None:
 				db.session.add(nota)
 				db.session.commit()
+				session['numero_nota']=nota.get_id()
+				session['fecha_nota']=nota.get_fecha()
 				succes_message='Se creo la nota de pedido para {}'.format(nombre_comprador)
 				flash(succes_message,category='message')
 			else:
@@ -183,7 +190,33 @@ def crear_nota_pedido():
 				flash(error_message,category='error')
 
 	return redirect(url_for('.buscar_producto'))
+@app.route('/vernotapedido',methods=['GET','POST'])
+def vernotapedido():
+	buscar_nota=formularios.BuscarNotaporComprador(request.form)
 
+	if request.method=='POST': 
+		if buscar_nota.validate():
+			nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+buscar_nota.nombrecomprador.data+'%')).all()
+			if nota_pedido is not None:
+				return render_template('ver_nota_pedido.html',buscar_nota=buscar_nota,nota_pedido=nota_pedido,log=loge)
+			else :
+				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
+				flash(error_message,category='error')
+				
+	return render_template('ver_nota_pedido.html',buscar_nota=buscar_nota,log=loge)
+
+@app.route('/vernotapedidobyID',methods=['GET','POST'])
+def vernotapedido_id():
+	id=request.form['notaid']
+	ver=False
+	if id and request.method=='POST':
+		
+		nota=Nota_de_Pedido.query.get(id)
+		ver=True
+		notas=json.loads(nota.get_nombre_producto())
+		return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver)})
+	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver)})
+	
 
 def array_merge( first_array , second_array ):
 	if isinstance( first_array , list ) and isinstance( second_array , list ):
@@ -246,6 +279,22 @@ def updateproduct():
 		return redirect(url_for('.buscar_producto'))
 	return redirect(url_for('.buscar_producto'))
 
+@app.route('/updateprice',methods=['POST'])
+def updateprice():
+	price=float(request.form['price'])
+	key=str(request.form['code'])
+	total_venta=0
+	if price and request.method == 'POST':
+		session.modified = True
+		session['producto'][key]['precio']=price
+		session['producto'][key]['precio_individual']=session['producto'][key]['cantidad']*float(session['producto'][key]['precio'])
+
+		for key,producto in session['producto'].items():
+			total_venta=total_venta+session['producto'][key]['precio_individual']
+		session['total_venta']=total_venta
+		return redirect(url_for('.buscar_producto'))
+	return redirect(url_for('.buscar_producto'))
+
 @app.route('/delete',methods=['POST'])
 def deleteproduct():
 	key_code=str(request.form['code'])
@@ -273,6 +322,8 @@ def empty_cart():
 	try:
 		session.pop('producto')
 		session.pop('total_venta')
+		session.pop('fecha_nota')
+		session.pop('numero_nota')
 
 		return redirect(url_for('.buscar_producto'))
 	except Exception as e:
@@ -280,6 +331,7 @@ def empty_cart():
 		
 @app.route('/imprimir')
 def imprimir():
+
 	return render_template('imprimir.html')
 
 		

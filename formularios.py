@@ -19,9 +19,11 @@ class CrearProducto(Form):
 
 class BuscarProducto(Form):
     nombreproducto=SearchField('Buscar producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])
+class BuscarNotaporComprador(Form):
+    nombrecomprador=SearchField('Buscar por nombre de comprador',validators=[Length(max=200,message="Ingrese un nombre de comprador valido"),DataRequired(message="El nombre del comprador es requerido")])
 
 class EditarProducto(Form):
-    nombre__producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])
+    nombre__producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido")])
     precio_costo_producto=FloatField('Precio costo producto',validators=[DataRequired(message='El precio de costo es requerido')])
     precio_venta_producto=FloatField('Precio venta producto',validators=[DataRequired(message='El precio de venta es requerido')])
 

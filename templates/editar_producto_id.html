@@ -8,6 +8,9 @@
       <a class="nav-link" href="{{ url_for('buscar_producto') }}"><strong>Buscar Productos</strong></a>
     </li>
     <li class="nav-item">
+        <a class="nav-link" href="vernotapedido"><strong>Ver Notas de Pedido</strong></a>
+      </li>
+    <li class="nav-item">
       <a class="nav-link" href="{{ url_for('logout') }}"><strong>Log out</strong></a>
     </li>
   {%endif%}
@@ -25,7 +28,7 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="row control-group">
                         <div class="form-group col-xs-12 floating label-form-group controls">
-                            {{render_field(editar_form.nombre__producto,class="form-control",placeholder=product_name)}}
+                            {{render_field(editar_form.nombre__producto,class="form-control",placeholder=product_name,value=product_name)}}
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
