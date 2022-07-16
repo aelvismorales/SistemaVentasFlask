@@ -6,7 +6,7 @@ import formularios
 import json 
 import pandas as pd
 import commands
-from datetime import datetime
+
 #-------------------------------------------------------------------------------------------------------
 # Iniciar la aplicación
 app=Flask(__name__)
@@ -20,7 +20,7 @@ with app.app_context():
     db.create_all()
 	
 #Lista de comandos
-commands.init_app(app)
+#commands.init_app(app)
 
 #-------------------------------------------------------------------------------------------------------
 @app.before_first_request
