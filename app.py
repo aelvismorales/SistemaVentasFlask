@@ -256,32 +256,58 @@ def vernotapedido():
 	fecha=False
 	nombre=False
 	order=False
+	estado_nota=False
+	total_dia=0
+	total_dia_visa=0
+	total_dia_por_cancelar=0
 	if request.method=='POST':
 		if seleccion=='Fecha':
 			fecha=True
 		elif seleccion=='Nombre':
 			nombre=True
+		elif seleccion=='Estado':
+			estado_nota=True
 		elif seleccion=='Ordenar por Cantidad':
 			order=True
 			nota_pedido=Nota_de_Pedido.query.order_by(desc(Nota_de_Pedido.total_venta)).all()
 			if nota_pedido is not None:
-				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order)
+				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
 			else :
 				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 				flash(error_message,category='error')
 		
-	return render_template('ver_nota_pedido.html',log=loge,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order)
+	return render_template('ver_nota_pedido.html',log=loge,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_estado=estado_nota,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+
+@app.route('/vernotaporestado',methods=['GET','POST'])
+def vernotaporestado():
+	opcion=request.form.get('opcionestado')
+	total_dia=0
+	total_dia_visa=0
+	total_dia_por_cancelar=0
+	if request.method=='POST' and opcion:
+		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.estado==opcion).all()
+		return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+	return redirect(url_for('.vernotapedido'))
 
 @app.route('/vernotaporfecha',methods=['GET','POST'])
 def vernotaporfecha():
 	fecha_inicio=request.form['fecha_inicio']
 	fecha_final=request.form['fecha_final']
-
+	total_dia=0
+	total_dia_visa=0
+	total_dia_por_cancelar=0
 	if fecha_inicio and fecha_final and request.method=='POST':
 		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio,fecha_final)).all()
 		if nota_pedido is not None:
-			print(nota_pedido )
-			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido)
+			for note in nota_pedido:
+				if note.get_estado() in ['cancelado','cancelado-entregado']:
+					total_dia+=note.get_total_venta()
+				elif note.get_estado() in ['cancelado-visa','cancelado-visa-entregado']:
+					total_dia_visa+=note.get_total_venta()
+				elif note.get_estado() in ['por-cancelar','por-cancelar-entregado']:
+					total_dia_por_cancelar+=note.get_total_venta()
+				
+			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
 		else :
 			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 			flash(error_message,category='error')
@@ -291,11 +317,13 @@ def vernotaporfecha():
 @app.route('/vernotapornombre',methods=['GET','POST'])
 def vernotapornombre():
 	nombrecomprador=request.form['nombre_comprador']
-	print(nombrecomprador)
+	total_dia=0
+	total_dia_visa=0
+	total_dia_por_cancelar=0
 	if nombrecomprador and request.method=='POST':
 		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+nombrecomprador+'%')).all()
 		if nota_pedido is not None:
-			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido)
+			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
 		else :
 			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 			flash(error_message,category='error')
@@ -313,6 +341,26 @@ def vernotapedido_id():
 		notas=json.loads(nota.get_nombre_producto())
 		return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver)})
 	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver)})
+@app.route('/editarnota/<string:id>',methods=['GET','POST'])
+def editarnota(id):
+	nota=Nota_de_Pedido.query.get(id)
+	nombre_comprador=request.form.get('comprador_name')
+	direccion_comprador=request.form.get('direccion_comprador')
+	estado_nota=request.form.get('estado')
+	if nota and nombre_comprador and direccion_comprador and estado_nota and request.method=='POST':
+		nota.nombre_comprador=nombre_comprador
+		nota.direccion_comprador=direccion_comprador
+		nota.estado=estado_nota
+
+		db.session.add(nota)
+		db.session.commit()
+		succes_message='Se actualizo la nota de pedido de {}'.format(nota.nombre_comprador)
+		flash(succes_message,category='message')
+		return render_template('editar_nota_id.html',nota=nota,log=loge)
+	return render_template('editar_nota_id.html',nota=nota,log=loge)
+
+
+
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
 #To Do editar  CRUD informacion de Usuario - Ver Lista de Usuarios 
 @app.route('/crearcomprador',methods=['GET','POST'])
@@ -455,6 +503,14 @@ def empty_cart():
 def imprimir():
 	return render_template('imprimir.html')
 
+@app.route('/imprimire/<string:id>',methods=['GET','POST'])
+def imprimire(id):
+
+	nota=Nota_de_Pedido.query.get(id)
+	notas=json.loads(nota.get_nombre_producto())
+	if id and request.method=='POST':
+		return render_template('imprimirid.html',nota=nota,notas=notas)
+	return render_template('imprimirid.html',nota=nota,notas=notas)
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
 if __name__=='main':
 	app.run(debug=False)

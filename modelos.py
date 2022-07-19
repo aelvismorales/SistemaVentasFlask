@@ -79,7 +79,7 @@ class Nota_de_Pedido(db.Model):
     nombre_producto=db.Column(db.String(15000))
     total_venta=db.Column(db.Float)
     direccion_comprador=db.Column(db.String(200))
-    estado=db.Column(db.String(20))
+    estado=db.Column(db.String(50))
     comprador_id=db.Column(db.Integer,db.ForeignKey('comprador.id'))
 
     def get_id(self):
@@ -96,6 +96,8 @@ class Nota_de_Pedido(db.Model):
         return self.total_venta
     def get_comprador_id(self):
         return self.comprador_id
+    def get_estado(self):
+        return self.estado
             
     def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,comprador_id=None):
 

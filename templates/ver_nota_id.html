@@ -28,7 +28,7 @@
                       <div style="text-align: justify;"><em>VENTA DE AGREGADOS DE MATERIALES DE CONSTRUCCION Y ARTICULOS DE FERRETERIA EN GENERAL,PINTURA Y PRODUCTOS DE VIDRIO EN COMERCIOS ESPECIALIZADOS</em></div>
                         <div style="text-align: justify;">&nbsp;</div>
                           <div style="text-align: left;">&nbsp; &nbsp; Sr.(es): &nbsp;{{nota.get_nombre_comprador()}} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  Fecha: {{nota.get_fecha()}}</div>
-                            <div style="text-align: left;">&nbsp; &nbsp; Dirección:&nbsp;Av. Tupac Amaru MzA K3 Lt 18 Peralvillo</div>
+                            <div style="text-align: left;">&nbsp; &nbsp; Dirección:&nbsp;{{nota.get_direccion()}}</div>
                               <div style="text-align: left;">&nbsp;</div>
                                 <div style="text-align: left;">&nbsp;</div>
                                   <div style="text-align: left;">
@@ -49,12 +49,13 @@
                                             <td>{{product.name}}</td>
                                             <td>{{product.precio}}</td>
                                             <td>{{product.precio_individual}}</td>
-                                        </tr>                   
+                                        </tr> 
+                                        {% endfor %}                 
                                         <tr>
                                           <td colspan="4" align="right"> <strong>Total:</strong></td>
                                           <td> <strong>{{nota.total_venta}}</strong></td>
                                         </tr>
-                                        {% endfor %}
+                                        
                                       </tbody>
                                     </table>
                                     

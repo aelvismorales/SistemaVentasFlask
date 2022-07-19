@@ -31,6 +31,7 @@
                     <option value="Fecha">Fecha</option>
                     <option value="Nombre">Nombre</option>
                     <option value="Ordenar por Cantidad">Ordenar por Cantidad</option>
+                    <option value="Estado">Estado</option>
                 </select>
                 <button type="submit" class="btn btn-dark" >Filtrar</button>
             </form>
@@ -92,6 +93,22 @@
             </div>
         </div>
     </div>
+{% elif bool_estado==True %}
+<form id="OpcionBusqueda" method="post" action="/vernotaporestado">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <select name="opcionestado" id="OpcionesBusqueda">
+        <option value="cancelado">CANCELADO</option>
+        <option value="por-cancelar">POR CANCELAR</option>
+        <option value="cancelado-visa">CANCELADO VISA</option>
+        <option value="cancelado-entregado">CANCELADO-ENTREGADO</option>
+        <option value="por-cancelar-entregado">POR CANCELAR-ENTREGADO</option>
+        <option value="cancelado-visa-entregado">CANCELADO VISA-ENTREGADO</option>
+        <option value="cancelado-por-recoger">CANCELADO POR RECOGER</option>
+        <option value="cancelado-visa-por-recoger">CANCELADO VISA POR RECOGER</option>
+        <option value="PROFORMA">PROFORMA</option>
+    </select>
+    <button type="submit" class="btn btn-info" >Buscar</button>
+</form>
 
 {%endif%}
 <div class="container">
@@ -104,7 +121,10 @@
                         <th scope="col">Fecha</th>
                         <th scope="col">Nombre</th>
                         <th scope="col">Total</th>
+                        <th scope="col">Estado </th>
                         <th scope="col">Ver</th>
+                        <th scope="col">Imprimir</th>
+                        <th scope="col">Editar</th>
                     </thead>
                     <tbody>
                         {% for notaped in nota_pedido %}
@@ -113,17 +133,28 @@
                             <td> {{notaped.get_fecha()}}</td>
                             <td> {{notaped.get_nombre_comprador()}}</td>
                             <td> {{notaped.get_total_venta()}}</td>
+                            <td>{{notaped.get_estado()}}</td>
                             <td>
                                 <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
                                 <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" href="{{ url_for('imprimire',id=notaped.get_id() ) }}" target="_blank" >Imprimir</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-info" href="{{ url_for('editarnota',id=notaped.get_id() ) }}" target="_blank" >Editar</a>
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
+            <p><strong>Total Venta del Dia:</strong> {{td}}</p>
+            <p><strong>Total Venta del Dia por Visa:</strong> {{tdv}}</p>
+            <p><strong>Total Venta del Dia por Cancelar:</strong> {{tdpc}}</p>
         </div>
     </div>
+    
 </div>
 
   <div class="modal fade" id="empModal" role="dialog">
