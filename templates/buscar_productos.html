@@ -10,10 +10,13 @@
     <li class="nav-item">
         <a class="nav-link" href="vernotapedido"><strong>Ver Notas de Pedido</strong></a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="crearcomprador"><strong>Crear Comprador</strong></a>
+    </li>  
     <li class="nav-item">
       <a class="nav-link" href="logout"><strong>Log out</strong></a>
-    </li>    
-
+    </li>
+    
   {%endif%}
 {% endblock %}
 
@@ -40,134 +43,129 @@
         </div>
     </div>
 
-    <div class="container">       
-        
-            <div class="product-item">
-                    <table class="table table-sm">
-                        <thead>
+    <div class="container">            
+        <div class="product-item">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre Producto</th>
+                            <th scope="col">Precio Costo</th>
+                            <th scope="col">Precio Venta</th>
+                            <th scope="col">Fecha Actualizacion</th>
+                            <th scope="col">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for producto in productos%}
+                        <form method="post" action="/add">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Nombre Producto</th>
-                                <th scope="col">Precio Costo</th>
-                                <th scope="col">Precio Venta</th>
-                                <th scope="col">Fecha Actualizacion</th>
-                                <th scope="col">Cantidad</th>
+                                <th scope="row">{{producto.id}}</th>
+                                <td>{{producto.nombre_producto}}</td>
+                                <td>{{producto.precio_costo_producto}}</td>
+                                <td>{{producto.precio_venta_producto}}</td>
+                                <td>{{producto.get_fecha_actualizacion_producto()}}</td>
+                                <td> 
+                                    <input type="hidden" name="code" value="{{ producto.id }}"/>
+                                    <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
+                                    <input type="submit" value="Agregar a Nota de Pedido" class="btnAddAction" />
+                                </td>
+                                <td> 
+                                    <a class="btn btn-primary" href="{{ url_for('editar_id', id=producto.id) }}">Actualizar</a>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {%for producto in productos%}
-                            <form method="post" action="/add">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                                <tr>
-                                    <th scope="row">{{producto.id}}</th>
-                                    <td>{{producto.nombre_producto}}</td>
-                                    <td>{{producto.precio_costo_producto}}</td>
-                                    <td>{{producto.precio_venta_producto}}</td>
-                                    <td>{{producto.get_fecha_actualizacion_producto()}}</td>
-                                    
-                                    <td> 
-                                        <input type="hidden" name="code" value="{{ producto.id }}"/>
-                                        <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
-                                        <input type="submit" value="Agregar a Nota de Pedido" class="btnAddAction" />
-                                    </td>
-                                    <td> 
-                                        <a class="btn btn-success" href="{{ url_for('editar_id', id=producto.id) }}">Actualizar</a>
-                                    </td>
-                                </tr>
-                            </form>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                
-            </div> 
+                        </form>
+                        {% endfor %}
+                    </tbody>
+                </table>
+        </div> 
     </div>  
 
     {% if prd==True %}
+    <br>
+    <br>
+        <h3>Nota de Pedido</h3>
+        <form id="crear_nota" method="POST" action="/crearnotapedido">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="form-group row">
+                <label for="NombreComprador" class="col-sm2 col-form-label">Nombre del comprador:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="NombreComprador" name="comprador_name" required />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="DireccionComprador" class="col-sm2 col-form-label">Direccion:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="DireccionComprador" name="direccion_comprador" required />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="EstadoNota" class="col-sm2 col-form-label">Estado:</label>
+                <div class="col-sm-4">
+                    <select name="estado" id="EstadoNota">
+                        <option value="cancelado">CANCELADO</option>
+                        <option value="por cancelar">POR CANCELAR</option>
+                        <option value="cancelado visa">CANCELADO VISA</option>
+                    </select>
+                </div>
+            </div>
+            <br> 
+            <button type="submit" class="btn btn-success btn-sm">Crear Nota Pedido</button>
+        </form>
+        <br>
+        <a id="btnEmpty"  class="btn btn-secondary btn-sm" href="{{ url_for('.empty_cart') }}" role="button" style="position:sticky">Vaciar Nota de Pedido</a>
 
-    
-                    <h3>Nota de Pedido</h3>
-                    <form class="form-inline" id="buscarForm" method="POST" action="/crearnotapedido">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                        <div class="row control-group">
-                        <div class="form-group col-xs-12 floating-label-form-group controls">
-                            <label>Nombre del comprador: </label>
-                            <input type="text" class="nota-comprador" name="comprador_name" required/> 
-                            <!-- <input type="submit" value="Actualizar Cantidad" class="btnGetComprador" /> -->
-                            <p class="help-block text-danger"></p>
-                        </div>
-                        <div class="form-group col-xs-12 floating-label-form-group controls">
-                            <label>Direccion: </label>
-                            <input type="text" class="nota-direccion_comprador" name="direccion_comprador" required/> 
-                            <!-- <input type="submit" value="Actualizar Cantidad" class="btnGetDirecComprador" /> -->
-                            <!-- <p class="help-block text-danger"></p> -->
-                        </div>
-                        <br>
-                        <br> 
-                        <div id="success"></div>
-                        <div class="row">
-                            <div class="form-group cols=xs=12">
-                                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Crear Nota Pedido</button>
-                            </div>
-                        </div>
-                    </form>
-                    <br> 
-                    <br> 
-                    <a id="btnEmpty"  href="{{ url_for('.empty_cart') }}">Vaciar Nota de Pedido</a>
-
-                    <div class="table-responsive-xxl">
-                        <table class="table align-middle">
-                            <thead>
-                                <th scope="col">#</th>
-                                <th scope="col">Cantidad</th>
-                                <th scope="col">Nombre Producto</th>
-                                <th scope="col">Precio</th>
-                                <th scope="col">Sub Total</th>
-                                <th scope="col">Delete</th>
-            
-                            </thead>
-                            <tbody>
-                                    {% for key,product in session['producto'].items() %}
-                                        <form method="post" action="/updateproduct">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                                                <tr>
-                                                    <td>{{loop.index}} </td>
-                                                    <td>
-                                                        <input type="hidden" name="code" value="{{key}}" />
-                                                        <input type="text" class="product-quantity" name="quantity" value="{{product.cantidad}}" size="2" /> 
-                                                        <input type="submit" value="Actualizar Cantidad" class="btnUpdtCant" />
-                                                    </td>
-                                        </form>
-                                                    <td>{{product.name}}</td>
-                                                    <form method="post" action="/updateprice">
-                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                                                            
-                                                                <td>
-                                                                    <input type="hidden" name="code" value="{{key}}" />
-                                                                    <input type="text" class="product-price" name="price" value="{{product.precio}}" size="2" /> 
-                                                                    <input type="submit" value="Actualizar Precio" class="btnUpdtPrice" />
-                                                                </td>
-                                                    </form>
-                                                    <td>{{product.precio_individual}}</td>
-                                                    <form method="post" action="/delete">
-                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                                                        <td>
-                                                            <input type="hidden" name="code" value="{{product.id}}" />
-                                                            <input type="submit" value="Eliminar" class="btnDeletePrd" />
-                                                        </td>
-                                                    </form>
-                                                </tr>
-                                    
-                                    {% endfor %}
-
+        <div class="table-responsive-xxl">
+            <table class="table align-middle">
+                <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Nombre Producto</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Sub Total</th>
+                    <th scope="col">Delete</th>
+                </thead>
+                <tbody>
+                        {% for key,product in session['producto'].items() %}
+                            <form method="post" action="/updateproduct">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                     <tr>
-                                        <td colspan="4" align="right"> Total:</td>
-                                        <td> {{session['total_venta']}}</td>
+                                        <td>{{loop.index}} </td>
+                                        <td>
+                                            <input type="hidden" name="code" value="{{key}}" />
+                                            <input type="text" class="product-quantity" name="quantity" value="{{product.cantidad}}" size="2" /> 
+                                            <input type="submit" value="Actualizar Cantidad" class="btnUpdtCant" />
+                                        </td>
+                            </form>
+                                        <td>{{product.name}}</td>
+                                        <form method="post" action="/updateprice">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />       
+                                                <td>
+                                                    <input type="hidden" name="code" value="{{key}}" />
+                                                    <input type="text" class="product-price" name="price" value="{{product.precio}}" size="2" /> 
+                                                    <input type="submit" value="Actualizar Precio" class="btnUpdtPrice" />
+                                                </td>
+                                        </form>
+                                        <td>{{product.precio_individual}}</td>
+                                        <form method="post" action="/delete">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                            <td>
+                                                <input type="hidden" name="code" value="{{product.id}}" />
+                                                <input type="submit" value="Eliminar" class="btnDeletePrd" style="background-color: #f54257; border-radius: 1cm;" />
+                                            </td>
+                                        </form>
                                     </tr>
-                            </tbody>
-                        </table>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="4" align="right"> Total:</td>
+                            <td> <strong>{{session['total_venta']}}</strong></td>
+                        </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-primary" href="{{ url_for('imprimir') }}" target="_blank" >Imprimir</a>
+        </div>
 
-                        <a class="btn btn-primary" href="{{ url_for('imprimir') }}" target="_blank" >Imprimir</a>
-                    </div>
-
+           
     {%endif%}
 {% endblock %}

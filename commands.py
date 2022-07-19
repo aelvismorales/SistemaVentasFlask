@@ -32,6 +32,7 @@ def poblar_bd():
 @click.command('descargar-tabla')
 @click.argument('name',type=str)
 def descargar_tabla(name):
+    "Descarga una tabla de la base de datos : usuario,producto,comprador,notapedido"
     if name=='usuario':
         usuario=Usuario.query.all()
         df_usuario=pd.DataFrame(usuario)

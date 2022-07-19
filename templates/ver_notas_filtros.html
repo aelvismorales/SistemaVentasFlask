@@ -22,40 +22,19 @@
 
 {% block content %}
 {% from "macro.html" import render_field %}
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form id="SeleccionBusqueda" method="post" action="/vernotapedido">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <select name="seleccionbusqueda">
-                    <option value="Fecha">Fecha</option>
-                    <option value="Nombre">Nombre</option>
-                    <option value="Ordenar por Cantidad">Ordenar por Cantidad</option>
-                </select>
-                <button type="submit" class="btn btn-dark" >Filtrar</button>
-            </form>
-        </div>
-    </div>
-</div>
 {% if bool_fecha==True %}
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <form class="form-inline" id="buscarForm" method="POST" action="/vernotaporfecha">
+                <form class="form-inline" id="buscarForm" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="row control-group">
                     <div class="form-group col-xs-12 floating-label-form-group controls">
-                        <label for="Fecha_inicio" class="col-sm2 col-form-label">Fecha Inicio</label>
-                        <div class="col-sm-4">
-                            <input type="date" class="form-control" id="Fecha_inicio" name="fecha_inicio" required />
-                        </div>
+                            {{render_field(buscar_nota_por_fecha.fecha_inicio,class="form-control")}}
                         <p class="help-block text-danger"></p>
                     </div>
                     <div class="form-group col-xs-12 floating-label-form-group controls">
-                        <label for="Fecha_final" class="col-sm2 col-form-label">Fecha Final</label>
-                        <div class="col-sm-4">
-                            <input type="date" class="form-control" id="Fecha_final" name="fecha_final" required />
-                        </div>
+                        {{render_field(buscar_nota_por_fecha.fecha_final,class="form-control")}}
                     <p class="help-block text-danger"></p>
                 </div>
                     <div class="row">
@@ -64,22 +43,44 @@
                         </div>
                     </div>
                 </form>
+                
             </div>
         </div>
     </div>
-
+    <div class="table-responsive-xxl">
+        <table class="table align-middle">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Total</th>
+                <th scope="col">Ver</th>
+            </thead>
+            <tbody>
+                {% for notaped in nota_pedido %}
+                <tr>
+                    <td> {{loop.index}}</td>
+                    <td> {{notaped.get_fecha()}}</td>
+                    <td> {{notaped.get_nombre_comprador()}}</td>
+                    <td> {{notaped.get_total_venta()}}</td>
+                    <td>
+                        <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
+                        <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% elif bool_nombre==True %}
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <form class="form-inline" id="buscarForm" method="POST" action="/vernotapornombre">
+                <form class="form-inline" id="buscarForm" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="row control-group">
                     <div class="form-group col-xs-10 floating-label-form-group controls">
-                        <label for="NombreComprador" class="col-sm2 col-form-label">Nombre Comprador</label>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="NombreComprador" name="nombre_comprador" required />
-                        </div>
+                            {{render_field(buscar_nota.nombrecomprador,class="form-control",placeholder="Search")}}
                         <p class="help-block text-danger"></p>
                     </div>
                     <div class="row">
@@ -92,39 +93,59 @@
             </div>
         </div>
     </div>
+    <div class="table-responsive-xxl">
+        <table class="table align-middle">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Total</th>
+                <th scope="col">Ver</th>
+            </thead>
+            <tbody>
+                {% for notaped in nota_pedido %}
+                <tr>
+                    <td> {{loop.index}}</td>
+                    <td> {{notaped.get_fecha()}}</td>
+                    <td> {{notaped.get_nombre_comprador()}}</td>
+                    <td> {{notaped.get_total_venta()}}</td>
+                    <td>
+                        <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
+                        <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% elif bool_order==True %}
+<div class="table-responsive-xxl">
+    <table class="table align-middle">
+        <thead>
+            <th scope="col">#</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Total</th>
+            <th scope="col">Ver</th>
+        </thead>
+        <tbody>
+            {% for notaped in nota_pedido %}
+            <tr>
+                <td> {{loop.index}}</td>
+                <td> {{notaped.get_fecha()}}</td>
+                <td> {{notaped.get_nombre_comprador()}}</td>
+                <td> {{notaped.get_total_venta()}}</td>
+                <td>
+                    <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
+                    <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 {%endif%}
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="table-responsive-xxl">
-                <table class="table align-middle">
-                    <thead>
-                        <th scope="col">#</th>
-                        <th scope="col">Fecha</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Ver</th>
-                    </thead>
-                    <tbody>
-                        {% for notaped in nota_pedido %}
-                        <tr>
-                            <td> {{loop.index}}</td>
-                            <td> {{notaped.get_fecha()}}</td>
-                            <td> {{notaped.get_nombre_comprador()}}</td>
-                            <td> {{notaped.get_total_venta()}}</td>
-                            <td>
-                                <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
-                                <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 
   <div class="modal fade" id="empModal" role="dialog">
     <div class="modal-dialog">

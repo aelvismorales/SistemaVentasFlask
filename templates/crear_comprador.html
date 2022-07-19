@@ -1,0 +1,63 @@
+{%extends 'base.html' %}
+{% block navbar %}
+  {% if log==True %}
+    <li class="nav-item">
+        <a class="nav-link" href="producto"><strong>Crear Productos</strong></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link " href="buscar"><strong>Buscar Productos</strong></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="vernotapedido"><strong>Ver Notas de Pedido</strong></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="crearcomprador"><strong>Crear Comprador</strong></a>
+    </li>  
+    <li class="nav-item">
+      <a class="nav-link" href="logout"><strong>Log out</strong></a>
+    </li>
+    
+ 
+
+  {%endif%}
+{% endblock %}
+
+{% block content %}
+    {% from "macro.html" import render_field %} 
+    <form method="post">
+        <div class="form-group row">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            
+            <label for="comprador-label" class="col-sm-2 col-form-label">{{form_comprador.nombre_comprador.label}}</label>
+            <div class="col-sm-10">
+                {{form_comprador.nombre_comprador}}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="num-telefono" class="col-sm-2 col-form-label"> {{form_comprador.numero_telefono.label}}</label>
+            <div class="col-sm-10">
+                {{form_comprador.numero_telefono}}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="tipo-comprador" class="col-sm-2 col-form-label"> {{form_comprador.tipo_comprador.label}}</label>
+            <div class="col-sm-10">
+                {{form_comprador.tipo_comprador}}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="direccion-comprador" class="col-sm-2 col-form-label"> {{form_comprador.direccion_comprador.label}}</label>
+            <div class="col-sm-10">
+                {{form_comprador.direccion_comprador}}
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-10">
+              <button type="submit" class="btn btn-primary">Crear</button>
+            </div>
+          </div>
+    </form>
+
+{% endblock %}

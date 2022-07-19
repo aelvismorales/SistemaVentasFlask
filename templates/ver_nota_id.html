@@ -12,6 +12,9 @@
                 <tr style="height: 29px;">
                   <td style="width: 100%; text-align: justify; height: 29px;">N°: {{nota.get_id()}}</td>
                 </tr>
+                <tr style="height: 29px;">
+                  <td style="width: 100%; text-align: justify; height: 29px;"><strong>ESTADO:</strong> {{nota.estado}}</td>
+                </tr>
               </tbody>
             </table>
         &nbsp;</div>
@@ -49,7 +52,7 @@
                                         </tr>                   
                                         <tr>
                                           <td colspan="4" align="right"> <strong>Total:</strong></td>
-                                          <td> <strong>7.0</strong></td>
+                                          <td> <strong>{{nota.total_venta}}</strong></td>
                                         </tr>
                                         {% endfor %}
                                       </tbody>
