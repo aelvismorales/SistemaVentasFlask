@@ -10,18 +10,21 @@ import commands
 
 #-------------------------------------------------------------------------------------------------------
 # Iniciar la aplicación
-app=Flask(__name__)
-app.config.from_object(DevelopmentConfig)
 
-db.init_app(app)
-csrf=CSRFProtect(app)
-#csrf.init_app(app)
+def create_app():
+	app=Flask(__name__)
+	app.config.from_object(DevelopmentConfig)
+	db.init_app(app)
+	csrf=CSRFProtect()
+	csrf.init_app(app)
+	with app.app_context():
+		db.create_all()
+	commands.init_app(app)
+	return app 
 
-with app.app_context():
-    db.create_all()
-	
+app=create_app()
 #Lista de comandos
-commands.init_app(app)
+#commands.init_app(app)
 
 #-------------------------------------------------------------------------------------------------------
 @app.route('/llenarbasededatos')
@@ -114,6 +117,7 @@ def crear_cuenta():
 	return render_template('crear_cuenta.html',form_usuario=crear_usuario)
 
 @app.route('/login',methods=['GET','POST'])
+
 def login():
 	user_form=formularios.Login(request.form)
 	
