@@ -139,15 +139,8 @@ def login():
 @app.route('/logout',methods=['GET','POST'])
 def logout():
 	session.pop('username')
-	session.pop('rol')
-	session.pop('producto')
 	session.pop('id')
-	session.pop('total_venta')
-	session.pop('nombre_comprador')
-	session.pop('direccion_comprador')
-	session.pop('numero_nota')
-	session.pop('fecha_nota')
-	session.pop('estado_nota')
+	session.pop('rol')
 	return redirect(url_for('login'))
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
 @app.route('/producto',methods=['GET','POST'])
