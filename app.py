@@ -20,9 +20,9 @@ def create_app():
 	with app.app_context():
 		db.create_all()
 	commands.init_app(app)
-	return app 
+	return app,csrf
 
-app=create_app()
+app,csrf=create_app()
 #Lista de comandos
 #commands.init_app(app)
 
@@ -117,7 +117,7 @@ def crear_cuenta():
 	return render_template('crear_cuenta.html',form_usuario=crear_usuario)
 
 @app.route('/login',methods=['GET','POST'])
-
+@csrf.exempt
 def login():
 	user_form=formularios.Login(request.form)
 	
