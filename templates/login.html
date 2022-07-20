@@ -20,7 +20,7 @@
                 <br>
                 <br>
                 <form id="loginForm" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="row control-group">
                         <div class="form-group col-xs-12 floating label-form-group controls">
                             {{render_field(form_login.username,class="form-control")}}

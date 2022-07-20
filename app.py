@@ -15,7 +15,7 @@ app.config.from_object(DevelopmentConfig)
 
 db.init_app(app)
 csrf=CSRFProtect(app)
-csrf.init_app(app)
+#csrf.init_app(app)
 
 with app.app_context():
     db.create_all()
