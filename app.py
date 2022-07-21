@@ -1,3 +1,4 @@
+from datetime import date
 from flask import Flask, render_template, request,flash,session,redirect,url_for,jsonify,send_file
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import desc
@@ -24,14 +25,14 @@ def create_app():
 
 app,csrf=create_app()
 #Lista de comandos
-#commands.init_app(app)
+commands.init_app(app)
 
 #-------------------------------------------------------------------------------------------------------
 @app.route('/llenarbasededatos')
 def llenarbasededatos():
 	prd=pd.read_csv('ferreteria_data.csv')
 	for i in prd.index:
-		productos=Producto(prd['Material'][i],prd['COSTO'][i],prd['PRECIO PUBLICO'][i])
+		productos=Producto(prd['Material'][i],prd['COSTO'][i],prd['PRECIO PUBLICO'][i],prd['STOCK'][i])
 		db.session.add(productos)
 		db.session.commit()
 	return redirect(url_for('buscar_producto'))
@@ -117,7 +118,7 @@ def crear_cuenta():
 	return render_template('crear_cuenta.html',form_usuario=crear_usuario)
 
 @app.route('/login',methods=['GET','POST'])
-@csrf.exempt
+#@csrf.exempt
 def login():
 	user_form=formularios.Login(request.form)
 	
@@ -142,9 +143,9 @@ def login():
 
 @app.route('/logout',methods=['GET','POST'])
 def logout():
-	session.pop('username')
-	session.pop('id')
-	session.pop('rol')
+	session.pop('username',None)
+	session.pop('id',None)
+	session.pop('rol',None)
 	return redirect(url_for('login'))
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
 @app.route('/producto',methods=['GET','POST'])
@@ -152,12 +153,12 @@ def crear_producto():
 	crear_producto=formularios.CrearProducto(request.form)
 	if request.method=='POST' and crear_producto.validate():
 		precio_venta=crear_producto.precio_venta_producto.data
-		producto=Producto(crear_producto.nombre_producto.data,crear_producto.precio_costo_producto.data,precio_venta)
+		producto=Producto(crear_producto.nombre_producto.data,crear_producto.precio_costo_producto.data,precio_venta,crear_producto.stock.data)
 
 		if producto is not None:
 			db.session.add(producto)
 			db.session.commit()
-			succes_message='Se creo el producto {}'.format(crear_producto.nombre_producto.data)
+			succes_message='Se creo el producto "{}"'.format(crear_producto.nombre_producto.data)
 			flash(succes_message,category='message')
 			return render_template('crear_producto.html',producto_form=crear_producto,log=loge)
 		else:
@@ -175,6 +176,7 @@ def editar_id(id):
 		producto.nombre_producto=editar_producto.nombre__producto.data
 		producto.precio_costo_producto=editar_producto.precio_costo_producto.data
 		producto.precio_venta_producto=editar_producto.precio_venta_producto.data
+		producto.stock=editar_producto.stock.data
 		producto.fecha_actualizacion_producto=datetime.now()
 
 		db.session.add(producto)
@@ -182,9 +184,7 @@ def editar_id(id):
 
 		succes_message='Se actualizo el producto {}'.format(producto.nombre_producto)
 		flash(succes_message,category='message')
-		return render_template('editar_producto_id.html',editar_form=editar_producto,log=loge,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv())
-
-	return render_template('editar_producto_id.html',editar_form=editar_producto,log=loge,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv())
+	return render_template('editar_producto_id.html',editar_form=editar_producto,log=loge,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv(),product_stock=producto.get_stock())
 
 @app.route('/buscar',methods=['GET','POST'])
 def buscar_producto():
@@ -192,7 +192,6 @@ def buscar_producto():
 	if request.method=='POST': 
 		if buscar_producto.validate():
 			productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data+'%')).all()
-
 			if productos is not None:
 				return render_template('buscar_productos.html',buscar_form=buscar_producto,productos=productos,log=loge)
 			else :
@@ -202,29 +201,54 @@ def buscar_producto():
 			render_template('buscar_productos.html',buscar_form=buscar_producto,log=loge,prd=produ)
 	
 	return render_template('buscar_productos.html',buscar_form=buscar_producto,log=loge,prd=produ)
+
+@app.route('/eliminarproducto/<string:id>',methods=['GET','POST'])
+def eliminarproducto(id):
+	producto_eliminar=Producto.query.get(id)
+	if producto_eliminar is not None:
+		nombre_elimninar=producto_eliminar.get_str_nombre()
+		db.session.delete(producto_eliminar)
+		db.session.commit()
+		succes_message='Se elimino el producto "{}" satisfactoriamente'.format(nombre_elimninar)
+		flash(succes_message,category='message')
+		return redirect(url_for('.buscar_producto'))
+	else:
+		error_message='El producto no se pudo eliminar intente nuevamente'
+		flash(error_message,category='error')
+
+	return redirect(url_for('.buscar_producto'))
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
 @app.route('/crearnotapedido',methods=['GET','POST'])
 def crear_nota_pedido():
 	nombre_comprador=request.form['comprador_name']
 	direccion_comprador=request.form['direccion_comprador']
+	dni_comprador=request.form['dni_comprador']
+	telefono_comprador=request.form['telefono_comprador']
 	estado_nota=request.form.get('estado')
 	total_venta=0
 	if 'producto' in session:
 		session.modified=True
 		for key,producto in session['producto'].items():
-				total_venta=total_venta+session['producto'][key]['precio_individual']
+			total_venta=total_venta+session['producto'][key]['precio_individual']
 		session['total_venta']=total_venta
 
 		if nombre_comprador and direccion_comprador and estado_nota and request.method == 'POST':
-			existe_comprador=Comprador.query.filter_by(nombre_comprador=nombre_comprador).first()
+			existe_comprador=Comprador.query.filter_by(dni=dni_comprador).first()
 			
 			if existe_comprador is not None:
 				datos_producto_json= json.dumps(session['producto'])
 
 				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,existe_comprador)
+
+				for key,product in session['producto'].items():
+					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
+					producto.stock-= session['producto'][key]['cantidad']
+				session.modified = True
 				session['nombre_comprador']=nombre_comprador
 				session['direccion_comprador']=direccion_comprador
-
+				session['dni_comprador']=dni_comprador
+				session['telefono_comprador']=telefono_comprador
+				
 				if nota is not None:
 					db.session.add(nota)
 					db.session.commit()
@@ -238,24 +262,45 @@ def crear_nota_pedido():
 					flash(error_message,category='error')
 			else:
 					datos_producto_json= json.dumps(session['producto'])
+					comprador_nuevo=Comprador(nombre_comprador,telefono_comprador,direccion_comprador,dni_comprador)
 					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota)
+					for key,product in session['producto'].items():
+						producto=Producto.query.filter_by(nombre_producto=product.name)
+						producto.stock-=product.cantidad
+					session.modified = True
 					session['nombre_comprador']=nombre_comprador
 					session['direccion_comprador']=direccion_comprador
-
+					session['dni_comprador']=dni_comprador
+					session['telefono_comprador']=telefono_comprador
 					if nota is not None:
 						db.session.add(nota)
+						db.session.add(comprador_nuevo)
 						db.session.commit()
 						session['numero_nota']=nota.get_id()
 						session['fecha_nota']=nota.get_fecha()
 						session['estado_nota']=estado_nota
-						succes_message='Se creo la nota de pedido para {}'.format(nombre_comprador)
+						succes_message='Se creo la nota de pedido para {} y se registro como nuevo comprador'.format(nombre_comprador)
 						flash(succes_message,category='message')
-						
-						error_message='Se esta creando la nota de pedido con un comprador no registrado'
-						flash(error_message,category='error')
-
 	return redirect(url_for('.buscar_producto'))
 # To Do --> Poner una seleccion de busqueda un desplegable de opciones ['Buscar por Fecha-Nombre de Comprador - Notas Pendientes - Enviadas'].
+
+@app.route('/buscarcompradorbydni',methods=['GET','POST'])
+def buscarcompradorbydni():
+	dni=request.form['dni_comprador']
+	print(dni)
+	if dni and request.method=='POST':
+		comprador=Comprador.query.filter_by(dni=dni).first()
+		if comprador is not None:
+			session.modified = True
+			session['nombre_comprador']=comprador.get_nombre()
+			session['direccion_comprador']=comprador.get_direccion()
+			session['dni_comprador']=comprador.get_dni()
+			session['telefono_comprador']=comprador.get_telefono()
+		else:
+			error_message='El comprador no existe porfavor cree uno'
+			flash(error_message,category='error')
+	return redirect(url_for('.buscar_producto'))
+
 @app.route('/vernotapedido',methods=['GET','POST'])
 def vernotapedido():
 	seleccion=request.form.get('seleccionbusqueda')
@@ -263,26 +308,34 @@ def vernotapedido():
 	nombre=False
 	order=False
 	estado_nota=False
+	dni_comprador=False
+	resumen_Ventas=False
+	imprimir_resumen=False
 	total_dia=0
 	total_dia_visa=0
 	total_dia_por_cancelar=0
 	if request.method=='POST':
 		if seleccion=='Fecha':
 			fecha=True
+			imprimir_resumen=True
 		elif seleccion=='Nombre':
 			nombre=True
 		elif seleccion=='Estado':
 			estado_nota=True
+		elif seleccion=='DNI':
+			dni_comprador=True
+		elif seleccion=='resumen':
+			resumen_Ventas=True
 		elif seleccion=='Ordenar por Cantidad':
 			order=True
 			nota_pedido=Nota_de_Pedido.query.order_by(desc(Nota_de_Pedido.total_venta)).all()
 			if nota_pedido is not None:
-				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_dni=dni_comprador,bool_imprimir=imprimir_resumen,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
 			else :
 				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 				flash(error_message,category='error')
 		
-	return render_template('ver_nota_pedido.html',log=loge,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_estado=estado_nota,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+	return render_template('ver_nota_pedido.html',log=loge,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_estado=estado_nota,bool_dni=dni_comprador,bool_resumen=resumen_Ventas,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
 
 @app.route('/vernotaporestado',methods=['GET','POST'])
 def vernotaporestado():
@@ -313,12 +366,60 @@ def vernotaporfecha():
 				elif note.get_estado() in ['por-cancelar','por-cancelar-entregado']:
 					total_dia_por_cancelar+=note.get_total_venta()
 				
-			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha_inicio,fechita_final=fecha_final,bool_imprimir=True)
 		else :
 			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 			flash(error_message,category='error')
 
 	return redirect(url_for('.vernotapedido'))
+
+# @app.route('/verresumennotashoy',methods=['GET','POST'])
+# def verresumennotashoy():
+# 	fecha=request.form.get('fecha_seleccionada')
+# 	total_dia=0
+# 	total_dia_visa=0
+# 	total_dia_por_cancelar=0
+# 	if fecha and request.method=='POST':
+
+# 		nota_pedido=Nota_de_Pedido.query.filter_by(fecha_creacion=fecha).all()
+
+# 		if nota_pedido is not None:
+# 			for note in nota_pedido:
+# 				if note.get_estado() in ['cancelado','cancelado-entregado']:
+# 					total_dia+=note.get_total_venta()
+# 				elif note.get_estado() in ['cancelado-visa','cancelado-visa-entregado']:
+# 					total_dia_visa+=note.get_total_venta()
+# 				elif note.get_estado() in ['por-cancelar','por-cancelar-entregado']:
+# 					total_dia_por_cancelar+=note.get_total_venta()
+# 			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
+# 		else:
+# 			error_message='No se pudo crear un resumen por que no existen notas de pedido'
+# 			flash(error_message,category='error')
+
+# 	return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
+
+@app.route('/imprimirresumen/<string:fecha>/<string:fecha_final>',methods=['GET','POST'])
+def imprimirresumen(fecha,fecha_final):
+	fecha=datetime.strptime(fecha, '%Y-%m-%d').date()
+	fecha_final=datetime.strptime(fecha_final, '%Y-%m-%d').date()
+	total_dia=0
+	total_dia_visa=0
+	total_dia_por_cancelar=0
+	nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
+	print(nota_pedido)
+	if nota_pedido is not None:
+		for note in nota_pedido:
+			if note.get_estado() in ['cancelado','cancelado-entregado']:
+				total_dia+=note.get_total_venta()
+			elif note.get_estado() in ['cancelado-visa','cancelado-visa-entregado']:
+				total_dia_visa+=note.get_total_venta()
+			elif note.get_estado() in ['por-cancelar','por-cancelar-entregado']:
+				total_dia_por_cancelar+=note.get_total_venta()
+		return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
+	else:
+		error_message='No se pudo crear un resumen por que no existen notas de pedido'
+		flash(error_message,category='error')
+	return render_template('resumen_por_imprimir.html',td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
 
 @app.route('/vernotapornombre',methods=['GET','POST'])
 def vernotapornombre():
@@ -336,6 +437,24 @@ def vernotapornombre():
 
 	return redirect(url_for('.vernotapedido'))
 
+@app.route('/vernotaporDNI',methods=['GET','POST'])
+def vernotaporDNI():
+	dni_comprador=request.form['dni_comprador']
+	total_dia=0
+	total_dia_visa=0
+	total_dia_por_cancelar=0
+	if dni_comprador and request.method=='POST':
+		comprador=Comprador.query.filter_by(dni=dni_comprador).first()
+		if comprador is not None:
+			nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador.get_nombre()+'%')).all()
+			if nota_pedido is not None:
+				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+			else :
+				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
+				flash(error_message,category='error')
+	return redirect(url_for('.vernotapedido'))
+
+
 @app.route('/vernotapedidobyID',methods=['GET','POST'])
 def vernotapedido_id():
 	id=request.form['notaid']
@@ -345,7 +464,7 @@ def vernotapedido_id():
 		nota=Nota_de_Pedido.query.get(id)
 		ver=True
 		notas=json.loads(nota.get_nombre_producto())
-		return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver)})
+		
 	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver)})
 @app.route('/editarnota/<string:id>',methods=['GET','POST'])
 def editarnota(id):
@@ -375,9 +494,9 @@ def crearcomprador():
 
 	if request.method=='POST' and comprador.validate():
 		existe_comprador=Comprador.query.filter_by(nombre_comprador=comprador.nombre_comprador.data).first()
-	
+
 		if existe_comprador is None:
-			nuevo_comprador=Comprador(comprador.nombre_comprador.data,comprador.numero_telefono.data,comprador.tipo_comprador.data,comprador.direccion_comprador.data)
+			nuevo_comprador=Comprador(comprador.nombre_comprador.data,comprador.numero_telefono.data,comprador.tipo_comprador.data,comprador.dni.data,comprador.direccion_comprador.data)
 		
 			db.session.add(nuevo_comprador)
 			db.session.commit()
@@ -388,6 +507,59 @@ def crearcomprador():
 			error_message='No se puede crear el comprador, este ya se encuentra registrado'
 			flash(error_message,category='error')
 	return render_template('crear_comprador.html',form_comprador=comprador,log=loge)
+
+@app.route('/editarcomprador/<string:id>',methods=['GET','POST'])
+def editarcomprador(id):
+	comprador_encontrado=Comprador.query.get(id)
+	comprador_nombre=request.form.get('nombre_comprador')
+	comprador_numero_telefono=request.form.get('numero_telefono')
+	comprador_tipo_comprador=request.form.get('tipo_comprador')
+	comprador_direccion=request.form.get('direccion_comprador')
+	comprador_dni=request.form.get('dni')
+
+	if request.method=='POST':
+		if comprador_encontrado is not None:
+			comprador_encontrado.nombre_comprador=comprador_nombre
+			comprador_encontrado.numero_telefono_comprador=comprador_numero_telefono
+			comprador_encontrado.tipo_comprador=comprador_tipo_comprador
+			comprador_encontrado.direccion_comprador=comprador_direccion
+			comprador_encontrado.dni=comprador_dni
+
+			db.session.add(comprador_encontrado)
+			db.session.commit()
+
+			success_message='Se actualizo correctamente al comprador {}'.format(comprador_encontrado.nombre_comprador)
+			flash(success_message,category='message')
+		else:
+			error_message='No se pudo actualizar la informacion del comprador,intente nuevamente'
+			flash(error_message,category='error')
+	return render_template('editar_comprador.html',log=loge,form_compra=comprador_encontrado)
+@app.route('/eliminarcomprador/<string:id>',methods=['GET','POST'])
+def eliminarcomprador(id):
+	comprador_encontrado=Comprador.query.get(id)
+	if comprador_encontrado is not None:
+		nombre_comprador=comprador_encontrado.get_nombre()
+		db.session.delete(comprador_encontrado)
+		db.session.commit()
+		success_message='Se elimino correctamente al comprador {}'.format(nombre_comprador)
+		flash(success_message,category='message')
+	else:
+		error_message='No se pudo eliminar el comprador'
+		flash(error_message,category='error')
+	return redirect(url_for('.vercompradores'))
+
+
+@app.route('/vercompradores',methods=['GET','POST'])
+def vercompradores():
+	dni_comprador=request.form.get('dni_comprador')
+	if dni_comprador and request.method=='POST':
+		if dni_comprador=='*':
+			compradores=Comprador.query.all()
+		else:
+			compradores=Comprador.query.filter_by(dni=dni_comprador).all()
+		return render_template('ver_compradores.html',form_comprador=compradores,log=loge)
+	return render_template('ver_compradores.html',log=loge)
+
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
 
 
@@ -494,12 +666,18 @@ def deleteproduct():
 @app.route('/empty')
 def empty_cart():
 	try:
-		session.pop('producto')
-		session.pop('total_venta')
-		session.pop('fecha_nota')
-		session.pop('numero_nota')
-		session.pop('estado_nota')
-
+		session.pop('producto',None)
+		session.pop('total_venta',None)
+		session.pop('fecha_nota',None)
+		session.pop('numero_nota',None)
+		session.pop('estado_nota',None)
+		session.pop('dni_comprador',None)
+		session.pop('telefono_comprador',None)
+		session.pop('nombre_comprador',None)
+		session.pop('direccion_comprador',None)
+		
+		success_message='Se vacio la nota de pedido'
+		flash(success_message,category='message')
 		return redirect(url_for('.buscar_producto'))
 	except Exception as e:
 		print(e)
@@ -511,12 +689,16 @@ def imprimir():
 
 @app.route('/imprimire/<string:id>',methods=['GET','POST'])
 def imprimire(id):
-
 	nota=Nota_de_Pedido.query.get(id)
 	notas=json.loads(nota.get_nombre_producto())
-	if id and request.method=='POST':
-		return render_template('imprimirid.html',nota=nota,notas=notas)
-	return render_template('imprimirid.html',nota=nota,notas=notas)
+	if nota.notasdepedidos is None:
+		telefono_comprador=''
+		dni_comprador=''
+	else:
+		telefono_comprador=nota.notasdepedidos.numero_telefono_comprador
+		dni_comprador=nota.notasdepedidos.dni
+	return render_template('imprimirid.html',nota=nota,notas=notas,telefono=telefono_comprador,dni=dni_comprador)
+
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
 if __name__=='main':
 	app.run(debug=False)

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <title>Sistema Ventas</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h2 style="text-align: center;"><strong>&nbsp;FERRETERIA PERALVILLO E.I.R.L</strong></h2>
+        <h3 style="text-align: center;"><strong>&nbsp;RESUMEN DEL DIA: {{fechita}}</strong></h2>
+
+        <div style="text-align: left;">
+            <table class="table table-sm">
+                <thead>
+                <th scope="col" style="font-size:80%;">Fecha</th>
+                <th scope="col" style="font-size:80%;">Nombre</th>
+                <th scope="col" style="font-size:80%;">Total</th>
+                <th scope="col" style="font-size:80%;">Estado</th>
+
+                </thead>
+                <tbody>
+                    {% for notaped in nota_pedido %}
+                        <tr>
+                            <td style="font-size:80%;"> {{notaped.get_fecha()}}</td>
+                            <td style="font-size:80%;">{{notaped.get_nombre_comprador()}}</td>
+                            <td style="font-size:80%;">{{notaped.get_total_venta()}}</td>
+                            <td style="font-size:80%;">{{notaped.get_estado()}}</td>
+                        </tr> 
+                        {% endfor %}                  
+
+                </tbody>
+            </table>
+                    <p style="font-size:80%;"><strong>Total Venta del Dia - (CANCELADO):</strong> {{td}}</p>
+                    <p style="font-size:80%;"><strong>Total Venta del Dia por Visa - (CANCELADO):</strong> {{tdv}}</p>
+                    <p style="font-size:80%;"><strong>Total Venta del Dia por -(CANCELAR):</strong> {{tdpc}}</p>
+
+    </body>
+</html>

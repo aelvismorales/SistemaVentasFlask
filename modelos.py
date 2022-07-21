@@ -39,11 +39,13 @@ class Producto(db.Model):
     fecha_actualizacion_producto=db.Column(db.DateTime,default=datetime.now)
     precio_costo_producto=db.Column(db.Float)
     precio_venta_producto=db.Column(db.Float)
+    stock=db.Column(db.Float)
 
-    def __init__(self,nombre_producto,precio_costo_producto,precio_venta_producto):
+    def __init__(self,nombre_producto,precio_costo_producto,precio_venta_producto,stock):
         self.nombre_producto=nombre_producto
         self.precio_costo_producto=precio_costo_producto
         self.precio_venta_producto=precio_venta_producto
+        self.stock=stock
         
             
     def get_fecha_actualizacion_producto(self):
@@ -55,6 +57,8 @@ class Producto(db.Model):
         return str(self.precio_costo_producto)
     def get_str_pv(self):
         return str(self.precio_venta_producto)
+    def get_stock(self):
+        return self.stock
 
 class Comprador(db.Model):
     __tablename__="comprador"
@@ -63,14 +67,27 @@ class Comprador(db.Model):
     numero_telefono_comprador=db.Column(db.String(10))
     tipo_comprador=db.Column(db.String(15))
     direccion_comprador=db.Column(db.String(200))
+    dni=db.Column(db.String(20))
     notas=db.relationship('Nota_de_Pedido',backref='notasdepedidos')
 
-    def __init__(self,nombre_comprador,numero_telefono_comprador,tipo_comprador,direccion_comprador):
+    def __init__(self,nombre_comprador,numero_telefono_comprador,direccion_comprador,dni,tipo_comprador='persona'):
         self.nombre_comprador=nombre_comprador
         self.numero_telefono_comprador=numero_telefono_comprador
         self.tipo_comprador=tipo_comprador
         self.direccion_comprador=direccion_comprador
-
+        self.dni=dni
+    def get_id(self):
+        return self.id
+    def get_nombre(self):
+        return self.nombre_comprador
+    def get_direccion(self):
+        return self.direccion_comprador
+    def get_telefono(self):
+        return self.numero_telefono_comprador
+    def get_dni(self):
+        return self.dni
+    def get_tipo(self):
+        return self.tipo_comprador
 class Nota_de_Pedido(db.Model):
     __tablename__="notapedido"
     id=db.Column(db.Integer,primary_key=True)
@@ -98,7 +115,8 @@ class Nota_de_Pedido(db.Model):
         return self.comprador_id
     def get_estado(self):
         return self.estado
-            
+
+     
     def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,comprador_id=None):
 
         self.nombre_producto=nombre_producto

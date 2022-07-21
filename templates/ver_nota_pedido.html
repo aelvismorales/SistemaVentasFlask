@@ -14,6 +14,9 @@
         <a class="nav-link" href="crearcomprador"><strong>Crear Comprador</strong></a>
     </li>  
     <li class="nav-item">
+        <a class="nav-link" href="vercompradores"><strong>Ver Compradores</strong></a>
+    </li>
+    <li class="nav-item">
       <a class="nav-link" href="logout"><strong>Log out</strong></a>
     </li>    
 
@@ -30,6 +33,7 @@
                 <select name="seleccionbusqueda">
                     <option value="Fecha">Fecha</option>
                     <option value="Nombre">Nombre</option>
+                    <option value="DNI"> Buscar por DNI</option>
                     <option value="Ordenar por Cantidad">Ordenar por Cantidad</option>
                     <option value="Estado">Estado</option>
                 </select>
@@ -68,7 +72,30 @@
             </div>
         </div>
     </div>
-
+{%elif bool_resumen==True%}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <form class="form-inline" id="buscarForm" method="POST" action="/verresumennotashoy">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    <label for="Fecha_seleccionada" class="col-sm2 col-form-label">Fecha de Resumen:</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" id="Fecha_seleccionada" name="fecha_seleccionada" required />
+                    </div>
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="row">
+                    <div class="form-group cols=xs=12">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar Fecha</button>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% elif bool_nombre==True %}
     <div class="container">
         <div class="row">
@@ -94,22 +121,51 @@
         </div>
     </div>
 {% elif bool_estado==True %}
-<form id="OpcionBusqueda" method="post" action="/vernotaporestado">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <select name="opcionestado" id="OpcionesBusqueda">
-        <option value="cancelado">CANCELADO</option>
-        <option value="por-cancelar">POR CANCELAR</option>
-        <option value="cancelado-visa">CANCELADO VISA</option>
-        <option value="cancelado-entregado">CANCELADO-ENTREGADO</option>
-        <option value="por-cancelar-entregado">POR CANCELAR-ENTREGADO</option>
-        <option value="cancelado-visa-entregado">CANCELADO VISA-ENTREGADO</option>
-        <option value="cancelado-por-recoger">CANCELADO POR RECOGER</option>
-        <option value="cancelado-visa-por-recoger">CANCELADO VISA POR RECOGER</option>
-        <option value="PROFORMA">PROFORMA</option>
-    </select>
-    <button type="submit" class="btn btn-info" >Buscar</button>
-</form>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <form id="OpcionBusqueda" method="post" action="/vernotaporestado">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <select name="opcionestado" id="OpcionesBusqueda">
+                    <option value="cancelado">CANCELADO</option>
+                    <option value="por-cancelar">POR CANCELAR</option>
+                    <option value="cancelado-visa">CANCELADO VISA</option>
+                    <option value="cancelado-entregado">CANCELADO-ENTREGADO</option>
+                    <option value="por-cancelar-entregado">POR CANCELAR-ENTREGADO</option>
+                    <option value="cancelado-visa-entregado">CANCELADO VISA-ENTREGADO</option>
+                    <option value="cancelado-por-recoger">CANCELADO POR RECOGER</option>
+                    <option value="cancelado-visa-por-recoger">CANCELADO VISA POR RECOGER</option>
+                    <option value="PROFORMA">PROFORMA</option>
+                </select>
+                <button type="submit" class="btn btn-info" >Buscar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% elif bool_dni==True %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <form class="form-inline" id="buscarForm" method="POST" action="/vernotaporDNI">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="row control-group">
+                <div class="form-group col-xs-10 floating-label-form-group controls">
+                    <label for="DNIComprador" class="col-sm2 col-form-label">DNI Comprador: </label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="DNIComprador" name="dni_comprador" required />
+                    </div>
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="row">
+                    <div class="form-group cols=xs=12">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                    </div>
+                </div>
+            </form>
 
+        </div>
+    </div>
+</div>
 {%endif%}
 <div class="container">
     <div class="row">
@@ -149,6 +205,9 @@
                     </tbody>
                 </table>
             </div>
+            {% if bool_imprimir==True %}
+            <a class="btn btn-primary" href="{{ url_for('imprimirresumen',fecha=fechita,fecha_final=fechita_final) }}" target="_blank" >Imprimir-Resumen</a>
+            {% endif %}
             <p><strong>Total Venta del Dia:</strong> {{td}}</p>
             <p><strong>Total Venta del Dia por Visa:</strong> {{tdv}}</p>
             <p><strong>Total Venta del Dia por Cancelar:</strong> {{tdpc}}</p>

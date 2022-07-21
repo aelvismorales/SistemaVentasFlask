@@ -12,7 +12,10 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="crearcomprador"><strong>Crear Comprador</strong></a>
-    </li>  
+    </li> 
+    <li class="nav-item">
+        <a class="nav-link" href="vercompradores"><strong>Ver Compradores</strong></a>
+    </li> 
     <li class="nav-item">
       <a class="nav-link" href="logout"><strong>Log out</strong></a>
     </li>
@@ -54,6 +57,7 @@
                             <th scope="col">Precio Venta</th>
                             <th scope="col">Fecha Actualizacion</th>
                             <th scope="col">Cantidad</th>
+                            <th scope="col">Stock</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,8 +75,12 @@
                                     <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
                                     <input type="submit" value="Agregar a Nota de Pedido" class="btnAddAction" />
                                 </td>
+                                <td>{{producto.get_stock()}}</td>
                                 <td> 
                                     <a class="btn btn-primary" href="{{ url_for('editar_id', id=producto.id) }}">Actualizar</a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-danger" href="{{ url_for('eliminarproducto',id=producto.id)}}">Eliminar</a>
                                 </td>
                             </tr>
                         </form>
@@ -85,21 +93,45 @@
     {% if prd==True %}
     <br>
     <br>
+    <form id="buscar_comprador" method="POST" action="/buscarcompradorbydni">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-group row">
+            <label for="DNIComprador" class="col-sm2 col-form-label">Busca por DNI:</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="DNIComprador" name="dni_comprador" />
+            </div>
+        </div>
+        <input type="submit" value="Buscar-DNI" class="btnBuscarDNIPrd"/>
+    </form>
+
         <h3>Nota de Pedido</h3>
         <form id="crear_nota" method="POST" action="/crearnotapedido">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="form-group row">
                 <label for="NombreComprador" class="col-sm2 col-form-label">Nombre del comprador:</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" id="NombreComprador" name="comprador_name" required />
+                    <input type="text" class="form-control" id="NombreComprador" name="comprador_name" value="{{session['nombre_comprador']}}" required />
                 </div>
             </div>
             <div class="form-group row">
                 <label for="DireccionComprador" class="col-sm2 col-form-label">Direccion:</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" id="DireccionComprador" name="direccion_comprador" required />
+                    <input type="text" class="form-control" id="DireccionComprador" name="direccion_comprador" value="{{session['direccion_comprador']}}" required />
                 </div>
             </div>
+            <div class="form-group row">
+                <label for="DNIComprador" class="col-sm2 col-form-label">DNI:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="DNIComprador" name="dni_comprador" value="{{session['dni_comprador']}}" required />
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="NumeroComprador" class="col-sm2 col-form-label">Telefono:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="NumeroComprador" name="telefono_comprador" value="{{session['telefono_comprador']}}" required />
+                </div>
+            </div>
+            
             <div class="form-group row">
                 <label for="EstadoNota" class="col-sm2 col-form-label">Estado:</label>
                 <div class="col-sm-4">

@@ -17,7 +17,7 @@ class CrearProducto(Form):
     nombre_producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])
     precio_costo_producto=FloatField('Precio costo producto',validators=[DataRequired(message='El precio de costo es requerido')])
     precio_venta_producto=FloatField('Precio venta producto',validators=[DataRequired(message='El precio de venta es requerido')])
-
+    stock=FloatField('Stock',validators=[DataRequired('Ingrese el stock')])
 class BuscarProducto(Form):
     nombreproducto=SearchField('Buscar producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])
 
@@ -34,25 +34,21 @@ class OpcionesFiltros(Form):
     filtros=SelectField("Tipo de Comprador",validators=[DataRequired("Seleccione una opción")],choices=[('Nombre','Nombre'),('Fecha','Fecha'),('Ordenar por Cantidad','Ordenar por Cantidad')])
   
 
-
 class EditarProducto(Form):
     nombre__producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido")])
-    precio_costo_producto=FloatField('Precio costo producto',validators=[DataRequired(message='El precio de costo es requerido')])
-    precio_venta_producto=FloatField('Precio venta producto',validators=[DataRequired(message='El precio de venta es requerido')])
-
+    precio_costo_producto=FloatField('Precio costo producto')
+    precio_venta_producto=FloatField('Precio venta producto')
+    stock=FloatField('Stock',validators=[DataRequired('Ingrese el stock')])
 class CrearNotaPedido(Form):
-    #cantidad=cantidad=FloatField()
-    #nombre___producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])
-    #precio_venta_producto=FloatField('Precio venta producto',validators=[DataRequired(message='El precio de venta es requerido')])
     nombre_comprador=StringField('Comprador',validators=[Length(max=200,message="Ingrese un direccion valida"),DataRequired(message="Se necesita una direccion")])
     direccion_comprador=StringField('Direccion',validators=[Length(max=200,message="Ingrese un direccion valida"),DataRequired(message="Se necesita una direccion")])
+    numero_telefono=StringField('Numero de celular',validators=[Length(max=10,message="Ingrese un numero de telefono válido"),DataRequired('Ingrese un numero de telefono')],default='')
+    dni=StringField('DNI:',validators=[DataRequired('Ingrese un DNI valido.'),Length(max=10)])
 
 class CrearComprador(Form):
     
     nombre_comprador=StringField('Nombre del comprador',validators=[Length(max=200,message="Ingrese un nombre válido"),DataRequired('Ingrese un nombre')])
-    
-    numero_telefono=StringField('Numero de celular',validators=[Length(max=10,message="Ingrese un numero de telefono válido"),DataRequired('Ingrese un numero de telefono')],default='')
-    
-    tipo_comprador=SelectField("Tipo de Comprador",validators=[DataRequired("Seleccione una opción")],choices=[('persona','persona'),('empresa','empresa')])
-    
+    numero_telefono=StringField('Numero de celular',validators=[Length(max=10,message="Ingrese un numero de telefono válido"),DataRequired('Ingrese un numero de telefono')],default='')    
+    tipo_comprador=SelectField("Tipo de Comprador",validators=[DataRequired("Seleccione una opción")],choices=[('persona','persona'),('empresa','empresa')],render_kw={'value':'persona'})    
     direccion_comprador=StringField('Direccion',validators=[Length(max=200,message="Ingrese un direccion valida"),DataRequired(message="Se necesita una direccion")])
+    dni=StringField('DNI:',validators=[DataRequired('Ingrese un DNI valido.'),Length(max=15)])

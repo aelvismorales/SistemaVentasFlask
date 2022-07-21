@@ -12,7 +12,10 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="crearcomprador"><strong>Crear Comprador</strong></a>
-    </li>  
+    </li> 
+    <li class="nav-item">
+        <a class="nav-link" href="vercompradores"><strong>Ver Compradores</strong></a>
+    </li>
     <li class="nav-item">
       <a class="nav-link" href="logout"><strong>Log out</strong></a>
     </li>
@@ -46,11 +49,17 @@
                             <p class="help-block text-danger"></p>
                         </div>
                     </div>
+                    <div class="row control-group">
+                        <div class="'form-group col-xs-12 floating-label-form-group controls">
+                            {{render_field(producto_form.stock,class="form-control")}}
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
                     <br>
                     <div id="success"></div>
                     <div class="row">
                         <div class="form-group cols=xs=12">
-                            <button type="submit" class="btn btn-primary">Crear</button>
+                            <button type="submit" class="btn btn-success">Crear</button>
                         </div>
                     </div>
                 </form>                

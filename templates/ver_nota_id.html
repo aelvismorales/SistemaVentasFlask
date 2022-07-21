@@ -1,75 +1,78 @@
 
     {% if ver==True %}
-
-        <h2 style="text-align: center;"><strong>&nbsp; &nbsp; &nbsp; &nbsp;FERRETERIA PERALVILLO E.I.R.L</strong></h2>
-        <div>
-          <div style="text-align: center;">Av San Martín Mz. "G5" lote 04 C.P.Peralvillo
-            <table style="width: 28.4084%; border-collapse: collapse; float: right; height: 47px;" border="2">
-              <tbody>
-                <tr style="height: 18px;">
-                  <td style="width: 100%; height: 18px;"><strong>NOTA DE PEDIDO</strong></td>
-                </tr>
-                <tr style="height: 29px;">
-                  <td style="width: 100%; text-align: justify; height: 29px;">N°: {{nota.get_id()}}</td>
-                </tr>
-                <tr style="height: 29px;">
-                  <td style="width: 100%; text-align: justify; height: 29px;"><strong>ESTADO:</strong> {{nota.estado}}</td>
-                </tr>
-              </tbody>
-            </table>
-        &nbsp;</div>
-          <div style="text-align: center;">(al costado del estadio Peralvillo)</div>
-            <div style="text-align: left;"><span style="text-align: left;">Telefono: (01)-758 9381 Celular: 981193256</span></div>
-              <div style="text-align: center;">
-                <div>
-                  <div style="text-align: center;">Correo: <a href="mailto:ferreteria_peralvilloeirl@hotmail.com">ferreteria_peralvilloeirl@hotmail.com</a></div>
-<br>
-                    <div style="text-align: center;">         BCP: 295-2263437-095&nbsp;&nbsp; &nbsp; &nbsp; BBVA: 0011-0264-95-01000-4212</div>
-                      <div style="text-align: justify;"><em>VENTA DE AGREGADOS DE MATERIALES DE CONSTRUCCION Y ARTICULOS DE FERRETERIA EN GENERAL,PINTURA Y PRODUCTOS DE VIDRIO EN COMERCIOS ESPECIALIZADOS</em></div>
-                        <div style="text-align: justify;">&nbsp;</div>
-                          <div style="text-align: left;">&nbsp; &nbsp; Sr.(es): &nbsp;{{nota.get_nombre_comprador()}} &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  Fecha: {{nota.get_fecha()}}</div>
-                            <div style="text-align: left;">&nbsp; &nbsp; Dirección:&nbsp;{{nota.get_direccion()}}</div>
-                              <div style="text-align: left;">&nbsp;</div>
-                                <div style="text-align: left;">&nbsp;</div>
-                                  <div style="text-align: left;">
-                                    <table class="table table-sm">
-                                      <thead>
-                                        <tr><th scope="col">#</th>
-                                        <th scope="col">Cantidad</th>
-                                        <th scope="col">Producto</th>
-                                        <th scope="col">Precio</th>
-                                        <th scope="col">Sub Total</th>
-                      
-                                      </tr></thead>
-                                      <tbody>
-                                        {% for key,product in notas.items() %}
-                                        <tr>
-                                            <td>{{loop.index}}</td>
-                                            <td>{{product.cantidad}}</td>
-                                            <td>{{product.name}}</td>
-                                            <td>{{product.precio}}</td>
-                                            <td>{{product.precio_individual}}</td>
-                                        </tr> 
-                                        {% endfor %}                 
-                                        <tr>
-                                          <td colspan="4" align="right"> <strong>Total:</strong></td>
-                                          <td> <strong>{{nota.total_venta}}</strong></td>
-                                        </tr>
-                                        
-                                      </tbody>
-                                    </table>
-                                    
-                                    <table style="border-collapse: collapse; width: 30.8239%; height: 75px;" border="1">
-                                      <tbody>
-                                        <tr style="height: 57px;">
-                                          <td style="width: 100%; height: 57px; text-align: justify;"><span style="color: #000000;"><strong>Unico comprobante para recoger su mercaderia y cambiarla por boleta y factura</strong></span></td>
-                                        </tr>
-                                      </tbody>
-                                    </table>
+    <!DOCTYPE html>
+    <html lang="es">
+      <head>
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+        
+        <title>Sistema Ventas</title>
+      </head>
+      <body>
+        <div id="TodoImprimir" style="font-size:100%; font-family: 'Courier New', Courier, monospace;">
+          <h2 style="text-align: center;"><strong>&nbsp;FERRETERIA PERALVILLO E.I.R.L</strong></h2>
+    <div>
+      <div style="text-align: left;">&nbsp;Av San Mart&iacute;n Mz. "G5" lote 04 C.P.Peralvillo
+        <table style="width: 28.4084%; border-collapse: collapse; float: right; height: 47px;" border="2">
+          <tbody>
+            <tr style="height: 18px;">
+              <td style="width: 100%; height: 18px;"><strong>NOTA DE PEDIDO</strong></td>
+            </tr>
+            <tr style="height: 29px;">
+              <td style="width: 100%; text-align: justify; height: 29px;">N°: {{nota.get_id()}}</td>
+            </tr>
+            <tr style="height: 29px;">
+              <td style="width: 100%; text-align: justify; height: 29px;"><strong>ESTADO:</strong> {{nota.estado}}</td>
+            </tr>
+          </tbody>
+        </table>
+    &nbsp;</div>
+      <div style="text-align: left;">(al costado del estadio Peralvillo)</div>
+        <div style="text-align: left;"><span style="text-align: center;">Telefono: (01)-758 9381 &nbsp;Celular: 981193256</span></div>
+          <div style="text-align: center;">
+            <div>
+                <br>
+                  <div style="text-align: left;"> <em>VENTA DE AGREGADOS Y MATERIALES DE CONSTRUCCION</em></div>
+                    <div style="text-align: justify;">&nbsp;</div>
+                     
+                      <div style="text-align: left;"><strong>Sr.(es):</strong>{{nota.get_nombre_comprador()}} &nbsp;<strong>Fecha:</strong> {{nota.get_fecha()}}</div>
+                        <div style="text-align: left;"><strong>Direcci&oacute;n:&nbsp;</strong>{{nota.get_direccion()}}</div> 
+                              <div style="text-align: left;">
+                                <table class="table table-sm">
+                                  <thead>
+                                    <th scope="col" style="font-size:80%;">Cantidad</th>
+                                    <th scope="col" style="font-size:80%;">Producto</th>
+                                    <th scope="col" style="font-size:80%;">Precio</th>
+                                    <th scope="col" style="font-size:80%;">Sub Total</th>
+                  
+                                  </thead>
+                                  <tbody>
+                                    {% for key,product in notas.items() %}
+                                            <tr>
+                                                <td style="font-size:80%;"> {{product.cantidad}}</td>
+                                                <td style="font-size:80%;">{{product.name}}</td>
+                                                <td style="font-size:80%;">{{product.precio}}</td>
+                                                <td style="font-size:80%;">{{product.precio_individual}}</td>
+                                            </tr> 
+                                            {% endfor %}                  
+                                            <tr>
+                                              <td colspan="3" align="right" style="font-size:80%;"> <strong>Total:</strong></td>
+                                              <td style="font-size:80%;"> <strong>{{nota.total_venta}}</strong></td>
+                                            </tr>
+                                                                          </tbody>
+                                </table>
+                                <p style="width: 100%; height: 25px; font-size: 80%; text-align: center; font-family: 'Courier New', Courier, monospace;"><span style="color: #000000;"><strong> UNICO COMPROBRANTE PARA RECOGER SU MERCADERIA Y CAMBIARLA POR BOLETA O FACTURA</strong></span>
+                                  <div style="font-size: 60%; text-align: center; font-family: 'Courier New', Courier, monospace;">
+                                    RECUERDE POR FAVOR REVISAR SU VUELTO Y LA MERCADERIA ANTES DE RETIRARSE DEL LOCAL
+                                    NO ESTA SUJETO A CAMBIO NI DEVOLUCION
                                   </div>
                                 </div>
-                              </div>
-        </div>
+                            </div>
+                          </div>
+                        </div>               
+    </html>
     {%endif%}
 
     

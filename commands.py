@@ -26,7 +26,7 @@ def crear_usuario(name,password,rol):
 def poblar_bd():
 	prd=pd.read_csv('ferreteria_data.csv')
 	for i in prd.index:
-            productos=Producto(prd['Material'][i],prd['COSTO'][i],prd['PRECIO PUBLICO'][i])
+            productos=Producto(prd['Material'][i],prd['COSTO'][i],prd['PRECIO PUBLICO'][i],prd['STOCK'][i])
             db.session.add(productos)
             db.session.commit()
 @click.command('descargar-tabla')

@@ -11,8 +11,8 @@
         <a class="nav-link" href="vernotapedido"><strong>Ver Notas de Pedido</strong></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" href="crearcomprador"><strong>Crear Comprador</strong></a>
-    </li>  
+        <a class="nav-link" href="crearcomprador"><strong>Crear Comprador</strong></a>
+    </li> 
     <li class="nav-item">
       <a class="nav-link" href="vercompradores"><strong>Ver Compradores</strong></a>
   </li> 
@@ -31,40 +31,44 @@
         <div class="form-group row">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             
-            <label for="comprador-label" class="col-sm-2 col-form-label">{{form_comprador.nombre_comprador.label}}</label>
+            <label for="comprador-label" class="col-sm-2 col-form-label">Nombre Comprador:</label>
             <div class="col-sm-10">
-                {{form_comprador.nombre_comprador}}
+              <input type="text" name='nombre_comprador' value="{{form_compra.nombre_comprador}}"/>
             </div>
         </div>
 
         <div class="form-group row">
-            <label for="num-telefono" class="col-sm-2 col-form-label"> {{form_comprador.numero_telefono.label}}</label>
+            <label for="num-telefono" class="col-sm-2 col-form-label"> Numero Telefono:</label>
             <div class="col-sm-10">
-                {{form_comprador.numero_telefono}}
+              <input type="text" name="numero_telefono" value="{{form_compra.numero_telefono_comprador}}"/>
             </div>
         </div>
         <div class="form-group row">
-            <label for="tipo-comprador" class="col-sm-2 col-form-label"> {{form_comprador.tipo_comprador.label}}</label>
+            <label for="tipo-comprador" class="col-sm-2 col-form-label"> Tipo Comprador:</label>
             <div class="col-sm-10">
-                {{form_comprador.tipo_comprador}}
+                <select name="tipo_comprador">
+                <option value="persona">Persona</option>
+                <option value="empresa">Empresa</option>
+                </select>
             </div>
         </div>
         <div class="form-group row">
-            <label for="direccion-comprador" class="col-sm-2 col-form-label"> {{form_comprador.direccion_comprador.label}}</label>
+            <label for="direccion-comprador" class="col-sm-2 col-form-label">Direccion Comprador:</label>
             <div class="col-sm-10">
-                {{form_comprador.direccion_comprador}}
+                <input type="text" name="direccion_comprador" value="{{form_compra.direccion_comprador}}"/>
             </div>
         </div>
         <div class="form-group row" >
-          <label for="direccion-comprador" class="col-sm-2 col-form-label"> {{form_comprador.dni.label}}</label>
+          <label for="dni-comprador" class="col-sm-2 col-form-label">DNI:</label>
           <div class="col-sm-10">
-              {{form_comprador.dni}}
+              <input type="text" name="dni" value="{{form_compra.dni}}"/>
           </div>
       </div>
 
         <div class="form-group row">
             <div class="col-sm-10">
-              <button type="submit" class="btn btn-primary">Crear</button>
+              <a class="btn btn-success" href="{{ url_for('vercompradores') }}">Regresar</a>
+              <button type="submit" class="btn btn-primary">Actualizar</button>
             </div>
           </div>
     </form>
