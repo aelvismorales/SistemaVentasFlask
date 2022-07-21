@@ -266,7 +266,7 @@ def crear_nota_pedido():
 					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota)
 					for key,product in session['producto'].items():
 						producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name'])
-						producto.stock-=product.cantidad
+						producto.stock-=session['producto'][key]['cantidad']
 					session.modified = True
 					session['nombre_comprador']=nombre_comprador
 					session['direccion_comprador']=direccion_comprador
