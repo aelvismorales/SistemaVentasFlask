@@ -49,7 +49,7 @@ class Producto(db.Model):
         
             
     def get_fecha_actualizacion_producto(self):
-        return self.fecha_actualizacion_producto.strftime('%m/%d/%Y')
+        return self.fecha_actualizacion_producto.strftime('%d/%m/%Y')
     
     def get_str_nombre(self):
         return str(self.nombre_producto)
@@ -102,7 +102,7 @@ class Nota_de_Pedido(db.Model):
     def get_id(self):
         return self.id
     def get_fecha(self):
-        return self.fecha_creacion.strftime('%m/%d/%Y')
+        return self.fecha_creacion.strftime('%d/%m/%Y')
     def get_nombre_producto(self):
         return self.nombre_producto
     def get_nombre_comprador(self):
