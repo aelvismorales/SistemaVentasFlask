@@ -373,31 +373,6 @@ def vernotaporfecha():
 
 	return redirect(url_for('.vernotapedido'))
 
-# @app.route('/verresumennotashoy',methods=['GET','POST'])
-# def verresumennotashoy():
-# 	fecha=request.form.get('fecha_seleccionada')
-# 	total_dia=0
-# 	total_dia_visa=0
-# 	total_dia_por_cancelar=0
-# 	if fecha and request.method=='POST':
-
-# 		nota_pedido=Nota_de_Pedido.query.filter_by(fecha_creacion=fecha).all()
-
-# 		if nota_pedido is not None:
-# 			for note in nota_pedido:
-# 				if note.get_estado() in ['cancelado','cancelado-entregado']:
-# 					total_dia+=note.get_total_venta()
-# 				elif note.get_estado() in ['cancelado-visa','cancelado-visa-entregado']:
-# 					total_dia_visa+=note.get_total_venta()
-# 				elif note.get_estado() in ['por-cancelar','por-cancelar-entregado']:
-# 					total_dia_por_cancelar+=note.get_total_venta()
-# 			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
-# 		else:
-# 			error_message='No se pudo crear un resumen por que no existen notas de pedido'
-# 			flash(error_message,category='error')
-
-# 	return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
-
 @app.route('/imprimirresumen/<string:fecha>/<string:fecha_final>',methods=['GET','POST'])
 def imprimirresumen(fecha,fecha_final):
 	fecha=datetime.strptime(fecha, '%Y-%m-%d').date()
@@ -406,7 +381,6 @@ def imprimirresumen(fecha,fecha_final):
 	total_dia_visa=0
 	total_dia_por_cancelar=0
 	nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
-	print(nota_pedido)
 	if nota_pedido is not None:
 		for note in nota_pedido:
 			if note.get_estado() in ['cancelado','cancelado-entregado']:
