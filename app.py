@@ -358,11 +358,11 @@ def vernotaporfecha():
 		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio,fecha_final)).all()
 		if nota_pedido is not None:
 			for note in nota_pedido:
-				if note.get_estado() in ['cancelado','cancelado-entregado']:
+				if note.get_estado() in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
 					total_dia+=note.get_total_venta()
-				elif note.get_estado() in ['cancelado-visa','cancelado-visa-entregado']:
+				elif note.get_estado() in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
 					total_dia_visa+=note.get_total_venta()
-				elif note.get_estado() in ['por-cancelar','por-cancelar-entregado']:
+				elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
 					total_dia_por_cancelar+=note.get_total_venta()
 				
 			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha_inicio,fechita_final=fecha_final,bool_imprimir=True)
@@ -382,11 +382,11 @@ def imprimirresumen(fecha,fecha_final):
 	nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
 	if nota_pedido is not None:
 		for note in nota_pedido:
-			if note.get_estado() in ['cancelado','cancelado-entregado']:
+			if note.get_estado() in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
 				total_dia+=note.get_total_venta()
-			elif note.get_estado() in ['cancelado-visa','cancelado-visa-entregado']:
+			elif note.get_estado() in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
 				total_dia_visa+=note.get_total_venta()
-			elif note.get_estado() in ['por-cancelar','por-cancelar-entregado']:
+			elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
 				total_dia_por_cancelar+=note.get_total_venta()
 		return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
 	else:
