@@ -118,7 +118,6 @@ def crear_cuenta():
 	return render_template('crear_cuenta.html',form_usuario=crear_usuario)
 
 @app.route('/login',methods=['GET','POST'])
-#@csrf.exempt
 def login():
 	user_form=formularios.Login(request.form)
 	
@@ -225,6 +224,7 @@ def crear_nota_pedido():
 	dni_comprador=request.form['dni_comprador']
 	telefono_comprador=request.form['telefono_comprador']
 	estado_nota=request.form.get('estado')
+	estado_nota_2=request.form.get('estado2')
 	total_venta=0
 	if 'producto' in session:
 		session.modified=True
@@ -234,7 +234,7 @@ def crear_nota_pedido():
 
 		if nombre_comprador and direccion_comprador and estado_nota and request.method == 'POST':
 			existe_comprador=Comprador.query.filter_by(dni=dni_comprador).first()
-			
+			estado_nota=estado_nota+estado_nota_2
 			if existe_comprador is not None:
 				datos_producto_json= json.dumps(session['producto'])
 
@@ -282,7 +282,6 @@ def crear_nota_pedido():
 						succes_message='Se creo la nota de pedido para {} y se registro como nuevo comprador'.format(nombre_comprador)
 						flash(succes_message,category='message')
 	return redirect(url_for('.buscar_producto'))
-# To Do --> Poner una seleccion de busqueda un desplegable de opciones ['Buscar por Fecha-Nombre de Comprador - Notas Pendientes - Enviadas'].
 
 @app.route('/buscarcompradorbydni',methods=['GET','POST'])
 def buscarcompradorbydni():
@@ -446,10 +445,11 @@ def editarnota(id):
 	nombre_comprador=request.form.get('comprador_name')
 	direccion_comprador=request.form.get('direccion_comprador')
 	estado_nota=request.form.get('estado')
+	estado_nota_2=request.form.get('estado2')
 	if nota and nombre_comprador and direccion_comprador and estado_nota and request.method=='POST':
 		nota.nombre_comprador=nombre_comprador
 		nota.direccion_comprador=direccion_comprador
-		nota.estado=estado_nota
+		nota.estado=estado_nota+estado_nota_2
 
 		db.session.add(nota)
 		db.session.commit()
