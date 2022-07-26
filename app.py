@@ -124,19 +124,21 @@ def login():
 	if request.method=='POST' and user_form.validate():
 		username=user_form.username.data
 		password=user_form.password.data
+		try:
+			usuario=Usuario.query.filter_by(nombre_usuario=username).first()
+			if usuario is not None and usuario.verificar_contrasena(password):
+				succes_message='Bienvenido {}'.format(user_form.username.data)
+				flash(succes_message,category='message')
+				session['username']=username
+				session['id']=usuario.get_id()
+				session['rol']=usuario.get_rol()
 
-		usuario=Usuario.query.filter_by(nombre_usuario=username).first()
-		if usuario is not None and usuario.verificar_contrasena(password):
-			succes_message='Bienvenido {}'.format(user_form.username.data)
-			flash(succes_message,category='message')
-			session['username']=username
-			session['id']=usuario.get_id()
-			session['rol']=usuario.get_rol()
-			
-			return redirect(url_for('crear_producto'))
-		else:
-			error_message='Usuario o contraseña no validos!'
-			flash(error_message,category='error')
+				return redirect(url_for('crear_producto'))
+			else:
+				error_message='Usuario o contraseña no validos!'
+				flash(error_message,category='error')
+		except e as Error:
+			session.rollback()
 
 	return render_template('login.html',form_login=user_form,log=loge)
 
