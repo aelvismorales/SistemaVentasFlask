@@ -115,7 +115,6 @@ class Nota_de_Pedido(db.Model):
         return self.comprador_id
     def get_estado(self):
         return self.estado
-
      
     def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,comprador_id=None):
 

@@ -36,6 +36,7 @@
                     <option value="DNI"> Buscar por DNI</option>
                     <option value="Ordenar por Cantidad">Ordenar por Cantidad</option>
                     <option value="Estado">Estado</option>
+                    <!-- <option value="ID">Numero de Nota de Pedido</option> -->
                 </select>
                 <button type="submit" class="btn btn-dark" >Filtrar</button>
             </form>
@@ -120,6 +121,30 @@
             </div>
         </div>
     </div>
+{% elif id_cambio==True %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <form class="form-inline" id="buscarForm" method="POST" action="/vernotaporid">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="row control-group">
+                <div class="form-group col-xs-10 floating-label-form-group controls">
+                    <label for="IDNota" class="col-sm2 col-form-label">Numero de Nota de Pedido</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="IDNota" name="id_nota" required />
+                    </div>
+                    <p class="help-block text-danger"></p>
+                </div>
+                <div class="row">
+                    <div class="form-group cols=xs=12">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
 {% elif bool_estado==True %}
 <div class="container">
     <div class="row">
@@ -127,15 +152,17 @@
             <form id="OpcionBusqueda" method="post" action="/vernotaporestado">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <select name="opcionestado" id="OpcionesBusqueda">
-                    <option value="cancelado">CANCELADO</option>
-                    <option value="por-cancelar">POR CANCELAR</option>
-                    <option value="cancelado-visa">CANCELADO VISA</option>
-                    <option value="cancelado-entregado">CANCELADO-ENTREGADO</option>
-                    <option value="por-cancelar-entregado">POR CANCELAR-ENTREGADO</option>
-                    <option value="cancelado-visa-entregado">CANCELADO VISA-ENTREGADO</option>
-                    <option value="cancelado-por-recoger">CANCELADO POR RECOGER</option>
-                    <option value="cancelado-visa-por-recoger">CANCELADO VISA POR RECOGER</option>
-                    <option value="PROFORMA">PROFORMA</option>
+                    <option value="cancelado-">CANCELADO</option>
+                    <option value="por-cancelar-">POR CANCELAR</option>
+                    <option value="cancelado-visa-">CANCELADO VISA</option>
+                    <option value="cancelado-entregado-">CANCELADO-ENTREGADO</option>
+                    <option value="por-cancelar-entregado-">POR CANCELAR-ENTREGADO</option>
+                    <option value="cancelado-visa-entregado-">CANCELADO VISA-ENTREGADO</option>
+                    <option value="cancelado-por-recoger-">CANCELADO POR RECOGER</option>
+                    <option value="cancelado-visa-por-recoger-">CANCELADO VISA POR RECOGER</option>
+                    <option value="PROFORMA-">PROFORMA</option>
+                    <option value="ANULADO-">ANULADO</option>
+
                 </select>
                 <button type="submit" class="btn btn-info" >Buscar</button>
             </form>
@@ -185,7 +212,7 @@
                     <tbody>
                         {% for notaped in nota_pedido %}
                         <tr>
-                            <td> {{loop.index}}</td>
+                            <td> {{notaped.get_id()}}</td>
                             <td> {{notaped.get_fecha()}}</td>
                             <td> {{notaped.get_nombre_comprador()}}</td>
                             <td> {{notaped.get_total_venta()}}</td>
@@ -199,6 +226,9 @@
                             </td>
                             <td>
                                 <a class="btn btn-info" href="{{ url_for('editarnota',id=notaped.get_id() ) }}" target="_blank" >Editar</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-warning" href="{{ url_for('anularnota',id=notaped.get_id() )}}">Anular</a>
                             </td>
                         </tr>
                         {% endfor %}

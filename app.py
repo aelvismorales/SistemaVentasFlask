@@ -310,6 +310,7 @@ def vernotapedido():
 	dni_comprador=False
 	resumen_Ventas=False
 	imprimir_resumen=False
+	id_cambio=False
 	total_dia=0
 	total_dia_visa=0
 	total_dia_por_cancelar=0
@@ -325,16 +326,18 @@ def vernotapedido():
 			dni_comprador=True
 		elif seleccion=='resumen':
 			resumen_Ventas=True
+		elif seleccion=='ID':
+			id_cambio=True
 		elif seleccion=='Ordenar por Cantidad':
 			order=True
 			nota_pedido=Nota_de_Pedido.query.order_by(desc(Nota_de_Pedido.total_venta)).all()
 			if nota_pedido is not None:
-				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_dni=dni_comprador,bool_imprimir=imprimir_resumen,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,id_cambio=id_cambio,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_dni=dni_comprador,bool_imprimir=imprimir_resumen,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
 			else :
 				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 				flash(error_message,category='error')
 		
-	return render_template('ver_nota_pedido.html',log=loge,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_estado=estado_nota,bool_dni=dni_comprador,bool_resumen=resumen_Ventas,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+	return render_template('ver_nota_pedido.html',log=loge,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,id_cambio=id_cambio,bool_order=order,bool_estado=estado_nota,bool_dni=dni_comprador,bool_resumen=resumen_Ventas,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
 
 @app.route('/vernotaporestado',methods=['GET','POST'])
 def vernotaporestado():
@@ -396,7 +399,7 @@ def imprimirresumen(fecha,fecha_final):
 
 @app.route('/vernotapornombre',methods=['GET','POST'])
 def vernotapornombre():
-	nombrecomprador=request.form['nombre_comprador']
+	nombrecomprador=request.form.get('nombre_comprador')
 	total_dia=0
 	total_dia_visa=0
 	total_dia_por_cancelar=0
@@ -410,9 +413,25 @@ def vernotapornombre():
 
 	return redirect(url_for('.vernotapedido'))
 
+# @app.route('/vernotaporid',methods=['GET','POST'])
+# def vernotaporid():
+# 	id_nota=request.form['id_nota']
+# 	total_dia=0
+# 	total_dia_visa=0
+# 	total_dia_por_cancelar=0
+# 	if id_nota and request.method=='POST':
+# 		nota_pedido=Nota_de_Pedido.query.get(id_nota)
+# 		if nota_pedido is not None:
+# 			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+# 		else :
+# 			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
+# 			flash(error_message,category='error')
+
+# 	return redirect(url_for('.vernotapedido'))
+
 @app.route('/vernotaporDNI',methods=['GET','POST'])
 def vernotaporDNI():
-	dni_comprador=request.form['dni_comprador']
+	dni_comprador=request.form.get('dni_comprador')
 	total_dia=0
 	total_dia_visa=0
 	total_dia_por_cancelar=0
@@ -458,6 +477,18 @@ def editarnota(id):
 		return render_template('editar_nota_id.html',nota=nota,log=loge)
 	return render_template('editar_nota_id.html',nota=nota,log=loge)
 
+@app.route('/anularnota/<string:id>',methods=['GET','POST'])
+def anularnota(id):
+	nota=Nota_de_Pedido.query.get(id)
+	print('llego2')
+	if nota:
+		nota.estado='ANULADO-'
+		db.session.add(nota)
+		db.session.commit()
+		succes_message='Se ANULO la nota de pedido {}'.format(nota.id)
+		flash(succes_message,category='message')
+		return redirect(request.referrer)
+	return redirect(request.referrer)
 
 
 #-------------------------------------------------------------------------------------------------------#-------------------------------------------------------------------------------------------------------
