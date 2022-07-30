@@ -360,6 +360,7 @@ def vernotaporfecha():
 	total_dia_visa=0
 	total_dia_por_cancelar=0
 	if fecha_inicio and fecha_final and request.method=='POST':
+		
 		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio,fecha_final)).all()
 		if nota_pedido is not None:
 			for note in nota_pedido:
@@ -386,14 +387,18 @@ def imprimirresumen(fecha,fecha_final):
 	total_dia_por_cancelar=0
 	nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
 	if nota_pedido is not None:
-		for note in nota_pedido:
-			if note.get_estado() in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
-				total_dia+=note.get_total_venta()
-			elif note.get_estado() in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
-				total_dia_visa+=note.get_total_venta()
-			elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
-				total_dia_por_cancelar+=note.get_total_venta()
-		return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
+		try:
+			for note in nota_pedido:
+				if note.get_estado() in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
+					total_dia+=note.get_total_venta()
+				elif note.get_estado() in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
+					total_dia_visa+=note.get_total_venta()
+				elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
+					total_dia_por_cancelar+=note.get_total_venta()
+			return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
+		except ValueError as EV:
+			session.rollback()
+			EV('No se pudo general el resumen de ventas realice un rollback')
 	else:
 		error_message='No se pudo crear un resumen por que no existen notas de pedido'
 		flash(error_message,category='error')
@@ -414,22 +419,6 @@ def vernotapornombre():
 			flash(error_message,category='error')
 
 	return redirect(url_for('.vernotapedido'))
-
-# @app.route('/vernotaporid',methods=['GET','POST'])
-# def vernotaporid():
-# 	id_nota=request.form['id_nota']
-# 	total_dia=0
-# 	total_dia_visa=0
-# 	total_dia_por_cancelar=0
-# 	if id_nota and request.method=='POST':
-# 		nota_pedido=Nota_de_Pedido.query.get(id_nota)
-# 		if nota_pedido is not None:
-# 			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
-# 		else :
-# 			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
-# 			flash(error_message,category='error')
-
-# 	return redirect(url_for('.vernotapedido'))
 
 @app.route('/vernotaporDNI',methods=['GET','POST'])
 def vernotaporDNI():
@@ -596,14 +585,14 @@ def add():
 						
 						for key,producto in session['producto'].items():
 							total_venta=total_venta+session['producto'][key]['precio_individual']
-						session['total_venta']=total_venta
+						session['total_venta']=total_venta.__round__(1)
 						print('El producto ya esta en el carrito')
 					else:
 						session['producto']=array_merge(session['producto'],DictProducts)
 						
 						for key,producto in session['producto'].items():
 							total_venta=total_venta+session['producto'][key]['precio_individual']
-						session['total_venta']=total_venta
+						session['total_venta']=total_venta.__round__(1)
 
 						return redirect(url_for('.buscar_producto'))
 				else:
@@ -627,7 +616,7 @@ def updateproduct():
 		session['producto'][key]['precio_individual']=cantidad*float(session['producto'][key]['precio'])
 		for key,producto in session['producto'].items():
 			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta
+		session['total_venta']=total_venta.__round__(1)
 		return redirect(url_for('.buscar_producto'))
 	return redirect(url_for('.buscar_producto'))
 
@@ -644,7 +633,7 @@ def updateprice():
 
 		for key,producto in session['producto'].items():
 			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta
+		session['total_venta']=total_venta.__round__(1)
 		return redirect(url_for('.buscar_producto'))
 	return redirect(url_for('.buscar_producto'))
 
@@ -663,7 +652,7 @@ def deleteproduct():
 						total_venta=total_venta+session['producto'][key]['precio_individual']
 				else:
 					session['total_venta']=0
-				session['total_venta']=total_venta
+				session['total_venta']=total_venta.__round__(1)
 				break
 		return redirect(url_for('.buscar_producto'))
 

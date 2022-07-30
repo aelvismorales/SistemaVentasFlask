@@ -54,9 +54,9 @@ class Producto(db.Model):
     def get_str_nombre(self):
         return str(self.nombre_producto)
     def get_str_pc(self):
-        return str(self.precio_costo_producto)
+        return str(self.precio_costo_producto.__round__(1))
     def get_str_pv(self):
-        return str(self.precio_venta_producto)
+        return str(self.precio_venta_producto.__round__(1))
     def get_stock(self):
         return self.stock
 
@@ -110,7 +110,7 @@ class Nota_de_Pedido(db.Model):
     def get_direccion(self):
         return self.direccion_comprador
     def get_total_venta(self):
-        return self.total_venta
+        return self.total_venta.__round__(1)
     def get_comprador_id(self):
         return self.comprador_id
     def get_estado(self):
