@@ -68,8 +68,8 @@
                                 {% endfor %}
                                 <td>{{product.name}}</td>
                                 <td>{{product.precio}}</td>
-                                {% set subtotal = ((product.precio|float * form_nota.cantidad)+100)-100|float %}
-                                <td> {{subtotal}}</td>
+                                <!-- {% set subtotal = ((product.precio|float * form_nota.cantidad)+100)-100|float %} -->
+                                <!-- <td> {{product.precio_individual}}</td> -->
                                 <td>{{product.precio_individual}}</td>
                             </tr>
                         {% endfor %}
