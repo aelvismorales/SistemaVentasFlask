@@ -1,7 +1,8 @@
+from ast import Not
 from datetime import date
 from flask import Flask, render_template, request,flash,session,redirect,url_for,jsonify,send_file
 from flask_wtf.csrf import CSRFProtect
-from sqlalchemy import desc
+from sqlalchemy import desc,asc
 from config import DevelopmentConfig
 from modelos import *
 import formularios
@@ -137,8 +138,9 @@ def login():
 			else:
 				error_message='Usuario o contraseña no validos!'
 				flash(error_message,category='error')
-		except e as Error:
+		except ValueError as Error:
 			session.rollback()
+			print(Error)
 
 	return render_template('login.html',form_login=user_form,log=loge)
 
@@ -232,7 +234,7 @@ def crear_nota_pedido():
 		session.modified=True
 		for key,producto in session['producto'].items():
 			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta
+		session['total_venta']=total_venta.__round__(2)
 
 		if nombre_comprador and direccion_comprador and estado_nota and request.method == 'POST':
 			existe_comprador=Comprador.query.filter_by(dni=dni_comprador).first()
@@ -385,7 +387,7 @@ def imprimirresumen(fecha,fecha_final):
 	total_dia=0
 	total_dia_visa=0
 	total_dia_por_cancelar=0
-	nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
+	nota_pedido=Nota_de_Pedido.query.order_by(asc(Nota_de_Pedido.id)).filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
 	if nota_pedido is not None:
 		try:
 			for note in nota_pedido:
