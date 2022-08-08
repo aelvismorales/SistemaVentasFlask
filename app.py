@@ -615,7 +615,7 @@ def updateproduct():
 	if cantidad and request.method == 'POST':
 		session.modified = True
 		session['producto'][key]['cantidad']=cantidad
-		session['producto'][key]['precio_individual']=cantidad*float(session['producto'][key]['precio'])
+		session['producto'][key]['precio_individual']=(cantidad*float(session['producto'][key]['precio'])).__round__(2)
 		for key,producto in session['producto'].items():
 			total_venta=total_venta+session['producto'][key]['precio_individual']
 		session['total_venta']=total_venta.__round__(2)
@@ -631,7 +631,7 @@ def updateprice():
 	if price and request.method == 'POST':
 		session.modified = True
 		session['producto'][key]['precio']=price
-		session['producto'][key]['precio_individual']=session['producto'][key]['cantidad']*float(session['producto'][key]['precio'])
+		session['producto'][key]['precio_individual']=(session['producto'][key]['cantidad']*float(session['producto'][key]['precio'])).__round__(2)
 
 		for key,producto in session['producto'].items():
 			total_venta=total_venta+session['producto'][key]['precio_individual']
