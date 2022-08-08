@@ -579,7 +579,7 @@ def add():
 		producto=Producto.query.get(id)
 		if cantidad and id and request.method == 'POST':
 			if producto is not None:
-				DictProducts={str(id):{'id':id,'name':producto.nombre_producto,'precio':producto.precio_venta_producto,'cantidad':cantidad,'precio_individual':producto.precio_venta_producto*cantidad}}
+				DictProducts={str(id):{'id':id,'name':producto.nombre_producto,'precio':producto.precio_venta_producto,'cantidad':cantidad,'precio_individual':(producto.precio_venta_producto*cantidad).__round__(2)}}
 
 				if 'producto' in session:
 					session.modified = True
@@ -587,14 +587,14 @@ def add():
 						
 						for key,producto in session['producto'].items():
 							total_venta=total_venta+session['producto'][key]['precio_individual']
-						session['total_venta']=total_venta.__round__(1)
+						session['total_venta']=total_venta.__round__(2)
 						print('El producto ya esta en el carrito')
 					else:
 						session['producto']=array_merge(session['producto'],DictProducts)
 						
 						for key,producto in session['producto'].items():
 							total_venta=total_venta+session['producto'][key]['precio_individual']
-						session['total_venta']=total_venta.__round__(1)
+						session['total_venta']=total_venta.__round__(2)
 
 						return redirect(url_for('.buscar_producto'))
 				else:
@@ -618,7 +618,7 @@ def updateproduct():
 		session['producto'][key]['precio_individual']=cantidad*float(session['producto'][key]['precio'])
 		for key,producto in session['producto'].items():
 			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta.__round__(1)
+		session['total_venta']=total_venta.__round__(2)
 		return redirect(url_for('.buscar_producto'))
 	return redirect(url_for('.buscar_producto'))
 
@@ -635,7 +635,7 @@ def updateprice():
 
 		for key,producto in session['producto'].items():
 			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta.__round__(1)
+		session['total_venta']=total_venta.__round__(2)
 		return redirect(url_for('.buscar_producto'))
 	return redirect(url_for('.buscar_producto'))
 
@@ -654,7 +654,7 @@ def deleteproduct():
 						total_venta=total_venta+session['producto'][key]['precio_individual']
 				else:
 					session['total_venta']=0
-				session['total_venta']=total_venta.__round__(1)
+				session['total_venta']=total_venta.__round__(2)
 				break
 		return redirect(url_for('.buscar_producto'))
 
