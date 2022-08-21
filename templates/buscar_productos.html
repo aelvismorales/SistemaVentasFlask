@@ -58,6 +58,7 @@
                             <th scope="col">Fecha Actualizacion</th>
                             <th scope="col">Cantidad</th>
                             <th scope="col">Stock</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,12 +77,14 @@
                                     <input type="submit" value="Agregar a Nota de Pedido" class="btnAddAction" />
                                 </td>
                                 <td>{{producto.get_stock()}}</td>
-                                <td> 
-                                    <a class="btn btn-primary" href="{{ url_for('editar_id', id=producto.id) }}">Actualizar</a>
-                                </td>
-                                <td>
-                                    <a class="btn btn-danger" href="{{ url_for('eliminarproducto',id=producto.id)}}">Eliminar</a>
-                                </td>
+                                <div class='btn-group-sm' role="group">
+                                    <td> 
+                                        <a class="btn btn-primary" href="{{ url_for('editar_id', id=producto.id) }}">Actualizar</a>
+                                        <a class="btn btn-danger" href="{{ url_for('eliminarproducto',id=producto.id)}}">Eliminar</a>
+                                    </td>
+
+                                </div>
+                                
                             </tr>
                         </form>
                         {% endfor %}

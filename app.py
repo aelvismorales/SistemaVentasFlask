@@ -1,5 +1,3 @@
-from ast import Not
-from datetime import date
 from flask import Flask, render_template, request,flash,session,redirect,url_for,jsonify,send_file
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy import desc,asc
@@ -462,7 +460,12 @@ def editarnota(id):
 		nota.nombre_comprador=nombre_comprador
 		nota.direccion_comprador=direccion_comprador
 		nota.estado=estado_nota+estado_nota_2
-
+		if estado_nota in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
+			nota.fecha_creacion=datetime.now()
+		elif estado_nota in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
+			nota.fecha_creacion=datetime.now()
+		else:
+			pass
 		db.session.add(nota)
 		db.session.commit()
 		succes_message='Se actualizo la nota de pedido de {}'.format(nota.nombre_comprador)
