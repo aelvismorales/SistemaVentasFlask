@@ -9,7 +9,7 @@
     <title>Sistema Ventas</title>
   </head>
   <body>
-    <div id="TodoImprimir" style="font-size:80%;">
+    <div id="TodoImprimir" style="font-size:100%;">
       <h2 style="text-align: center;"><strong>&nbsp;FERRETERIA PERALVILLO E.I.R.L</strong></h2>
 <div>
   <div style="text-align: left;">&nbsp;Av San Mart&iacute;n Mz. "G5" lote 04 C.P.Peralvillo
@@ -40,24 +40,24 @@
                           <div style="text-align: left;">
                             <table class="table table-sm">
                               <thead>
-                                <th scope="col" style="font-size:80%;">Cantidad</th>
-                                <th scope="col" style="font-size:80%;">Producto</th>
-                                <th scope="col" style="font-size:80%;">Precio</th>
-                                <th scope="col" style="font-size:80%;">Sub Total</th>
+                                <th scope="col" style="font-size:100%;">Cantidad</th>
+                                <th scope="col" style="font-size:100%;">Producto</th>
+                                <th scope="col" style="font-size:100%;">Precio</th>
+                                <th scope="col" style="font-size:100%;">Sub Total</th>
               
                               </thead>
                               <tbody>
                                 {% for key,product in session['producto'].items() %}
                                 <tr>
-                                  <td style="font-size:80%;">{{product.cantidad}}</td>
-                                  <td style="font-size:80%;">{{product.name}}</td>
-                                  <td style="font-size:80%;">{{product.precio}}</td>
-                                  <td style="font-size:80%;">{{product.precio_individual}}</td>
+                                  <td style="font-size:100%;"><strong>{{product.cantidad}}</strong></td>
+                                  <td style="font-size:100%;"><strong>{{product.name}}</strong></td>
+                                  <td style="font-size:100%;"><strong>{{product.precio}}</strong></td>
+                                  <td style="font-size:100%;"><strong>{{product.precio_individual}}</strong></td>
                                 </tr>
                                 {%endfor%}
                                 <tr>
-                                  <td colspan="3" align="right" style="font-size:80%;"> <strong>Total:</strong></td>
-                                  <td style="font-size:80%;"> <strong>{{session['total_venta']}}</strong></td>
+                                  <td colspan="3" align="right" style="font-size:100%;"> <strong>Total:</strong></td>
+                                  <td style="font-size:100%;"> <strong>{{session['total_venta']}}</strong></td>
                                 </tr>
                               </tbody>
                             </table>
