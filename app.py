@@ -205,12 +205,16 @@ def buscar_producto():
 	buscar_producto=formularios.BuscarProducto(request.form)
 	if request.method=='POST': 
 		if buscar_producto.validate():
-			productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data+'%')).all()
-			if productos is not None:
-				return render_template('buscar_productos.html',buscar_form=buscar_producto,productos=productos,log=loge)
-			else :
-				error_message='No se pudo encontrar el producto intente nuevamente'
-				flash(error_message,category='error')
+			try:
+				productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data+'%')).all()
+				if productos is not None:
+					return render_template('buscar_productos.html',buscar_form=buscar_producto,productos=productos,log=loge)
+				else :
+					error_message='No se pudo encontrar el producto intente nuevamente'
+					flash(error_message,category='error')
+			except ValueError as Error:
+				db.session.rollback()
+				raise Exception(f"Error en la busqueda de producto mas infor. {Error}")
 		else:
 			render_template('buscar_productos.html',buscar_form=buscar_producto,log=loge,prd=produ)
 	
