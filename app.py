@@ -479,8 +479,10 @@ def vernotapedido_id():
 		nota=Nota_de_Pedido.query.get(id)
 		ver=True
 		notas=json.loads(nota.get_nombre_producto())
+		telefono_comprador=nota.notasdepedidos.get_telefono()
+		dni_comprador=nota.notasdepedidos.get_dni()
 		
-	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver)})
+	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver,telefono=telefono_comprador,dni=dni_comprador)})
 @app.route('/editarnota/<string:id>',methods=['GET','POST'])
 def editarnota(id):
 	nota=Nota_de_Pedido.query.get(id)
