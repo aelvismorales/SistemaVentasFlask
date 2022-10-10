@@ -1,7 +1,6 @@
-from multiprocessing.sharedctypes import Value
 from flask import Flask, render_template, request,flash,session,redirect,url_for,jsonify,send_file
 from flask_wtf.csrf import CSRFProtect
-from sqlalchemy import desc,asc
+from sqlalchemy import desc,asc,update
 from config import DevelopmentConfig
 from modelos import *
 import formularios
@@ -28,14 +27,50 @@ app,csrf=create_app()
 commands.init_app(app)
 
 #-------------------------------------------------------------------------------------------------------
-@app.route('/llenarbasededatos')
-def llenarbasededatos():
-	prd=pd.read_csv('ferreteria_data.csv')
+@app.route('/llenarproductos')
+def llenarproductos():
+	prd=pd.read_csv('producto.csv')
 	for i in prd.index:
-		productos=Producto(prd['Material'][i],prd['COSTO'][i],prd['PRECIO PUBLICO'][i],prd['STOCK'][i])
+		productos=Producto(prd['nombre_producto'][i],prd['precio_costo_producto'][i],prd['precio_venta_producto'][i],prd['stock'][i])
 		db.session.add(productos)
 		db.session.commit()
 	return redirect(url_for('buscar_producto'))
+
+@app.route('/llenarnotas')
+def llenarnotas():
+	prd=pd.read_csv('notapedido.csv')
+	for i in prd.index:
+		notas=Nota_de_Pedido(prd['nombre_producto'][i],prd['total_venta'][i],prd['nombre_comprador'][i],prd['direccion_comprador'][i],prd['estado'][i],prd['fecha_creacion'][i])
+		db.session.add(notas)
+		db.session.commit()
+	return redirect(url_for('buscar_producto'))
+
+# @app.route('/actualizarcomprador')
+# def actualizarcomprador():
+# 	#notas =Nota_de_Pedido.query.filter_by(nombre_comprador=Comprador.nombre_comprador).all()
+# 	update(Nota_de_Pedido).where(Nota_de_Pedido.nombre_comprador==Comprador.nombre_comprador).values(comprador_id=Comprador.id)
+# 	#db.session.add(notas)
+# 	db.session.commit()
+# 	return redirect(url_for('buscar_producto'))
+
+@app.route('/llenarcompradores')
+def llenarcompradores():
+	prd=pd.read_csv('comprador.csv')
+	for i in prd.index:
+		compradores=Comprador(prd['nombre_comprador'][i],prd['numero_telefono_comprador'][i],prd['direccion_comprador'][i],prd['dni'][i])
+		db.session.add(compradores)
+		db.session.commit()
+	return redirect(url_for('buscar_producto'))
+
+@app.route('/llenarusuarios')
+def llenarusuarios():
+	prd=pd.read_csv('comprador.csv')
+	for i in prd.index:
+		usuarios=Usuario(prd['nombre_usuario'][i],prd['contrasena_usuario'][i],prd['rol_usuario'][i])
+		db.session.add(usuarios)
+		db.session.commit()
+	return redirect(url_for('buscar_producto'))
+
 
 @app.route('/downloadtables/<string:name>')
 def downloadtables(name):
@@ -261,7 +296,7 @@ def crear_nota_pedido():
 			if existe_comprador is not None:
 				datos_producto_json= json.dumps(session['producto'])
 
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,existe_comprador)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,comprador_id=existe_comprador)
 
 				for key,product in session['producto'].items():
 					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
@@ -479,9 +514,12 @@ def vernotapedido_id():
 		nota=Nota_de_Pedido.query.get(id)
 		ver=True
 		notas=json.loads(nota.get_nombre_producto())
-		telefono_comprador=nota.notasdepedidos.get_telefono()
-		dni_comprador=nota.notasdepedidos.get_dni()
-		
+		if nota.notasdepedidos is None:
+			telefono_comprador=''
+			dni_comprador=''
+		else:
+			telefono_comprador=nota.notasdepedidos.get_telefono()
+			dni_comprador=nota.notasdepedidos.get_dni()
 	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver,telefono=telefono_comprador,dni=dni_comprador)})
 @app.route('/editarnota/<string:id>',methods=['GET','POST'])
 def editarnota(id):
@@ -490,17 +528,22 @@ def editarnota(id):
 	direccion_comprador=request.form.get('direccion_comprador')
 	estado_nota=request.form.get('estado')
 	estado_nota_2=request.form.get('estado2')
+	fecha_adicional=request.form.get('fecha_adicional')
+	comentario=request.form.get('comentario')
 	try:
 		if nota and nombre_comprador and direccion_comprador and estado_nota and request.method=='POST':
 			nota.nombre_comprador=nombre_comprador
 			nota.direccion_comprador=direccion_comprador
 			nota.estado=estado_nota+estado_nota_2
+			nota.fecha_cancelacion=fecha_adicional
+			nota.comentario=comentario
 			# if estado_nota in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
 			# 	nota.fecha_creacion=datetime.now()
 			# elif estado_nota in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
 			# 	nota.fecha_creacion=datetime.now()
 			# else:
 			# 	pass
+			
 			db.session.add(nota)
 			db.session.commit()
 			succes_message='Se actualizo la nota de pedido de {}'.format(nota.nombre_comprador)

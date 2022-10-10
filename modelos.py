@@ -91,12 +91,15 @@ class Comprador(db.Model):
 class Nota_de_Pedido(db.Model):
     __tablename__="notapedido"
     id=db.Column(db.Integer,primary_key=True)
-    fecha_creacion=db.Column(db.DateTime,default=datetime.now)
-    nombre_comprador=db.Column(db.String(250))
+    fecha_creacion=db.Column(db.DateTime)
+    #fecha_creacion=db.Column(db.DateTime,default=datetime.now)
+    nombre_comprador=db.Column(db.String(60))
     nombre_producto=db.Column(db.String(15000))
     total_venta=db.Column(db.Float)
     direccion_comprador=db.Column(db.String(200))
     estado=db.Column(db.String(50))
+    fecha_cancelacion=db.Column(db.DateTime)
+    comentario=db.Column(db.String(500))
     comprador_id=db.Column(db.Integer,db.ForeignKey('comprador.id'))
 
     def get_id(self):
@@ -115,15 +118,27 @@ class Nota_de_Pedido(db.Model):
         return self.comprador_id
     def get_estado(self):
         return self.estado
-     
-    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,comprador_id=None):
+    def get_fecha_cancelacion(self):
+        if self.fecha_cancelacion is not None:
+            return self.fecha_cancelacion.strftime('%d/%m/%Y')
+        return None
+    def get_fecha_cancela(self):
+        if self.fecha_cancelacion is not None:
+            return self.fecha_cancelacion.strftime('%Y-%m-%d')
+        return None
+    def get_comentario(self):
+        return self.comentario     
+    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,fecha_creacion=datetime.today(),fecha_cancelacion=None,comentario=None,comprador_id=None):
 
         self.nombre_producto=nombre_producto
+        self.fecha_creacion=fecha_creacion
         self.total_venta=total_venta
         self.nombre_comprador=nombre_comprador
         self.direccion_comprador=direccion_comprador
         self.estado=estado
         self.notasdepedidos=comprador_id
+        self.fecha_cancelacion=fecha_cancelacion
+        self.comentario=comentario
 
-    
+        
 

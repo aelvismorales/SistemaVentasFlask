@@ -64,6 +64,22 @@
                         <option value="-por-recoger">POR RECOGER</option>
                        
                     </select>
+                    <div class="row control-group">
+                        <div class="form-group col-xs-12 floating label-form-group controls">
+                            <label for="FechaCancelacion" class="col-sm2 col-form-label"> Fecha Cancelacion:</label>
+                            <input type="date" value="{{nota.get_fecha_cancela()}}" id="FechaCancelacion" name="fecha_adicional"/>
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="row control-group">
+                        <div class="form-group col-s-24 floating label-form-group controls">
+                            <label for="Comentario" class="col-sm2 col-form-label"> Comentario </label>
+                            <textarea class="form-control"  aria-label="Comentario" id="Comentario" name="comentario">{{nota.get_comentario()}}</textarea>
+                            <!-- <input type="text" value=" " id="Comentario" name="comentario"/> -->
+                            <p class="help-block text-danger"></p>
+                        </div>
+                    </div>
+
                     <br>
                     <br>
                     <div class="row">

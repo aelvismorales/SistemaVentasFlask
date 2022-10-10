@@ -1,0 +1,2 @@
+"id","nombre_usuario","contrasena_usuario","fecha_creacion","rol_usuario"
+1,"morales123","sha256$35xTSysAqJc4p2qT$8c450a178c08d62331956e405240b049d1abca5d4eb1fee20965083343069a62","2022-07-21 15:39:47.558992","jefe"

@@ -203,6 +203,8 @@
                         <th scope="col">Nombre</th>
                         <th scope="col">Total</th>
                         <th scope="col">Estado </th>
+                        <th scope="col">Fecha Cancelacion </th>
+                        <th scope="col">Comentario</th>
                         <th scope="col">Ver</th>
                         <th scope="col">Imprimir</th>
                         <th scope="col">Editar</th>
@@ -215,6 +217,8 @@
                             <td> {{notaped.get_nombre_comprador()}}</td>
                             <td> {{notaped.get_total_venta()}}</td>
                             <td>{{notaped.get_estado()}}</td>
+                            <td>{{notaped.get_fecha_cancelacion()}}</td>
+                            <td>{{notaped.get_comentario()}}</td>
                             <td>
                                 <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
                                 <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
