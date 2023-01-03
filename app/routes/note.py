@@ -102,7 +102,7 @@ def editarnota(id):
 		db.session.add(nota)
 		succes_message='Se actualizo la nota de pedido de {}'.format(nota.nombre_comprador)
 		flash(succes_message,category='message')
-		return redirect(url_for("note.editarnota"))
+		return redirect(url_for("note.editarnota",id=id))
 	return render_template('editar_nota_id.html',nota=nota,log=loge)
 
 
