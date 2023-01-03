@@ -2,11 +2,11 @@ from flask import Flask
 from config import Config,config
 from .models.modelos import db
 from flask_wtf.csrf import CSRFProtect 
-# from flask_migrate import Migrate
+from flask_migrate import Migrate
 
 
 csrf=CSRFProtect()
-# migrate=Migrate()
+migrate=Migrate()
 
 
 def create_app(config_name):
@@ -17,7 +17,7 @@ def create_app(config_name):
 
     with app.app_context():
         db.create_all()
-    # migrate.init_app(app,db)
+    migrate.init_app(app,db)
     from .routes.database import database
     from .routes.auth import auth
     from .routes.buyer import buyer
