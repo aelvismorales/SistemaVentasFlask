@@ -40,7 +40,7 @@ def crear_nota_pedido():
 			if existe_comprador is not None:
 				datos_producto_json= json.dumps(session['producto'])
 
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,comprador_id=existe_comprador)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,comprador_id=existe_comprador)
 
 				for key,product in session['producto'].items():
 					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
@@ -357,7 +357,11 @@ def imprimire(id):
 	if nota.notasdepedidos is None:
 		telefono_comprador=''
 		dni_comprador=''
-	else:
+	elif nota.notasdepedidos.get_telefono():
 		telefono_comprador=nota.notasdepedidos.get_telefono()
 		dni_comprador=nota.notasdepedidos.get_dni()
+	else:
+		telefono_comprador=nota.get_telefono_nota()
+		dni_comprador=nota.get_dni_nota()
+
 	return render_template('imprimirid.html',nota=nota,notas=notas,telefono=telefono_comprador,dni=dni_comprador)

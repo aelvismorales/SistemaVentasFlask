@@ -98,6 +98,8 @@ class Nota_de_Pedido(db.Model):
     estado=db.Column(db.String(50))
     fecha_cancelacion=db.Column(db.DateTime)
     comentario=db.Column(db.String(500))
+    numero_comprador=db.Column(db.String(20))
+    dni_comprador=db.Column(db.String(20))
     comprador_id=db.Column(db.Integer,db.ForeignKey('comprador.id'))
 
     def get_id(self):
@@ -125,8 +127,15 @@ class Nota_de_Pedido(db.Model):
             return self.fecha_cancelacion.strftime('%Y-%m-%d')
         return None
     def get_comentario(self):
-        return self.comentario     
-    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,fecha_creacion=datetime.today(),fecha_cancelacion=None,comentario=None,comprador_id=None):
+        return self.comentario 
+
+    def get_telefono_nota(self):
+        return self.numero_comprador
+
+    def get_dni_nota(self):
+        return self.dni_comprador
+
+    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,fecha_creacion=datetime.today(),fecha_cancelacion=None,comentario=None,comprador_id=None):
 
         self.nombre_producto=nombre_producto
         self.fecha_creacion=fecha_creacion
@@ -137,6 +146,8 @@ class Nota_de_Pedido(db.Model):
         self.notasdepedidos=comprador_id
         self.fecha_cancelacion=fecha_cancelacion
         self.comentario=comentario
+        self.numero_comprador=numero_comprador
+        self.dni_comprador=dni_comprador
 
         
 
