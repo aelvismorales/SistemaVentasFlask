@@ -167,7 +167,7 @@
                                         </td>
                             </form>
                                         <td>{{product.name}}</td>
-                                        <form method="post" action="note/updateprice">
+                                        <form method="post" action="{{url_for('note.updateprice')}}">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />       
                                                 <td>
                                                     <input type="hidden" name="code" value="{{key}}" />
