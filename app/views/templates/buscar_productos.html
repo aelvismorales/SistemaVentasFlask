@@ -1,26 +1,6 @@
 {%extends 'base.html' %}
 {% block navbar %}
-  {% if log==True %}
-    <li class="nav-item">
-        <a class="nav-link" href="producto"><strong>Crear Productos</strong></a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" href="buscar"><strong>Buscar Productos</strong></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="vernotapedido"><strong>Ver Notas de Pedido</strong></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="crearcomprador"><strong>Crear Comprador</strong></a>
-    </li> 
-    <li class="nav-item">
-        <a class="nav-link" href="vercompradores"><strong>Ver Compradores</strong></a>
-    </li> 
-    <li class="nav-item">
-      <a class="nav-link" href="logout"><strong>Log out</strong></a>
-    </li>
-    
-  {%endif%}
+    {{ super() }}
 {% endblock %}
 
 {% block content %}
@@ -63,7 +43,7 @@
                     </thead>
                     <tbody>
                         {%for producto in productos%}
-                        <form method="post" action="/add">
+                        <form method="post" action="{{url_for('product.add')}}">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                             <tr>
                                 <th scope="row">{{producto.id}}</th>
@@ -79,8 +59,8 @@
                                 <td>{{producto.get_stock()}}</td>
                                 <div class='btn-group-sm' role="group">
                                     <td> 
-                                        <a class="btn btn-primary" href="{{ url_for('editar_id', id=producto.id) }}">Actualizar</a>
-                                        <a class="btn btn-danger" href="{{ url_for('eliminarproducto',id=producto.id)}}">Eliminar</a>
+                                        <a class="btn btn-primary" href="{{ url_for('product.editar_id', id=producto.id) }}">Actualizar</a>
+                                        <a class="btn btn-danger" href="{{ url_for('product.eliminarproducto',id=producto.id)}}">Eliminar</a>
                                     </td>
 
                                 </div>
@@ -96,7 +76,7 @@
     {% if prd==True %}
     <br>
     <br>
-    <form id="buscar_comprador" method="POST" action="/buscarcompradorbydni">
+    <form id="buscar_comprador" method="POST" action="{{url_for('buyer.buscarcompradorbydni')}}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <div class="form-group row">
             <label for="DNIComprador" class="col-sm2 col-form-label">Busca por DNI:</label>
@@ -108,7 +88,7 @@
     </form>
 
         <h3>Nota de Pedido</h3>
-        <form id="crear_nota" method="POST" action="/crearnotapedido">
+        <form id="crear_nota" method="POST" action="{{url_for('note.crear_nota_pedido')}}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="form-group row">
                 <label for="NombreComprador" class="col-sm2 col-form-label">Nombre del comprador:</label>
@@ -162,7 +142,7 @@
             <button type="submit" class="btn btn-success btn-sm">Crear Nota Pedido</button>
         </form>
         <br>
-        <a id="btnEmpty"  class="btn btn-secondary btn-sm" href="{{ url_for('.empty_cart') }}" role="button" style="position:sticky">Vaciar Nota de Pedido</a>
+        <a id="btnEmpty"  class="btn btn-secondary btn-sm" href="{{ url_for('note.empty_cart') }}" role="button" style="position:sticky">Vaciar Nota de Pedido</a>
 
         <div class="table-responsive-xxl">
             <table class="table align-middle">
@@ -176,7 +156,7 @@
                 </thead>
                 <tbody>
                         {% for key,product in session['producto'].items() %}
-                            <form method="post" action="/updateproduct">
+                            <form method="post" action="{{url_for('note.updateproduct')}}">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                     <tr>
                                         <td>{{loop.index}} </td>
@@ -187,7 +167,7 @@
                                         </td>
                             </form>
                                         <td>{{product.name}}</td>
-                                        <form method="post" action="/updateprice">
+                                        <form method="post" action="note/updateprice">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />       
                                                 <td>
                                                     <input type="hidden" name="code" value="{{key}}" />
@@ -196,7 +176,7 @@
                                                 </td>
                                         </form>
                                         <td>{{product.precio_individual}}</td>
-                                        <form method="post" action="/delete">
+                                        <form method="post" action="{{url_for('note.deleteproduct')}}">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                             <td>
                                                 <input type="hidden" name="code" value="{{product.id}}" />
@@ -211,7 +191,7 @@
                         </tr>
                 </tbody>
             </table>
-            <a class="btn btn-primary" href="{{ url_for('imprimir') }}" target="_blank" >Imprimir</a>
+            <a class="btn btn-primary" href="{{ url_for('note.imprimir') }}" target="_blank" >Imprimir</a>
         </div>
 
            

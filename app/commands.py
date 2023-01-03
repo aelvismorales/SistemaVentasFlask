@@ -1,5 +1,5 @@
 import click
-from modelos import *
+from models.modelos import *
 import pandas as pd
 @click.command('crear-db')
 def create_db():

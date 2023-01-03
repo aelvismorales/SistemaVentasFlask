@@ -1,26 +1,6 @@
 {% extends 'base.html' %} 
 {% block navbar %}
-  {% if log==True %}
-    <li class="nav-item">
-        <a class="nav-link" href="producto"><strong>Crear Productos</strong></a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="buscar"><strong>Buscar Productos</strong></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" href="vernotapedido"><strong>Ver Notas de Pedido</strong></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="crearcomprador"><strong>Crear Comprador</strong></a>
-    </li>  
-    <li class="nav-item">
-        <a class="nav-link" href="vercompradores"><strong>Ver Compradores</strong></a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="logout"><strong>Log out</strong></a>
-    </li>    
-
-  {%endif%}
+{{ super() }}
 {% endblock %}
 
 {% block content %}
@@ -28,7 +8,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form id="SeleccionBusqueda" method="post" action="/vernotapedido">
+            <form id="SeleccionBusqueda" method="post" action="{{url_for('note.vernotapedido')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <select name="seleccionbusqueda">
                     <option value="Fecha">Fecha</option>
@@ -47,7 +27,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <form class="form-inline" id="buscarForm" method="POST" action="/vernotaporfecha">
+                <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.vernotaporfecha')}}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="row control-group">
                     <div class="form-group col-xs-12 floating-label-form-group controls">
@@ -77,7 +57,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form class="form-inline" id="buscarForm" method="POST" action="/verresumennotashoy">
+            <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.verresumennotashoy')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div class="row control-group">
                 <div class="form-group col-xs-12 floating-label-form-group controls">
@@ -101,7 +81,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <form class="form-inline" id="buscarForm" method="POST" action="/vernotapornombre">
+                <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.vernotapornombre')}}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="row control-group">
                     <div class="form-group col-xs-10 floating-label-form-group controls">
@@ -125,7 +105,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form class="form-inline" id="buscarForm" method="POST" action="/vernotaporid">
+            <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.vernotaporid')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div class="row control-group">
                 <div class="form-group col-xs-10 floating-label-form-group controls">
@@ -149,7 +129,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form id="OpcionBusqueda" method="post" action="/vernotaporestado">
+            <form id="OpcionBusqueda" method="post" action="{{url_for('note.vernotaporestado')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <select name="opcionestado" id="OpcionesBusqueda">
                     <option value="cancelado-">CANCELADO</option>
@@ -171,7 +151,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form class="form-inline" id="buscarForm" method="POST" action="/vernotaporDNI">
+            <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('/vernotaporDNI')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div class="row control-group">
                 <div class="form-group col-xs-10 floating-label-form-group controls">
@@ -224,13 +204,13 @@
                                 <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
                             </td>
                             <td>
-                                <a class="btn btn-primary" href="{{ url_for('imprimire',id=notaped.get_id() ) }}" target="_blank" >Imprimir</a>
+                                <a class="btn btn-primary" href="{{ url_for('note.imprimire',id=notaped.get_id() ) }}" target="_blank" >Imprimir</a>
                             </td>
                             <td>
-                                <a class="btn btn-info" href="{{ url_for('editarnota',id=notaped.get_id() ) }}" target="_blank" >Editar</a>
+                                <a class="btn btn-info" href="{{ url_for('note.editarnota',id=notaped.get_id() ) }}" target="_blank" >Editar</a>
                             </td>
                             <td>
-                                <a class="btn btn-warning" href="{{ url_for('anularnota',id=notaped.get_id() )}}">Anular</a>
+                                <a class="btn btn-warning" href="{{ url_for('note.anularnota',id=notaped.get_id() )}}">Anular</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -238,7 +218,7 @@
                 </table>
             </div>
             {% if bool_imprimir==True %}
-            <a class="btn btn-primary" href="{{ url_for('imprimirresumen',fecha=fechita,fecha_final=fechita_final) }}" target="_blank" >Imprimir-Resumen</a>
+            <a class="btn btn-primary" href="{{ url_for('note.imprimirresumen',fecha=fechita,fecha_final=fechita_final) }}" target="_blank" >Imprimir-Resumen</a>
             {% endif %}
             <p><strong>Total Venta del Dia:</strong> {{td}}</p>
             <p><strong>Total Venta del Dia por Visa:</strong> {{tdv}}</p>
@@ -270,7 +250,7 @@
             var notaid = $(this).data('id');
             var csrf_token = $('#token').val();
             $.ajax({
-                url: '/vernotapedidobyID',
+                url: `{{url_for('note.vernotapedido_id')}}`,
                 type: 'post',
                 headers:{
                     "X-CSRFToken":csrf_token,

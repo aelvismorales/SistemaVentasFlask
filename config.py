@@ -1,13 +1,31 @@
-from flask_sqlalchemy import SQLAlchemy
 from os import environ
+class Config:
+    SECRET_KEY="#1523ABC"
+    SQLALCHEMY_COMMIT_ON_TEARDOWN=True
+    TEMPLATE_FOLDER="./views/templates/"
+    STATIC_FOLDER="./views/static/"
+    SQLALCHEMY_TRACK_MODIFICATIONS=False
+    # WTF_CSRF_CHECK_DEFAULT=False
 
-class Config(object):
-    SECRET_KEY='123447a47f563e90fe2db0f56b1b17be62378e31b7cfd3adc776c59ca4c75e2fc512c15f69bb38307d11d5d17a41a7936789'
+    # @staticmethod
+    # def init_app(app):
+    #     pass
 
 class DevelopmentConfig(Config):
-    DEBUG=environ.get('DEBUGGER')
-    #DEBUG=True
-    WTF_CSRF_CHECK_DEFAULT=False
-    #SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:admin@localhost/sistemaventas'
+    DEBUG = True
+    SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:admin@localhost/sistemaventas'
+
+class TestingConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:admin@localhost/sistemaventas'
+
+class ProductionConfig(Config):
+    SECRET_KEY=environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI=environ.get('DATABASE_URL').replace('postgres','postgresql')
-    SQLALCHEMY_TRACK_MODIFICATIONS=False
+
+config = {
+ 'development': DevelopmentConfig,
+ 'testing': TestingConfig,
+ 'production': ProductionConfig,
+ 'default': DevelopmentConfig
+}

@@ -1,0 +1,47 @@
+{%extends 'base.html' %} {% block navbar %} {{ super() }}
+{% endblock %} {% block content %} {% from "macro.html" import render_field %}
+<div class="container my-2">
+  <form method="post">
+    <div class="form-group row">
+      <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /> -->
+      {{ form_comprador.csrf_token }}
+      <label for="comprador-label" class="col-sm-2 col-form-label"
+        >{{form_comprador.nombre_comprador.label}}</label
+      >
+      <div class="col-sm-10">{{form_comprador.nombre_comprador}}</div>
+    </div>
+
+    <div class="form-group row">
+      <label for="num-telefono" class="col-sm-2 col-form-label">
+        {{form_comprador.numero_telefono.label}}</label
+      >
+      <div class="col-sm-10">{{form_comprador.numero_telefono}}</div>
+    </div>
+    <div class="form-group row">
+      <label for="tipo-comprador" class="col-sm-2 col-form-label">
+        {{form_comprador.tipo_comprador.label}}</label
+      >
+      <div class="col-sm-10">{{form_comprador.tipo_comprador}}</div>
+    </div>
+    <div class="form-group row">
+      <label for="direccion-comprador" class="col-sm-2 col-form-label">
+        {{form_comprador.direccion_comprador.label}}</label
+      >
+      <div class="col-sm-10">{{form_comprador.direccion_comprador}}</div>
+    </div>
+    <div class="form-group row">
+      <label for="direccion-comprador" class="col-sm-2 col-form-label">
+        {{form_comprador.dni.label}}</label
+      >
+      <div class="col-sm-10">{{form_comprador.dni}}</div>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-sm-10">
+        <button type="submit" class="btn btn-primary">Crear</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{%extends 'base.html' %} {% block navbar %} {{ super() }}
+
+{% endblock %} {% block content %} {% from "macro.html" import render_field %}
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <br />
+      <br />
+
+      <form id="editar_form" method="POST">
+        <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /> -->
+        {{ editar_form.csrf_token }}
+
+        <div class="row control-group">
+          <div class="form-group col-xs-12 floating label-form-group controls">
+            {{render_field(editar_form.nombre__producto,class="form-control",placeholder=product_name,value=product_name)}}
+            <p class="help-block text-danger"></p>
+          </div>
+        </div>
+        <div class="row control-group">
+          <div class="'form-group col-xs-12 floating-label-form-group controls">
+            {{render_field(editar_form.precio_costo_producto,class="form-control",placeholder=product_pc
+            )}}
+            <p class="help-block text-danger"></p>
+          </div>
+        </div>
+        <div class="row control-group">
+          <div class="'form-group col-xs-12 floating-label-form-group controls">
+            {{render_field(editar_form.precio_venta_producto,class="form-control",placeholder=product_pv)}}
+            <p class="help-block text-danger"></p>
+          </div>
+        </div>
+        <div class="row control-group">
+          <div class="'form-group col-xs-12 floating-label-form-group controls">
+            {{render_field(editar_form.stock,class="form-control",placeholder=product_stock)}}
+            <p class="help-block text-danger"></p>
+          </div>
+        </div>
+
+        <br />
+        <div id="success"></div>
+        <div class="row">
+          <div class="form-group cols=xs=12">
+            <a
+              class="btn btn-success"
+              href="{{ url_for('product.buscar_producto') }}"
+              >Regresar</a
+            >
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
