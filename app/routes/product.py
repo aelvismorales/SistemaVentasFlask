@@ -97,21 +97,16 @@ def add():
 	if cantidad and id and request.method == 'POST':
 		if producto is not None:
 			DictProducts={str(id):{'id':id,'name':producto.nombre_producto,'precio':producto.precio_venta_producto,'cantidad':cantidad,'precio_individual':(producto.precio_venta_producto*cantidad).__round__(2)}}
-
 			if 'producto' in session:
 				session.modified = True
 				if str(id) in session['producto']:
-					for key,producto in session['producto'].items():
-						total_venta=total_venta+session['producto'][key]['precio_individual']
-					session['total_venta']=total_venta.__round__(2)
-					print('El producto ya esta en el carrito')
+					flash('El producto ya se encuentra en el carrito','error')
+					return redirect(url_for('product.buscar_producto'))
 				else:
 					session['producto']=array_merge(session['producto'],DictProducts)
-					
 					for key,producto in session['producto'].items():
 						total_venta=total_venta+session['producto'][key]['precio_individual']
 					session['total_venta']=total_venta.__round__(2)
-
 					return redirect(url_for('product.buscar_producto'))
 			else:
 				session['producto']=DictProducts
