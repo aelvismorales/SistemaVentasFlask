@@ -2,8 +2,8 @@
 {% endblock %} {% block content %} {% from "macro.html" import render_field %}
 <form method="post">
   <div class="form-group row">
-    <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /> -->
-    {{ form_compra.csrf_token }}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    
 
     <label for="comprador-label" class="col-sm-2 col-form-label"
       >Nombre Comprador:</label
