@@ -285,6 +285,20 @@ def imprimirresumen(fecha,fecha_final):
 	return render_template('resumen_por_imprimir.html',td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
 
 
+@note.route('/convertirNota/<string:id>',methods=['GET','POST'])
+def convertirNota(id):
+	nota_pedido=Nota_de_Pedido.query.get(id)
+	if nota_pedido is not None:
+		nota_pedido.fecha_creacion=datetime.today()
+		nota_pedido.estado='cancelado-'
+		db.session.add(nota_pedido)
+		db.session.commit()
+		succes_message='Se convirtio la nota de pedido {} a Nota de Pedido'.format(nota_pedido.id)
+		flash(succes_message,'message')
+	else:
+		flash('No se pudo convertir la Proforma en una Nota','error')
+	return redirect(url_for('note.vernotapedido'))
+
 #Actualizar Cantidad de Productos en la nota de pedido
 @note.route('/updateproduct',methods=['POST'])
 def updateproduct():
