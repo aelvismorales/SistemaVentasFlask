@@ -22,13 +22,12 @@ def beforerequest():
 @product.route("/producto",methods=["GET","POST"])
 def crear_producto():
     productForm=CrearProducto()
-    print("llegue")
     if request.method=='POST' and productForm.validate():
         product=Producto.query.filter_by(nombre_producto=productForm.nombre_producto.data).first()
         if product is None:
             precio_venta=productForm.precio_venta_producto.data
             producto=Producto(productForm.nombre_producto.data,productForm.precio_costo_producto.data,precio_venta,productForm.stock.data)
-            print("llegue2")
+
             db.session.add(producto)
             succes_message='Se creo el producto "{}"'.format(productForm.nombre_producto.data)
             flash(succes_message,category='message')

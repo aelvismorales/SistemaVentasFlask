@@ -90,7 +90,6 @@ def vercompradores():
 @buyer.route('/buscarcompradorbydni',methods=['GET','POST'])
 def buscarcompradorbydni():
 	dni=request.form['dni_comprador']
-	print(dni)
 	if dni and request.method=='POST':
 		comprador=Comprador.query.filter_by(dni=dni).first()
 		if comprador is not None:
