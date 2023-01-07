@@ -112,11 +112,9 @@ def anularnota(id):
 	if nota:
 		nota.estado='ANULADO-'
 		db.session.add(nota)
-		db.session.commit()
 		succes_message='Se ANULO la nota de pedido {}'.format(nota.id)
 		flash(succes_message,category='message')
-		return redirect(request.referrer)
-	return redirect(request.referrer)
+	return redirect(url_for('note.vernotapedido'))
 
 
 @note.route('/vernotapedido',methods=['GET','POST'])
@@ -130,6 +128,7 @@ def vernotapedido():
 	resumen_Ventas=False
 	imprimir_resumen=False
 	id_cambio=False
+	# valVer=False
 	total_dia=0
 	total_dia_visa=0
 	total_dia_por_cancelar=0
@@ -152,7 +151,7 @@ def vernotapedido():
 			order=True
 			nota_pedido=Nota_de_Pedido.query.order_by(desc(Nota_de_Pedido.total_venta)).all()
 			if nota_pedido is not None:
-				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,id_cambio=id_cambio,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_dni=dni_comprador,bool_imprimir=imprimir_resumen,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,id_cambio=id_cambio,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_dni=dni_comprador,bool_imprimir=imprimir_resumen,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,)
 			else :
 				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 				flash(error_message,category='error')
@@ -230,6 +229,20 @@ def vernotaporDNI():
 				flash(error_message,category='error')
 	return redirect(url_for('note.vernotapedido'))
 
+@note.route('/vernotaID',methods=['GET','POST'])
+def vernotaID():
+	id=request.form.get('id_notas')
+	total_dia=0
+	total_dia_visa=0
+	total_dia_por_cancelar=0
+	if id and request.method=='POST':
+		nota_pedido=Nota_de_Pedido.query.filter_by(id=id).all()
+		if nota_pedido is not None:
+			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
+		else :
+			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
+			flash(error_message,category='error')
+	return redirect(url_for('note.vernotapedido'))
 
 @note.route('/vernotapedidobyID',methods=['GET','POST'])
 def vernotapedido_id():
