@@ -6,8 +6,8 @@ content %} {% from "macro.html" import render_field %}
       <br />
       <br />
       <form id="loginForm" method="POST" action="{{url_for('product.crear_producto')}}">
-        {{ producto_form.csrf_token }}
-        <!-- <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" /> -->
+        <!-- {{ producto_form.csrf_token }} -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <div class="row control-group">
           <div class="form-group col-xs-12 floating label-form-group controls">
             {{render_field(producto_form.nombre_producto,class="form-control")}}
@@ -15,19 +15,19 @@ content %} {% from "macro.html" import render_field %}
           </div>
         </div>
         <div class="row control-group">
-          <div class="'form-group col-xs-12 floating-label-form-group controls">
+          <div class="form-group col-xs-12 floating-label-form-group controls">
             {{render_field(producto_form.precio_costo_producto,class="form-control")}}
             <p class="help-block text-danger"></p>
           </div>
         </div>
         <div class="row control-group">
-          <div class="'form-group col-xs-12 floating-label-form-group controls">
+          <div class="form-group col-xs-12 floating-label-form-group controls">
             {{render_field(producto_form.precio_venta_producto,class="form-control")}}
             <p class="help-block text-danger"></p>
           </div>
         </div>
         <div class="row control-group">
-          <div class="'form-group col-xs-12 floating-label-form-group controls">
+          <div class="form-group col-xs-12 floating-label-form-group controls">
             {{render_field(producto_form.stock,class="form-control")}}
             <p class="help-block text-danger"></p>
           </div>
