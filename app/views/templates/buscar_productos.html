@@ -5,6 +5,7 @@
 
 {% block content %}
 {% from "macro.html" import render_field %}
+<br />
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -121,8 +122,8 @@
                     <select name="estado" id="EstadoNota">
                         <option value="cancelado">CANCELADO</option>
                         <option value="cancelado-VISA">CANCELADO-VISA</option>
-                        <option value="cancelado-BBVA">CANCELADO-BBVA</option>
-                        <option value="cancelado-BCP">CANCELADO-BCP</option>
+                        <!-- <option value="cancelado-BBVA">CANCELADO-BBVA</option>
+                        <option value="cancelado-BCP">CANCELADO-BCP</option> -->
                         <option value="cancelado-YAPE">CANCELADO-YAPE</option>
                         <option value="por-cancelar">POR CANCELAR</option>
                         <option value="PROFORMA">PROFORMA</option>
@@ -132,7 +133,7 @@
             <div class="form-group row">
                 <div class="col-sm-4">
                     <select name="estado2" id="EstadoNota2">
-                        <option value="-">----</option>
+                        <option selected value="-">----</option>
                         <option value="-entregado">ENTREGADO</option>
                         <option value="-por-recoger">POR RECOGER</option>
                     </select>

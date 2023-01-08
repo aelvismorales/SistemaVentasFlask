@@ -5,24 +5,33 @@
 
 {% block content %}
 {% from "macro.html" import render_field %}
+<br />
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form id="SeleccionBusqueda" method="post" action="{{url_for('note.vernotapedido')}}">
+           
+            <form id="SeleccionBusqueda" method="post" action="{{url_for('note.vernotapedido')}}" class="row g-3">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <select name="seleccionbusqueda">
-                    <option value="Fecha">Fecha</option>
-                    <option value="Nombre">Nombre</option>
-                    <option value="DNI"> Buscar por DNI</option>
-                    <option value="Ordenar por Cantidad">Ordenar por Cantidad</option>
-                    <option value="Estado">Estado</option>
-                    <option value="ID">Numero de Nota de Pedido</option>
-                </select>
-                <button type="submit" class="btn btn-dark" >Filtrar</button>
+                <div class="col-auto">
+                    <select name="seleccionbusqueda" class="form-select">
+                        <option value="Fecha">Fecha</option>
+                        <option value="Nombre">Nombre</option>
+                        <option value="DNI"> Buscar por DNI</option>
+                        <option value="Ordenar por Cantidad">Ordenar por Cantidad</option>
+                        <option value="Estado">Estado</option>
+                        <option value="ID">Numero de Nota de Pedido</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-dark" >Filtrar</button>
+                </div>
             </form>
+
         </div>
     </div>
-</div>
+</div> 
+
+
 {% if bool_fecha==True %}
     <div class="container">
         <div class="row">
@@ -30,20 +39,20 @@
                 <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.vernotaporfecha')}}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="row control-group">
-                    <div class="form-group col-xs-12 floating-label-form-group controls">
-                        <label for="Fecha_inicio" class="col-sm2 col-form-label">Fecha Inicio</label>
-                        <div class="col-sm-4">
-                            <input type="date" class="form-control" id="Fecha_inicio" name="fecha_inicio" required />
+                        <div class="form-group col-xs-12 floating-label-form-group controls">
+                            <label for="Fecha_inicio" class="col-sm2 col-form-label">Fecha Inicio</label>
+                            <div class="col-sm-4">
+                                <input type="date" class="form-control" id="Fecha_inicio" name="fecha_inicio" required />
+                            </div>
+                            <p class="help-block text-danger"></p>
                         </div>
-                        <p class="help-block text-danger"></p>
-                    </div>
                     <div class="form-group col-xs-12 floating-label-form-group controls">
                         <label for="Fecha_final" class="col-sm2 col-form-label">Fecha Final</label>
                         <div class="col-sm-4">
                             <input type="date" class="form-control" id="Fecha_final" name="fecha_final" required />
                         </div>
-                    <p class="help-block text-danger"></p>
-                </div>
+                        <p class="help-block text-danger"></p>
+                    </div>
                     <div class="row">
                         <div class="form-group cols=xs=12">
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar Fechas</button>
@@ -57,6 +66,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <br />
             <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.verresumennotashoy')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div class="row control-group">
@@ -81,6 +91,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <br />
                 <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.vernotapornombre')}}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="row control-group">
@@ -105,6 +116,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <br />
             <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.vernotaID')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div class="row control-group">
@@ -129,21 +141,24 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <form id="OpcionBusqueda" method="post" action="{{url_for('note.vernotaporestado')}}">
+            <br />
+            <form id="OpcionBusqueda" method="post" action="{{url_for('note.vernotaporestado')}}" class="row g-3">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <select name="opcionestado" id="OpcionesBusqueda">
-                    <option value="cancelado-">CANCELADO</option>
-                    <option value="por-cancelar-">POR CANCELAR</option>
-                    <option value="cancelado-visa-">CANCELADO VISA</option>
-                    <option value="cancelado-entregado-">CANCELADO-ENTREGADO</option>
-                    <option value="por-cancelar-entregado-">POR CANCELAR-ENTREGADO</option>
-                    <option value="cancelado-visa-entregado-">CANCELADO VISA-ENTREGADO</option>
-                    <option value="cancelado-por-recoger-">CANCELADO POR RECOGER</option>
-                    <option value="cancelado-visa-por-recoger-">CANCELADO VISA POR RECOGER</option>
-                    <option value="PROFORMA-">PROFORMA</option>
-                    <option value="ANULADO-">ANULADO</option>
-                </select>
-                <button type="submit" class="btn btn-info" >Buscar</button>
+                <div class="col-auto">
+                    <select name="opcionestado" id="OpcionesBusqueda" class="form-select">
+                        <option value="cancelado-">CANCELADO</option>
+                        <option value="por-cancelar-">POR CANCELAR</option>
+                        <option value="cancelado-VISA-">CANCELADO VISA</option>
+                        <option value="cancelado-entregado">CANCELADO-ENTREGADO</option>
+                        <option value="por-cancelar-entregado">POR CANCELAR-ENTREGADO</option>
+                        <option value="cancelado-VISA-entregado">CANCELADO VISA-ENTREGADO</option>
+                        <option value="cancelado-por-recoger">CANCELADO POR RECOGER</option>
+                        <option value="cancelado-VISA-por-recoger">CANCELADO VISA POR RECOGER</option>
+                        <option value="PROFORMA-">PROFORMA</option>
+                        <option value="ANULADO-">ANULADO</option>
+                    </select>
+                </div>
+                <div class="col-auto"><button type="submit" class="btn btn-info" >Buscar</button></div>
             </form>
         </div>    </div>
 </div>
@@ -151,6 +166,7 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <br />
             <form class="form-inline" id="buscarForm" method="POST" action="{{url_for('note.vernotaporDNI')}}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div class="row control-group">

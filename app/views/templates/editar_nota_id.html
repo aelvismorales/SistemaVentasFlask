@@ -8,65 +8,61 @@
 
       <form id="editar_form" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <div class="row control-group">
-          <div class="form-group col-xs-12 floating label-form-group controls">
-            <label for="NombreComprador" class="col-sm2 col-form-label">
-              Nombre Comprador
-            </label>
-            <input
-              type="text"
-              value="{{nota.get_nombre_comprador()}}"
-              id="NombreComprador"
-              name="comprador_name"
-            />
-            <p class="help-block text-danger"></p>
-          </div>
+
+        <div class="mb-3">
+          <label for="NombreComprador" class="form-label">Nombre Comprador</label>
+          <input type="text" value="{{nota.get_nombre_comprador()}}" class="form-control" id="NombreComprador" name="comprador_name">
+          <p class="help-block text-danger"></p>
         </div>
-        <div class="row control-group">
-          <div class="form-group col-xs-12 floating-label-form-group controls">
-            <label for="DireccionComprador" class="col-sm2 col-form-label"
-              >Direccion Comprador</label
-            >
-            <input
+
+        <div class="mb-3">
+          <label for="DireccionComprador" class="form-label">Direccion Comprador</label>
+          <input
               type="text"
+              class="form-control"
               id="DireccionComprador"
               value="{{nota.get_direccion()}}"
               name="direccion_comprador"
             />
-            <p class="help-block text-danger"></p>
-          </div>
+          <p class="help-block text-danger"></p>
         </div>
-        <label for="EstadoNota"> Estado:</label>
-        <input type="text" placeholder="{{nota.get_estado()}}" disabled />
-        <select name="estado" id="EstadoNota">
-          <option value="cancelado">CANCELADO</option>
-          <option value="cancelado-VISA">CANCELADO-VISA</option>
-          <option value="cancelado-BBVA">CANCELADO-BBVA</option>
-          <option value="cancelado-BCP">CANCELADO-BCP</option>
-          <option value="cancelado-YAPE">CANCELADO-YAPE</option>
-          <option value="por-cancelar">POR CANCELAR</option>
-          <option value="PROFORMA">PROFORMA</option>
-          <option value="ANULADO">ANULADO</option>
-        </select>
-        <select name="estado2" id="EstadoNota">
-          <option value="-">----</option>
-          <option value="-entregado">ENTREGADO</option>
-          <option value="-por-recoger">POR RECOGER</option>
-        </select>
-        <div class="row control-group">
-          <div class="form-group col-xs-12 floating label-form-group controls">
-            <label for="FechaCancelacion" class="col-sm2 col-form-label">
-              Fecha Cancelacion:</label
-            >
-            <input
+
+        <div class="input-group mb-3">
+          <label for="EstadoNota" class="input-group-text"><strong>Estado:</strong></label>
+          <input type="text" placeholder="{{nota.get_estado()}}" disabled class="input-group-text"/>
+
+          <select class="form-select" aria-label="Default select example" name="estado" id="EstadoNota">
+            <option selected>------</option>
+            <option value="cancelado">CANCELADO</option>
+            <option value="cancelado-VISA">CANCELADO-VISA</option>
+            <!-- <option value="cancelado-BBVA">CANCELADO-BBVA</option>
+            <option value="cancelado-BCP">CANCELADO-BCP</option> -->
+            <option value="cancelado-YAPE">CANCELADO-YAPE</option>
+            <option value="por-cancelar">POR CANCELAR</option>
+            <option value="PROFORMA">PROFORMA</option>
+            <option value="ANULADO">ANULADO</option>
+          </select>
+
+          <select name="estado2" id="EstadoNota" class="form-select">
+            <option value="-">----</option>
+            <option value="-entregado">ENTREGADO</option>
+            <option value="-por-recoger">POR RECOGER</option>
+          </select>
+
+        </div>
+
+        <div class="mb-3">
+          <label for="FechaCancelacion" class="form-label">Fecha Cancelacion:</label>
+          <input
               type="date"
               value="{{nota.get_fecha_cancela()}}"
               id="FechaCancelacion"
               name="fecha_adicional"
+              class="form-control"
             />
             <p class="help-block text-danger"></p>
-          </div>
         </div>
+
         <div class="row control-group">
           <div class="form-group col-s-24 floating label-form-group controls">
             <label for="Comentario" class="col-sm2 col-form-label">
