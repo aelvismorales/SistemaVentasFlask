@@ -89,7 +89,7 @@
     </form>
 
         <h3>Nota de Pedido</h3>
-        <form id="crear_nota" method="POST" action="{{url_for('note.crear_nota_pedido')}}">
+        <form id="crear_nota" method="POST" action= "{% if editar %} {{url_for('note.editarNotaVentaNoId')}} {% else %} {{url_for('note.crear_nota_pedido')}} {% endif %}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <div class="form-group row">
                 <label for="NombreComprador" class="col-sm2 col-form-label">Nombre del comprador:</label>
@@ -115,6 +115,14 @@
                     <input type="text" class="form-control" id="NumeroComprador" name="telefono_comprador" value="{{session['telefono_comprador']}}" required />
                 </div>
             </div>
+            {% if editar %}
+                <div class="form-group row">
+                    <label for="FechaActualizar" class="col-sm2 col-form-label">Actualizar Fecha:</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" id="FechaActualizar" name="FechaActualizar"  value="{{session['fecha_hoy']}}" required />
+                    </div>
+                </div>
+            {% endif %}
             
             <div class="form-group row">
                 <label for="EstadoNota" class="col-sm2 col-form-label">Estado:</label>
@@ -140,7 +148,7 @@
                 </div>
             </div>
             <br> 
-            <button type="submit" class="btn btn-success btn-sm">Crear Nota Pedido</button>
+            <button type="submit" class="btn btn-success btn-sm">{% if editar %} Actualizar Nota Pedido {% else %} Crear Nota Pedido {% endif %}</button>
         </form>
         <br>
         <a id="btnEmpty"  class="btn btn-secondary btn-sm" href="{{ url_for('note.empty_cart') }}" role="button" style="position:sticky">Vaciar Nota de Pedido</a>
@@ -197,4 +205,16 @@
 
            
     {%endif%}
+    <!-- <script>
+        var date = new Date();
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+
+        if (month < 10) month = "0" + month;
+        if (day < 10) day = "0" + day;
+
+        var today = year + "-" + month + "-" + day;       
+        document.getElementById("FechaActualizar").value = today;
+    </script> -->
 {% endblock %}

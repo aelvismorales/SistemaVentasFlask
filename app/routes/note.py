@@ -53,6 +53,7 @@ def crear_nota_pedido():
 				
 				if nota is not None:
 					db.session.add(nota)
+					db.session.commit()
 					session['numero_nota']=nota.get_id()
 					session['fecha_nota']=nota.get_fecha()
 					session['estado_nota']=estado_nota
@@ -76,11 +77,75 @@ def crear_nota_pedido():
 					if nota is not None:
 						db.session.add(nota)
 						db.session.add(comprador_nuevo)
+						db.session.commit()
 						session['numero_nota']=nota.get_id()
 						session['fecha_nota']=nota.get_fecha()
 						session['estado_nota']=estado_nota
 						succes_message='Se creo la nota de pedido para {} y se registro como nuevo comprador'.format(nombre_comprador)
 						flash(succes_message,category='message')
+	return redirect(url_for('product.buscar_producto'))
+
+@note.route('/editarnotaventa/<string:id>',methods=['GET','POST'])
+def editarnotaventa(id=None):
+	nota=Nota_de_Pedido.query.get(id)
+	session['id_nota']=id
+	if nota is not None:
+		session.modified=True
+		session['nombre_comprador']=nota.get_nombre_comprador()
+		session['direccion_comprador']=nota.get_direccion()
+		session['dni_comprador']=nota.get_dni_nota()
+		session['telefono_comprador']=nota.get_telefono_nota()
+		session['producto']=json.loads(nota.get_nombre_producto())
+		session['editar_activo']=True
+		session['fecha_hoy']=nota.get_fecha_edit()
+
+	return redirect(url_for('product.buscar_producto'))
+
+@note.route('/editarnotaventa/',methods=['GET','POST'])
+def editarNotaVentaNoId():
+	nota=Nota_de_Pedido.query.get(session['id_nota'])
+	nombre_comprador=request.form.get('comprador_name')
+	direccion_comprador=request.form.get('direccion_comprador')
+	dni_comprador=request.form.get('dni_comprador')
+	telefono_comprador=request.form.get('telefono_comprador')
+	estado_nota=request.form.get('estado')
+	estado_nota_2=request.form.get('estado2')
+	total_venta=0
+
+	if 'producto' in session:
+		session.modified=True
+		for key,product in session['producto'].items():
+			total_venta=total_venta+session['producto'][key]['precio_individual']
+
+		session['total_venta']=total_venta.__round__(2)
+		if estado_nota and request.method == 'POST':
+			estado_nota=estado_nota+estado_nota_2
+			datos_producto_json= json.dumps(session['producto'])
+			nota.nombre_comprador=nombre_comprador
+			nota.direccion_comprador=direccion_comprador
+			nota.dni_comprador=dni_comprador
+			nota.telefono_comprador=telefono_comprador
+			nota.nombre_producto=datos_producto_json
+			nota.fecha_creacion=datetime.today()
+			nota.estado=estado_nota
+			
+			# for key,product in session['producto'].items():
+			# 	producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
+			# 	print(producto.stock)
+			# 	producto.stock-=session['producto'][key]['cantidad']
+			session.modified = True
+			session['nombre_comprador']=nombre_comprador
+			session['direccion_comprador']=direccion_comprador
+			session['dni_comprador']=dni_comprador
+			session['telefono_comprador']=telefono_comprador
+			if nota is not None:
+				db.session.add(nota)
+				db.session.commit()
+				session['numero_nota']=nota.get_id()
+				session['fecha_nota']=nota.get_fecha()
+				session['estado_nota']=estado_nota
+				succes_message='Se creo la nota de pedido para {} y se registro como nuevo comprador, ID:{}'.format(nota.get_nombre_comprador(),nota.get_id())
+				flash(succes_message,category='message')
 	return redirect(url_for('product.buscar_producto'))
 
 @note.route('/editarnota/<string:id>',methods=['GET','POST'])
@@ -366,6 +431,9 @@ def empty_cart():
 		session.pop('telefono_comprador',None)
 		session.pop('nombre_comprador',None)
 		session.pop('direccion_comprador',None)
+		session.pop('editar_activo',None)
+		session.pop('id_nota',None)
+		session.pop('fecha_hoy',None)
 		
 		success_message='Se vacio la nota de pedido'
 		flash(success_message,category='message')

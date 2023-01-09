@@ -13,11 +13,16 @@ def beforerequest():
     loge=False
     global produ 
     produ=False
+
+    global editarnota
+    editarnota=False
     
     if 'username' in session:
         loge=True
     if 'producto' in session:
         produ=True
+    if 'editar_activo' in session:
+        editarnota=True
 
 @product.route("/producto",methods=["GET","POST"])
 def crear_producto():
@@ -58,7 +63,7 @@ def buscar_producto():
         else:
             error_message='No se pudo encontrar el producto intente nuevamente'
             flash(error_message,category='error')
-    return render_template('buscar_productos.html',buscar_form=buscar_producto,log=loge,prd=produ)
+    return render_template('buscar_productos.html',buscar_form=buscar_producto,log=loge,prd=produ,editar=editarnota)
 
 @product.route('/editar/<int:id>',methods=['GET','POST'])
 def editar_id(id):
@@ -110,3 +115,4 @@ def add():
 			else:
 				session['producto']=DictProducts
 				return redirect(url_for('product.buscar_producto'))
+

@@ -106,6 +106,8 @@ class Nota_de_Pedido(db.Model):
         return self.id
     def get_fecha(self):
         return self.fecha_creacion.strftime('%d/%m/%Y')
+    def get_fecha_edit(self):
+        return self.fecha_creacion.strftime('%Y-%m-%d')    
     def get_nombre_producto(self):
         return self.nombre_producto
     def get_nombre_comprador(self):

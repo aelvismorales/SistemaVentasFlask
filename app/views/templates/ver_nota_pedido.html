@@ -205,6 +205,7 @@
                         <th scope="col">Imprimir</th>
                         <th scope="col">Editar</th>
                         <th scope="col">Anular</th>
+                        <th scope="col">Editar Datos Venta</th>
                         <th scope="col">Convertir a Nota</th>
                     </thead>
                     <tbody>
@@ -230,11 +231,15 @@
                             <td>
                                 <a class="btn btn-warning" href="{{ url_for('note.anularnota',id=notaped.get_id() )}}">Anular</a>
                             </td>
+                            <td>
+                                <a class="btn btn-info" href="{{ url_for('note.editarnotaventa',id=notaped.get_id() )}}">Editar Productos</a>
+                            </td>
                             {% if notaped.get_estado() == 'PROFORMA-' %}
                             <td>
                                 <a class="btn btn-secondary" href="{{ url_for('note.convertirNota',id=notaped.get_id() )}}">Convertir</a>
                             </td>
                             {% endif %}
+
                         </tr>
                         {% endfor %}
                     </tbody>
