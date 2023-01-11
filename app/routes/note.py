@@ -122,6 +122,7 @@ def editarNotaVentaNoId():
 			estado_nota=estado_nota+estado_nota_2
 			datos_producto_json= json.dumps(session['producto'])
 			nota.nombre_comprador=nombre_comprador
+			nota.total_venta=total_venta
 			nota.direccion_comprador=direccion_comprador
 			nota.dni_comprador=dni_comprador
 			nota.telefono_comprador=telefono_comprador
