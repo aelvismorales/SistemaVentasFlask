@@ -44,16 +44,15 @@ def crear_nota_pedido():
 
 				for key,product in session['producto'].items():
 					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
-					producto.stock-= session['producto'][key]['cantidad']
-				session.modified = True
-				session['nombre_comprador']=nombre_comprador
-				session['direccion_comprador']=direccion_comprador
-				session['dni_comprador']=dni_comprador
-				session['telefono_comprador']=telefono_comprador
-				
+					producto.stock-= session['producto'][key]['cantidad']	
 				if nota is not None:
 					db.session.add(nota)
 					db.session.commit()
+					session.modified = True
+					session['nombre_comprador']=nombre_comprador
+					session['direccion_comprador']=direccion_comprador
+					session['dni_comprador']=dni_comprador
+					session['telefono_comprador']=telefono_comprador
 					session['numero_nota']=nota.get_id()
 					session['fecha_nota']=nota.get_fecha()
 					session['estado_nota']=estado_nota
@@ -69,15 +68,17 @@ def crear_nota_pedido():
 					for key,product in session['producto'].items():
 						producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
 						producto.stock-=session['producto'][key]['cantidad']
-					session.modified = True
-					session['nombre_comprador']=nombre_comprador
-					session['direccion_comprador']=direccion_comprador
-					session['dni_comprador']=dni_comprador
-					session['telefono_comprador']=telefono_comprador
+					
 					if nota is not None:
 						db.session.add(nota)
+						db.session.commit()
 						db.session.add(comprador_nuevo)
 						db.session.commit()
+						session.modified = True
+						session['nombre_comprador']=nombre_comprador
+						session['direccion_comprador']=direccion_comprador
+						session['dni_comprador']=dni_comprador
+						session['telefono_comprador']=telefono_comprador
 						session['numero_nota']=nota.get_id()
 						session['fecha_nota']=nota.get_fecha()
 						session['estado_nota']=estado_nota
@@ -103,7 +104,8 @@ def editarnotaventa(id=None):
 
 @note.route('/editarnotaventa/',methods=['GET','POST'])
 def editarNotaVentaNoId():
-	nota=Nota_de_Pedido.query.get(session['id_nota'])
+	#Check for requirements, if they want to generate a new one or only edit.
+	# nota=Nota_de_Pedido.query.get(session['id_nota'])
 	nombre_comprador=request.form.get('comprador_name')
 	direccion_comprador=request.form.get('direccion_comprador')
 	dni_comprador=request.form.get('dni_comprador')
@@ -121,33 +123,58 @@ def editarNotaVentaNoId():
 		if estado_nota and request.method == 'POST':
 			estado_nota=estado_nota+estado_nota_2
 			datos_producto_json= json.dumps(session['producto'])
-			nota.nombre_comprador=nombre_comprador
-			nota.total_venta=total_venta
-			nota.direccion_comprador=direccion_comprador
-			nota.dni_comprador=dni_comprador
-			nota.telefono_comprador=telefono_comprador
-			nota.nombre_producto=datos_producto_json
-			nota.fecha_creacion=datetime.today()
-			nota.estado=estado_nota
+			existe_comprador=Comprador.query.filter_by(dni=dni_comprador).first()
+			if existe_comprador:
+				nota =Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,comprador_id=existe_comprador)
+			else:
+				nota =Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador)
+			# nota.nombre_comprador=nombre_comprador
+			# nota.total_venta=total_venta
+			# nota.direccion_comprador=direccion_comprador
+			# nota.dni_comprador=dni_comprador
+			# nota.telefono_comprador=telefono_comprador
+			# nota.nombre_producto=datos_producto_json
+			# nota.fecha_creacion=datetime.today()
+			# nota.estado=estado_nota
 			
 			# for key,product in session['producto'].items():
 			# 	producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
 			# 	print(producto.stock)
 			# 	producto.stock-=session['producto'][key]['cantidad']
-			session.modified = True
-			session['nombre_comprador']=nombre_comprador
-			session['direccion_comprador']=direccion_comprador
-			session['dni_comprador']=dni_comprador
-			session['telefono_comprador']=telefono_comprador
 			if nota is not None:
 				db.session.add(nota)
 				db.session.commit()
+				session.modified = True
+				session['nombre_comprador']=nombre_comprador
+				session['direccion_comprador']=direccion_comprador
+				session['dni_comprador']=dni_comprador
+				session['telefono_comprador']=telefono_comprador
 				session['numero_nota']=nota.get_id()
 				session['fecha_nota']=nota.get_fecha()
 				session['estado_nota']=estado_nota
 				succes_message='Se creo la nota de pedido para {} y se registro como nuevo comprador, ID:{}'.format(nota.get_nombre_comprador(),nota.get_id())
 				flash(succes_message,category='message')
 	return redirect(url_for('product.buscar_producto'))
+	
+@note.route('/convertirNota/<string:id>',methods=['GET','POST'])
+def convertirNota(id):
+	#Check for requirements if they want to create a new one.
+	nota_pedido=Nota_de_Pedido.query.get(id)
+	if nota_pedido is not None:
+		# existe_comprador=Comprador.query.filter_by(dni=nota_pedido.get_dni_nota()).first()
+		if nota_pedido.get_comprador_id():
+			nota =Nota_de_Pedido(nota_pedido.get_nombre_producto(),nota_pedido.get_total_venta(),nota_pedido.get_nombre_comprador(),nota_pedido.get_direccion(),nota_pedido.get_estado(),nota_pedido.get_telefono_nota(),nota_pedido.get_dni_nota(),comprador_id=nota_pedido.get_comprador_id())
+		else:
+			nota =Nota_de_Pedido(nota_pedido.get_nombre_producto(),nota_pedido.get_total_venta(),nota_pedido.get_nombre_comprador(),nota_pedido.get_direccion(),nota_pedido.get_estado(),nota_pedido.get_telefono_nota(),nota_pedido.get_dni_nota())
+		nota.estado='cancelado-'
+		db.session.add(nota)
+		db.session.commit()
+		# db.session.delete(nota_pedido)
+		succes_message='Se convirtio la Proforma a una Nota de Pedido con ID: {}'.format(nota.id)
+		flash(succes_message,'message')
+	else:
+		flash('No se pudo convertir la Proforma en una Nota','error')
+	return redirect(url_for('note.vernotapedido'))
 
 @note.route('/editarnota/<string:id>',methods=['GET','POST'])
 def editarnota(id):
@@ -314,19 +341,15 @@ def vernotaID():
 def vernotapedido_id():
 
 	id=request.form['notaid']
-	ver=False
-	if id and request.method=='POST':
-		
-		nota=Nota_de_Pedido.query.get(id)
-		ver=True
-		notas=json.loads(nota.get_nombre_producto())
-		if nota.notasdepedidos is None:
-			telefono_comprador=nota.get_telefono_nota()
-			dni_comprador=nota.get_dni_nota()
-		else:
-			telefono_comprador=nota.notasdepedidos.get_telefono()
-			dni_comprador=nota.notasdepedidos.get_dni()
-	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,log=loge,ver=ver,telefono=telefono_comprador,dni=dni_comprador)})
+	nota=Nota_de_Pedido.query.get(id)
+	notas=json.loads(nota.get_nombre_producto())
+	if nota.notasdepedidos is None:
+		telefono_comprador=nota.get_telefono_nota()
+		dni_comprador=nota.get_dni_nota()
+	else:
+		telefono_comprador=nota.notasdepedidos.get_telefono()
+		dni_comprador=nota.notasdepedidos.get_dni()
+	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,telefono=telefono_comprador,dni=dni_comprador)})
 
 @note.route('/imprimirresumen/<string:fecha>/<string:fecha_final>',methods=['GET','POST'])
 def imprimirresumen(fecha,fecha_final):
@@ -350,20 +373,6 @@ def imprimirresumen(fecha,fecha_final):
 		flash(error_message,category='error')
 	return render_template('resumen_por_imprimir.html',td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
 
-
-@note.route('/convertirNota/<string:id>',methods=['GET','POST'])
-def convertirNota(id):
-	nota_pedido=Nota_de_Pedido.query.get(id)
-	if nota_pedido is not None:
-		nota_pedido.fecha_creacion=datetime.today()
-		nota_pedido.estado='cancelado-'
-		db.session.add(nota_pedido)
-		db.session.commit()
-		succes_message='Se convirtio la nota de pedido {} a Nota de Pedido'.format(nota_pedido.id)
-		flash(succes_message,'message')
-	else:
-		flash('No se pudo convertir la Proforma en una Nota','error')
-	return redirect(url_for('note.vernotapedido'))
 
 #Actualizar Cantidad de Productos en la nota de pedido
 @note.route('/updateproduct',methods=['POST'])
