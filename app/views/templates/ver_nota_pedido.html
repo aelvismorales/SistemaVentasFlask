@@ -150,6 +150,7 @@
                         <option value="cancelado-por-recoger">CANCELADO POR RECOGER</option>
                         <option value="cancelado-entregado">CANCELADO-ENTREGADO</option>
                         <option value="por-cancelar-">POR CANCELAR</option>
+                        <option value="por-cancelar-por-recoger">POR CANCELAR POR RECOGER</option>
                         <option value="por-cancelar-entregado">POR CANCELAR-ENTREGADO</option>
                         <option value="cancelado-VISA-">CANCELADO VISA</option>
                         <option value="cancelado-VISA-entregado">CANCELADO VISA-ENTREGADO</option>
@@ -243,11 +244,11 @@
                             <td>
                                 <a class="btn btn-info" href="{{ url_for('note.editarnotaventa',id=notaped.get_id() )}}">Editar Productos</a>
                             </td>
-                            {% if notaped.get_estado() == 'PROFORMA-' %}
+                            <!-- {% if notaped.get_estado() == 'PROFORMA-' %}
                             <td>
                                 <a class="btn btn-secondary" href="{{ url_for('note.convertirNota',id=notaped.get_id() )}}">Convertir</a>
                             </td>
-                            {% endif %}
+                            {% endif %} -->
 
                         </tr>
                         {% endfor %}
@@ -259,6 +260,10 @@
             {% endif %}
             <p><strong>Total Venta del Dia:</strong> {{td}}</p>
             <p><strong>Total Venta del Dia por Visa:</strong> {{tdv}}</p>
+            <p><strong>Total Venta del Dia por BCP:</strong> {{tdbcp}}</p>
+            <p><strong>Total Venta del Dia por BBVA:</strong> {{tdbbva}}</p>
+            <p><strong>Total Venta del Dia por YAPE:</strong> {{tdy}}</p>
+
             <p><strong>Total Venta del Dia por Cancelar:</strong> {{tdpc}}</p>
         </div>
     </div>

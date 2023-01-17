@@ -269,6 +269,9 @@ def vernotaporfecha():
 	fecha_final=request.form['fecha_final']
 	total_dia=0
 	total_dia_visa=0
+	total_dia_bcp=0
+	total_dia_bbva=0
+	total_dia_yape=0
 	total_dia_por_cancelar=0
 	if fecha_inicio and fecha_final and request.method=='POST':
 		
@@ -276,13 +279,20 @@ def vernotaporfecha():
 		if nota_pedido is not None:
 
 			for note in nota_pedido:
-				if note.get_estado() in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
+				if note.get_estado() in ['cancelado-entregado','cancelado-por-recoger','cancelado-']:
 					total_dia+=note.get_total_venta()
-				elif note.get_estado() in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
+				elif note.get_estado() in ['cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
 					total_dia_visa+=note.get_total_venta()
 				elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
 					total_dia_por_cancelar+=note.get_total_venta()
-			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha_inicio,fechita_final=fecha_final,bool_imprimir=True)
+				elif note.get_estado() in ['cancelado-BCP-','cancelado-BCP-por-recoger','cancelado-BCP-entregado']:
+					total_dia_bcp+=note.get_total_venta()
+				elif note.get_estado() in ['cancelado-BBVA-','cancelado-BBVA-por-recoger','cancelado-BBVA-entregado']:
+					total_dia_bbva+=note.get_total_venta()
+				elif note.get_estado() in ['cancelado-YAPE-','cancelado-YAPE-por-recoger','cancelado-YAPE-entregado']:
+					total_dia_yape+=note.get_total_venta()
+
+			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha_inicio,fechita_final=fecha_final,bool_imprimir=True)
 		else :
 			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
 			flash(error_message,category='error')
@@ -357,21 +367,31 @@ def imprimirresumen(fecha,fecha_final):
 	fecha_final=datetime.strptime(fecha_final, '%Y-%m-%d').date()
 	total_dia=0
 	total_dia_visa=0
+	total_dia_bcp=0
+	total_dia_bbva=0
+	total_dia_yape=0
 	total_dia_por_cancelar=0
 	nota_pedido=Nota_de_Pedido.query.order_by(asc(Nota_de_Pedido.id)).filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
 	if nota_pedido is not None:
 		for note in nota_pedido:
-			if note.get_estado() in ['cancelado','cancelado-entregado','cancelado-por-recoger','cancelado-']:
+			if note.get_estado() in ['cancelado-','cancelado-por-recoger','cancelado-entregado']:
 				total_dia+=note.get_total_venta()
-			elif note.get_estado() in ['cancelado-VISA','cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
+			elif note.get_estado() in ['cancelado-VISA-','cancelado-VISA-entregado','cancelado-VISA-por-recoger']:
 				total_dia_visa+=note.get_total_venta()
 			elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
 				total_dia_por_cancelar+=note.get_total_venta()
-		return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
+			elif note.get_estado() in ['cancelado-BCP-','cancelado-BCP-por-recoger','cancelado-BCP-entregado']:
+				total_dia_bcp+=note.get_total_venta()
+			elif note.get_estado() in ['cancelado-BBVA-','cancelado-BBVA-por-recoger','cancelado-BBVA-entregado']:
+				total_dia_bbva+=note.get_total_venta()
+			elif note.get_estado() in ['cancelado-YAPE-','cancelado-YAPE-por-recoger','cancelado-YAPE-entregado']:
+				total_dia_yape+=note.get_total_venta()
+
+		return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha)
 	else:
 		error_message='No se pudo crear un resumen por que no existen notas de pedido'
 		flash(error_message,category='error')
-	return render_template('resumen_por_imprimir.html',td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,fechita=fecha)
+	return render_template('resumen_por_imprimir.html',td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha)
 
 
 #Actualizar Cantidad de Productos en la nota de pedido
