@@ -50,6 +50,12 @@
           </select>
 
         </div>
+        {% if nota.get_deuda() %} 
+        <div class="mb-3">
+          <label for="Deuda" class="form-label">Deuda:</label>
+          <input type="text" value="{{ nota.get_deuda() }}" name="deuda">
+        </div>
+        {% endif %}
 
         <div class="mb-3">
           <label for="FechaCancelacion" class="form-label">Fecha Cancelacion:</label>

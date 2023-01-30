@@ -94,6 +94,8 @@ class Nota_de_Pedido(db.Model):
     nombre_comprador=db.Column(db.String(60))
     nombre_producto=db.Column(db.String(15000))
     total_venta=db.Column(db.Float)
+    acuenta=db.Column(db.Float)
+    deuda=db.Column(db.Float)
     direccion_comprador=db.Column(db.String(200))
     estado=db.Column(db.String(50))
     fecha_cancelacion=db.Column(db.DateTime)
@@ -136,8 +138,14 @@ class Nota_de_Pedido(db.Model):
 
     def get_dni_nota(self):
         return self.dni_comprador
+    
+    def get_deuda(self):
+        return self.deuda
+    
+    def get_acuenta(self):
+        return self.acuenta
 
-    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,fecha_creacion=datetime.today(),fecha_cancelacion=None,comentario=None,comprador_id=None):
+    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_creacion=datetime.today(),fecha_cancelacion=None,comentario="",comprador_id=None):
 
         self.nombre_producto=nombre_producto
         self.fecha_creacion=fecha_creacion
@@ -150,6 +158,8 @@ class Nota_de_Pedido(db.Model):
         self.comentario=comentario
         self.numero_comprador=numero_comprador
         self.dni_comprador=dni_comprador
+        self.deuda=deuda
+        self.acuenta=acuenta
 
         
 

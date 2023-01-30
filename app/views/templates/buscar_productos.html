@@ -195,8 +195,18 @@
                                     </tr>
                         {% endfor %}
                         <tr>
-                            <td colspan="4" align="right"> Total:</td>
+                            <td colspan="4" align="right"> Total: </td>
                             <td> <strong>{{session['total_venta']}}</strong></td>
+                            <td>
+                                <form method="post" action="{{url_for('note.updatedebt')}}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                                    <input type="text" class="debt" name="debt" placeholder="0" value="{{session['acuenta']}}" size="2"/>
+                                    <input type="submit" value="A Cuenta" class="btnUpdateDebt"/>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr>
+                            
                         </tr>
                 </tbody>
             </table>

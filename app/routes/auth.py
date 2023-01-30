@@ -19,12 +19,13 @@ def crear():
     crear_usuario=CrearCuenta()
     if request.method=="POST" and crear_usuario.validate():
         user=Usuario.query.filter_by(nombre_usuario=crear_usuario.username.data).first()
-        if user is None:
+        if user is not None:
             mensaje="El usuario {} ya existe.".format(crear_usuario.username.data)
             flash(mensaje,category='message')
         else:
             usuario=Usuario(crear_usuario.username.data,crear_usuario.password.data,crear_usuario.rol.data)
             db.session.add(usuario)
+            db.session.commit()
             mensaje='Felicidades por registrarte {}'.format(crear_usuario.username.data)
             flash(mensaje,category="message")
             return redirect(url_for("auth.login"))

@@ -211,6 +211,7 @@
                         <th scope="col">Estado </th>
                         <th scope="col">Fecha Cancelacion </th>
                         <th scope="col">Comentario</th>
+                        <th scope="col">Deuda</th>
                         <th scope="col">Ver</th>
                         <th scope="col">Imprimir</th>
                         <th scope="col">Editar</th>
@@ -220,37 +221,73 @@
                     </thead>
                     <tbody>
                         {% for notaped in nota_pedido %}
-                        <tr>
-                            <td> {{notaped.get_id()}}</td>
-                            <td> {{notaped.get_fecha()}}</td>
-                            <td> {{notaped.get_nombre_comprador()}}</td>
-                            <td> {{notaped.get_total_venta()}}</td>
-                            <td>{{notaped.get_estado()}}</td>
-                            <td>{{notaped.get_fecha_cancelacion()}}</td>
-                            <td>{{notaped.get_comentario()}}</td>
-                            <td>
-                                <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
-                                <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
-                            </td>
-                            <td>
-                                <a class="btn btn-primary" href="{{ url_for('note.imprimire',id=notaped.get_id() ) }}" target="_blank" >Imprimir</a>
-                            </td>
-                            <td>
-                                <a class="btn btn-info" href="{{ url_for('note.editarnota',id=notaped.get_id() ) }}" target="_blank" >Editar</a>
-                            </td>
-                            <td>
-                                <a class="btn btn-warning" href="{{ url_for('note.anularnota',id=notaped.get_id() )}}">Anular</a>
-                            </td>
-                            <td>
-                                <a class="btn btn-info" href="{{ url_for('note.editarnotaventa',id=notaped.get_id() )}}">Editar Productos</a>
-                            </td>
-                            <!-- {% if notaped.get_estado() == 'PROFORMA-' %}
-                            <td>
-                                <a class="btn btn-secondary" href="{{ url_for('note.convertirNota',id=notaped.get_id() )}}">Convertir</a>
-                            </td>
-                            {% endif %} -->
+                            {% if notaped.get_deuda()>0.0 %}  
+                                <tr style="background-color: #F5F03A;">
+                                    <td> {{notaped.get_id()}}</td>
+                                    <td> {{notaped.get_fecha()}}</td>
+                                    <td> {{notaped.get_nombre_comprador()}}</td>
+                                    <td> {{notaped.get_total_venta()}}</td>
+                                    <td> {{notaped.get_estado()}}</td>
+                                    <td> {{notaped.get_fecha_cancelacion()}}</td>
+                                    <td> {{notaped.get_comentario()}}</td>
+                                    <td> {{notaped.get_deuda()}}</td>
+                                    <td>
+                                        <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
+                                        <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{{ url_for('note.imprimire',id=notaped.get_id() ) }}" target="_blank" >Imprimir</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info" href="{{ url_for('note.editarnota',id=notaped.get_id() ) }}" target="_blank" >Editar</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning" href="{{ url_for('note.anularnota',id=notaped.get_id() )}}">Anular</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info" href="{{ url_for('note.editarnotaventa',id=notaped.get_id() )}}">Editar Productos</a>
+                                    </td>
+                                    <!-- {% if notaped.get_estado() == 'PROFORMA-' %}
+                                    <td>
+                                        <a class="btn btn-secondary" href="{{ url_for('note.convertirNota',id=notaped.get_id() )}}">Convertir</a>
+                                    </td>
+                                    {% endif %} -->
 
-                        </tr>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td> {{notaped.get_id()}}</td>
+                                    <td> {{notaped.get_fecha()}}</td>
+                                    <td> {{notaped.get_nombre_comprador()}}</td>
+                                    <td> {{notaped.get_total_venta()}}</td>
+                                    <td> {{notaped.get_estado()}}</td>
+                                    <td> {{notaped.get_fecha_cancelacion()}}</td>
+                                    <td> {{notaped.get_comentario()}}</td>
+                                    <td></td>
+                                    <td>
+                                        <input type="hidden"  id='token' name="csrf_token" value="{{ csrf_token() }}" />
+                                        <input type="submit" data-id="{{notaped.get_id()}}" value="Ver" class="btnSeebyId"/>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-primary" href="{{ url_for('note.imprimire',id=notaped.get_id() ) }}" target="_blank" >Imprimir</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info" href="{{ url_for('note.editarnota',id=notaped.get_id() ) }}" target="_blank" >Editar</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning" href="{{ url_for('note.anularnota',id=notaped.get_id() )}}">Anular</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info" href="{{ url_for('note.editarnotaventa',id=notaped.get_id() )}}">Editar Productos</a>
+                                    </td>
+                                    <!-- {% if notaped.get_estado() == 'PROFORMA-' %}
+                                    <td>
+                                        <a class="btn btn-secondary" href="{{ url_for('note.convertirNota',id=notaped.get_id() )}}">Convertir</a>
+                                    </td>
+                                    {% endif %} -->
+
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>

@@ -17,6 +17,7 @@
                 <th scope="col" style="font-size:80%;">Fecha</th>
                 <th scope="col" style="font-size:80%;">Nombre</th>
                 <th scope="col" style="font-size:80%;">Total</th>
+                <th scope="col" style="font-size:80%;">A cuenta</th>
                 <th scope="col" style="font-size:80%;">Estado</th>
 
                 </thead>
@@ -27,14 +28,26 @@
                             <td style="font-size:80%;"> {{notaped.get_fecha()}}</td>
                             <td style="font-size:80%;">{{notaped.get_nombre_comprador()}}</td>
                             <td style="font-size:80%;">{{notaped.get_total_venta()}}</td>
+                            <td style="font-size:80%;">{{notaped.get_acuenta()}}</td>
+                            <!--{% if notaped.get_acuenta() >0 %} 
+                                <td style="font-size:80%;">{{notaped.get_acuenta()}}</td>
+                            {% else %} 
+                                <td style="font-size:80%;">{{notaped.get_total_venta()}}</td>
+                            {% endif %}-->
+                            
                             <td style="font-size:80%;">{{notaped.get_estado()}}</td>
+                            <td style="font-size:80%;">{{notaped.get_comentario()}}</td>
                         </tr> 
                         {% endfor %}                  
 
                 </tbody>
             </table>
-                    <p style="font-size:80%;"><strong>Total Venta del Dia - (CANCELADO):</strong> {{td}}</p>
-                    <p style="font-size:80%;"><strong>Total Venta del Dia por Visa - (CANCELADO):</strong> {{tdv}}</p>
-                    <p style="font-size:80%;"><strong>Total Venta del Dia por -(CANCELAR):</strong> {{tdpc}}</p>
+            <p><strong>Total Venta del Dia:</strong> {{td}}</p>
+            <p><strong>Total Venta del Dia por Visa:</strong> {{tdv}}</p>
+            <p><strong>Total Venta del Dia por BCP:</strong> {{tdbcp}}</p>
+            <p><strong>Total Venta del Dia por BBVA:</strong> {{tdbbva}}</p>
+            <p><strong>Total Venta del Dia por YAPE:</strong> {{tdy}}</p>
+
+            <p><strong>Total Venta del Dia por Cancelar:</strong> {{tdpc}}</p>
     </body>
 </html>

@@ -57,7 +57,8 @@ def eliminarproducto(id):
 def buscar_producto():
     buscar_producto=BuscarProducto()
     if request.method=='POST' and buscar_producto.validate():
-        productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data+'%')).all()
+
+        productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data.upper()+'%')).all()
         if productos is not None:
            return render_template('buscar_productos.html',buscar_form=buscar_producto,productos=productos,log=loge)
         else:

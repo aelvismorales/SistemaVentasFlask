@@ -12,7 +12,7 @@ def llenarproductos():
 		productos=Producto(prd['nombre_producto'][i],prd['precio_costo_producto'][i],prd['precio_venta_producto'][i],prd['stock'][i])
 		db.session.add(productos)
 		db.session.commit()
-	return redirect(url_for('buscar_producto'))
+	return redirect(url_for('product.buscar_producto'))
 
 @database.route('/llenarnotas')
 def llenarnotas():
@@ -21,7 +21,7 @@ def llenarnotas():
 		notas=Nota_de_Pedido(prd['nombre_producto'][i],prd['total_venta'][i],prd['nombre_comprador'][i],prd['direccion_comprador'][i],prd['estado'][i],prd['fecha_creacion'][i])
 		db.session.add(notas)
 		db.session.commit()
-	return redirect(url_for('buscar_producto'))
+	return redirect(url_for('product.buscar_producto'))
 
 @database.route('/llenarcompradores')
 def llenarcompradores():
@@ -30,7 +30,7 @@ def llenarcompradores():
 		compradores=Comprador(prd['nombre_comprador'][i],prd['numero_telefono_comprador'][i],prd['direccion_comprador'][i],prd['dni'][i])
 		db.session.add(compradores)
 		db.session.commit()
-	return redirect(url_for('buscar_producto'))
+	return redirect(url_for('product.buscar_producto'))
 
 @database.route('/llenarusuarios')
 def llenarusuarios():
@@ -39,7 +39,7 @@ def llenarusuarios():
 		usuarios=Usuario(prd['nombre_usuario'][i],prd['contrasena_usuario'][i],prd['rol_usuario'][i])
 		db.session.add(usuarios)
 		db.session.commit()
-	return redirect(url_for('buscar_producto'))
+	return redirect(url_for('product.buscar_producto'))
 
 
 @database.route('/downloadtables/<string:name>')
@@ -76,3 +76,13 @@ def downloadtables(name):
         download_name='{}.csv'.format(name),
         as_attachment=True
     )
+
+@database.route("/actualizarnota")
+def actualizarnota():
+	notas=Nota_de_Pedido.query.all()
+	for nota in notas:
+		nota.deuda=0.0
+		nota.acuenta=0.0
+		db.session.add(nota)
+		db.session.commit()
+	return redirect(url_for('product.buscar_producto'))

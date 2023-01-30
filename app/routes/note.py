@@ -40,11 +40,14 @@ def crear_nota_pedido():
 			if existe_comprador is not None:
 				datos_producto_json= json.dumps(session['producto'])
 
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,comprador_id=existe_comprador)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'],comprador_id=existe_comprador)
 
 				for key,product in session['producto'].items():
 					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
-					producto.stock-= session['producto'][key]['cantidad']	
+					producto.stock-= session['producto'][key]['cantidad']
+				
+				if session["acuenta"] > 0:
+					nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])	
 				if nota is not None:
 					db.session.add(nota)
 					db.session.commit()
@@ -64,11 +67,12 @@ def crear_nota_pedido():
 			else:
 					datos_producto_json= json.dumps(session['producto'])
 					comprador_nuevo=Comprador(nombre_comprador,telefono_comprador,direccion_comprador,dni_comprador)
-					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador)
+					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'])
 					for key,product in session['producto'].items():
 						producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
 						producto.stock-=session['producto'][key]['cantidad']
-					
+					if session["acuenta"] > 0:
+						nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
 					if nota is not None:
 						db.session.add(nota)
 						db.session.commit()
@@ -184,12 +188,21 @@ def editarnota(id):
 	estado_nota=request.form.get('estado')
 	estado_nota_2=request.form.get('estado2')
 	fecha_adicional=request.form.get('fecha_adicional')
+	deuda_actual=request.form.get('deuda')
 	comentario=request.form.get('comentario')
 
 	if nota and nombre_comprador and direccion_comprador and estado_nota and request.method=='POST':
 		nota.nombre_comprador=nombre_comprador
 		nota.direccion_comprador=direccion_comprador
 		nota.estado=estado_nota+estado_nota_2
+		if deuda_actual>0:
+			nota.acuenta=deuda_actual
+			nota.deuda=deuda_actual
+		else:
+			nota.acuenta=nota.get_deuda()
+			nota.deuda=deuda_actual
+		
+		nota.fecha_creacion=fecha_adicional
 		nota.fecha_cancelacion=fecha_adicional
 		nota.comentario=comentario	
 		db.session.add(nota)
@@ -279,18 +292,37 @@ def vernotaporfecha():
 		if nota_pedido is not None:
 
 			for note in nota_pedido:
-				if note.get_estado() in ['cancelado-entregado','cancelado-por-recoger','cancelado-']:
-					total_dia+=note.get_total_venta()
-				elif note.get_estado() in ['cancelado-VISA-entregado','cancelado-VISA-por-recoger','cancelado-VISA-']:
-					total_dia_visa+=note.get_total_venta()
+				if note.get_estado() in ['cancelado-','cancelado-por-recoger','cancelado-entregado']:
+					if note.get_acuenta()>0:
+						total_dia+=note.get_acuenta()
+					else:
+						total_dia+=note.get_total_venta()
+				elif note.get_estado() in ['cancelado-VISA-','cancelado-VISA-entregado','cancelado-VISA-por-recoger']:
+					if note.get_acuenta()>0:
+						total_dia_visa+=note.get_acuenta()
+					else:
+						total_dia_visa+=note.get_total_venta()
+
 				elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
-					total_dia_por_cancelar+=note.get_total_venta()
+					if note.get_acuenta()>0:
+						total_dia_por_cancelar+=note.get_acuenta()
+					else:
+						total_dia_por_cancelar+=note.get_total_venta()
 				elif note.get_estado() in ['cancelado-BCP-','cancelado-BCP-por-recoger','cancelado-BCP-entregado']:
-					total_dia_bcp+=note.get_total_venta()
+					if note.get_acuenta()>0:
+						total_dia_bcp+=note.get_acuenta()
+					else:
+						total_dia_bcp+=note.get_total_venta()
 				elif note.get_estado() in ['cancelado-BBVA-','cancelado-BBVA-por-recoger','cancelado-BBVA-entregado']:
-					total_dia_bbva+=note.get_total_venta()
+					if note.get_acuenta()>0:
+						total_dia_bbva+=note.get_acuenta()
+					else:
+						total_dia_bbva+=note.get_total_venta()
 				elif note.get_estado() in ['cancelado-YAPE-','cancelado-YAPE-por-recoger','cancelado-YAPE-entregado']:
-					total_dia_yape+=note.get_total_venta()
+					if note.get_acuenta()>0:
+						total_dia_yape+=note.get_acuenta()
+					else:
+						total_dia_yape+=note.get_total_venta()
 
 			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha_inicio,fechita_final=fecha_final,bool_imprimir=True)
 		else :
@@ -375,17 +407,36 @@ def imprimirresumen(fecha,fecha_final):
 	if nota_pedido is not None:
 		for note in nota_pedido:
 			if note.get_estado() in ['cancelado-','cancelado-por-recoger','cancelado-entregado']:
-				total_dia+=note.get_total_venta()
+				if note.get_acuenta()>0:
+					total_dia+=note.get_acuenta()
+				else:
+					total_dia+=note.get_total_venta()
 			elif note.get_estado() in ['cancelado-VISA-','cancelado-VISA-entregado','cancelado-VISA-por-recoger']:
-				total_dia_visa+=note.get_total_venta()
+				if note.get_acuenta()>0:
+					total_dia_visa+=note.get_acuenta()
+				else:
+					total_dia_visa+=note.get_total_venta()
+
 			elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
-				total_dia_por_cancelar+=note.get_total_venta()
+				if note.get_acuenta()>0:
+					total_dia_por_cancelar+=note.get_acuenta()
+				else:
+					total_dia_por_cancelar+=note.get_total_venta()
 			elif note.get_estado() in ['cancelado-BCP-','cancelado-BCP-por-recoger','cancelado-BCP-entregado']:
-				total_dia_bcp+=note.get_total_venta()
+				if note.get_acuenta()>0:
+					total_dia_bcp+=note.get_acuenta()
+				else:
+					total_dia_bcp+=note.get_total_venta()
 			elif note.get_estado() in ['cancelado-BBVA-','cancelado-BBVA-por-recoger','cancelado-BBVA-entregado']:
-				total_dia_bbva+=note.get_total_venta()
+				if note.get_acuenta()>0:
+					total_dia_bbva+=note.get_acuenta()
+				else:
+					total_dia_bbva+=note.get_total_venta()
 			elif note.get_estado() in ['cancelado-YAPE-','cancelado-YAPE-por-recoger','cancelado-YAPE-entregado']:
-				total_dia_yape+=note.get_total_venta()
+				if note.get_acuenta()>0:
+					total_dia_yape+=note.get_acuenta()
+				else:
+					total_dia_yape+=note.get_total_venta()
 
 		return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha)
 	else:
@@ -427,6 +478,18 @@ def updateprice():
 		return redirect(url_for('product.buscar_producto'))
 	return redirect(url_for('product.buscar_producto'))
 
+@note.route('/updatedebt',methods=['POST'])
+def updatedebt():
+	debt=float(request.form['debt'])
+	if request.method=='POST':
+		session.modified=True
+		if debt>0 and debt<session['total_venta']:
+			session['acuenta']=debt
+		else:
+			flash("No se puede actualizar el acuenta por que es mayor que el monto total.","error")
+		return redirect(url_for('product.buscar_producto'))
+
+	return redirect(url_for('product.buscar_producto'))
 #Eliminar un producto de la nota de pedido
 @note.route('/delete',methods=['POST'])
 def deleteproduct():
@@ -464,6 +527,7 @@ def empty_cart():
 		session.pop('editar_activo',None)
 		session.pop('id_nota',None)
 		session.pop('fecha_hoy',None)
+		session.pop('acuenta',None)
 		
 		success_message='Se vacio la nota de pedido'
 		flash(success_message,category='message')

@@ -23,7 +23,7 @@ def create_app(config_name):
     from .routes.buyer import buyer
     from .routes.note import note
     from .routes.product import product
-    app.register_blueprint(database, url_prefix="/database")
+    app.register_blueprint(database, url_prefix="/")
     app.register_blueprint(auth, url_prefix="/")
     app.register_blueprint(buyer, url_prefix="/")
     app.register_blueprint(note, url_prefix="/")
