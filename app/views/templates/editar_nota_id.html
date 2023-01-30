@@ -53,7 +53,7 @@
         {% if nota.get_deuda() %} 
         <div class="mb-3">
           <label for="Deuda" class="form-label">Deuda:</label>
-          <input type="number" value="{{ nota.get_deuda() }}" name="deuda">
+          <input type="text" value="{{ nota.get_deuda() }}" name="deuda">
         </div>
         {% endif %}
 
