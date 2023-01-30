@@ -192,7 +192,7 @@ def editarnota(id):
 	estado_nota=request.form.get('estado')
 	estado_nota_2=request.form.get('estado2')
 	fecha_adicional=request.form.get('fecha_adicional')
-	deuda_actual=request.form.get('deuda')
+	deuda_actual=float(request.form.get('deuda'))
 	comentario=request.form.get('comentario')
 
 	if nota and nombre_comprador and direccion_comprador and estado_nota and request.method=='POST':
