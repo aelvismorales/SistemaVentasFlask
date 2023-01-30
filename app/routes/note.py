@@ -39,15 +39,15 @@ def crear_nota_pedido():
 			estado_nota=estado_nota+estado_nota_2
 			if existe_comprador is not None:
 				datos_producto_json= json.dumps(session['producto'])
-
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'],comprador_id=existe_comprador)
-
+				if session['acuenta']>0:
+					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'],comprador_id=existe_comprador)
+					nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
+				else:
+					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,comprador_id=existe_comprador)
+				
 				for key,product in session['producto'].items():
 					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
-					producto.stock-= session['producto'][key]['cantidad']
-				
-				if session["acuenta"] > 0:
-					nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])	
+					producto.stock-= session['producto'][key]['cantidad']	
 				if nota is not None:
 					db.session.add(nota)
 					db.session.commit()
@@ -67,12 +67,16 @@ def crear_nota_pedido():
 			else:
 					datos_producto_json= json.dumps(session['producto'])
 					comprador_nuevo=Comprador(nombre_comprador,telefono_comprador,direccion_comprador,dni_comprador)
-					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'])
+					if session["acuenta"] > 0:
+						nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'])
+						nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
+					else:
+						nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador)
+					
 					for key,product in session['producto'].items():
 						producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
 						producto.stock-=session['producto'][key]['cantidad']
-					if session["acuenta"] > 0:
-						nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
+
 					if nota is not None:
 						db.session.add(nota)
 						db.session.commit()
