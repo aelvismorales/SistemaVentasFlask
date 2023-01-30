@@ -483,7 +483,7 @@ def updatedebt():
 	debt=float(request.form['debt'])
 	if request.method=='POST':
 		session.modified=True
-		if debt>0 and debt<session['total_venta']:
+		if debt>=0 and debt<session['total_venta']:
 			session['acuenta']=debt
 		else:
 			flash("No se puede actualizar el acuenta por que es mayor que el monto total.","error")
