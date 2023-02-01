@@ -199,7 +199,7 @@ def editarnota(id):
 		nota.nombre_comprador=nombre_comprador
 		nota.direccion_comprador=direccion_comprador
 		nota.estado=estado_nota+estado_nota_2
-		if float(deuda_actual)>0.0:
+		if float(deuda_actual)>0.0 and deuda_actual:
 			nota.acuenta=float(deuda_actual)
 			nota.deuda=float(deuda_actual)
 		else:
