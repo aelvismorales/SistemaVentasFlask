@@ -42,8 +42,11 @@ def crear_nota_pedido():
 				if session['acuenta']>0:
 					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'],comprador_id=existe_comprador)
 					nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
+					session.modified=True
+					session['deuda']=total_venta-session['acuenta']
 				else:
 					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,comprador_id=existe_comprador)
+					
 				
 				for key,product in session['producto'].items():
 					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
@@ -70,8 +73,11 @@ def crear_nota_pedido():
 					if session["acuenta"] > 0:
 						nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'])
 						nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
+						session.modified=True
+						session['deuda']=total_venta-session['acuenta']
 					else:
 						nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador)
+						
 					
 					for key,product in session['producto'].items():
 						producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
@@ -485,6 +491,7 @@ def updateprice():
 @note.route('/updatedebt',methods=['POST'])
 def updatedebt():
 	debt=float(request.form['debt'])
+	session['deuda']=0
 	if request.method=='POST':
 		session.modified=True
 		if debt>=0 and debt<session['total_venta']:
@@ -532,6 +539,7 @@ def empty_cart():
 		session.pop('id_nota',None)
 		session.pop('fecha_hoy',None)
 		session.pop('acuenta',None)
+		session.pop('deuda',None)
 		
 		success_message='Se vacio la nota de pedido'
 		flash(success_message,category='message')
@@ -541,7 +549,7 @@ def empty_cart():
 
 @note.route('/imprimir')
 def imprimir():
-	return render_template('imprimir.html')
+	return render_template('imprimir.html',acuenta=session['acuenta'],deuda=session['deuda'])
 
 @note.route('/imprimire/<string:id>',methods=['GET','POST'])
 def imprimire(id):
