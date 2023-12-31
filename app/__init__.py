@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config,config
-from .models.modelos import db
+from .models.modelos import db,Role,login_manager
 from flask_wtf.csrf import CSRFProtect 
 from flask_migrate import Migrate
 
@@ -17,7 +17,9 @@ def create_app(config_name):
 
     with app.app_context():
         db.create_all()
+        Role.insertar_roles()
     migrate.init_app(app,db)
+    login_manager.init_app(app)
     from .routes.database import database
     from .routes.auth import auth
     from .routes.buyer import buyer

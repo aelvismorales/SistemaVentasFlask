@@ -1,4 +1,8 @@
 from os import environ
+from dotenv import load_dotenv
+
+load_dotenv()
+
 class Config:
     SECRET_KEY="#1523ABC"
     SQLALCHEMY_COMMIT_ON_TEARDOWN=True

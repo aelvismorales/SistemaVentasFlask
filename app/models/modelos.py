@@ -1,33 +1,118 @@
-
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
 from datetime import datetime
+from flask_login import UserMixin,LoginManager,AnonymousUserMixin
+
 
 db=SQLAlchemy()
 
-class Usuario(db.Model):
+login_manager=LoginManager()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(int(user_id))
+
+
+class Permisos:
+    VER_APLICACION=1
+    CREAR_NOTAS=2
+    CREAR_PRODUCTOS=4
+    ADMINISTRADOR=8  
+
+class Usuario(UserMixin,db.Model):
     __tablename__="usuario"
     id=db.Column(db.Integer,primary_key=True)
     nombre_usuario=db.Column(db.String(50),unique=True)
-    contrasena_usuario=db.Column(db.String(102))
+    contrasena_usuario=db.Column(db.String(128))
     fecha_creacion=db.Column(db.DateTime,default=datetime.now)
-    rol_usuario=db.Column(db.String(20))
+    rol_id=db.Column(db.Integer,db.ForeignKey('roles.id',name="fk_rol_usuario"),nullable=False)
 
-    def __init__(self,nombre_usuario,contrasena_usuario,rol_usuario):
+    def __init__(self,nombre_usuario,contrasena_usuario,rol_id=None):
         self.nombre_usuario=nombre_usuario
         self.contrasena_usuario=self.crear_contrasena(contrasena_usuario)
-        self.rol_usuario=rol_usuario
+        if self.rol_id is None:
+            if rol_id is None:
+                self.rol_id=1
+            else:
+                self.rol_id=rol_id
 
     def crear_contrasena(self,contrasena_usuario):
-        return generate_password_hash(contrasena_usuario,"sha256")
+        return generate_password_hash(contrasena_usuario,"pbkdf2")
 
     def verificar_contrasena(self,contrasena_usuario):
         return check_password_hash(self.contrasena_usuario,contrasena_usuario)
 
+    def can(self,permiso):
+        return self.rol is not None and self.rol.has_permiso(permiso)
+    
+    def is_admin(self):
+        return self.can(Permisos.ADMINISTRADOR)   
+
     def get_rol(self):
-        return self.rol_usuario
+        return self.rol_id
     def get_id(self):
         return self.id
+
+class Role(db.Model):
+    __tablename__="roles"
+    id=db.Column(db.Integer,primary_key=True)
+    nombre_rol=db.Column(db.String(50))
+    default=db.Column(db.Boolean,default=False,index=True)
+    permisos=db.Column(db.Integer)
+    usuarios=db.relationship('Usuario',backref='rol',lazy='dynamic')
+
+    def __init__(self,nombre):
+        self.nombre_rol=nombre
+        if self.permisos is None:
+            self.permisos=0
+    
+    def __repr__(self):
+        return '<Role %r>' % self.nombre_rol
+    
+    def has_permiso(self,permiso):
+        return self.permisos & permiso == permiso
+    
+    def add_permiso(self,permiso):
+        if not self.has_permiso(permiso):
+            self.permisos+=permiso
+
+    def remove_permiso(self,permiso):
+        if self.has_permiso(permiso):
+            self.permisos-=permiso
+    
+    def reset_permisos(self):
+        self.permisos=0
+    
+    def get_id(self):
+        return self.id
+
+    @staticmethod
+    def insertar_roles():
+        roles={
+            'Usuario':[Permisos.VER_APLICACION,Permisos.CREAR_NOTAS,Permisos.CREAR_PRODUCTOS],
+            'Administrador':[Permisos.VER_APLICACION,Permisos.CREAR_NOTAS,Permisos.CREAR_PRODUCTOS,Permisos.ADMINISTRADOR]
+        }
+        default_role='Usuario'
+        for r in roles:
+            role=Role.query.filter_by(nombre_rol=r).first()
+            if role is None:
+                role=Role(r)
+            role.reset_permisos()
+       
+            for permiso in roles[r]:
+                role.add_permiso(permiso)
+            role.default=(role.nombre_rol==default_role)
+            db.session.add(role)
+        db.session.commit()
+
+
+class AnonymousUser(AnonymousUserMixin):
+    def can(self,permiso):
+        return False
+    def is_administrador(self):
+        return False   
+    
+login_manager.anonymous_user=AnonymousUser
 
 class Producto(db.Model):
     __tablename__="producto"
@@ -86,6 +171,8 @@ class Comprador(db.Model):
         return self.dni
     def get_tipo(self):
         return self.tipo_comprador
+    
+
 class Nota_de_Pedido(db.Model):
     __tablename__="notapedido"
     id=db.Column(db.Integer,primary_key=True)
