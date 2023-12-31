@@ -22,7 +22,7 @@ def crear():
         user=Usuario.query.filter_by(nombre_usuario=form.username.data).first()
         if user:
             mensaje="El usuario {} ya existe.".format(form.username.data)
-            flash(mensaje,category='message')
+            flash(mensaje,category='error')
         else:
             role_id=Role.query.filter_by(nombre_rol=form.rol.data).first()
             usuario=Usuario(form.username.data,form.password.data,role_id.get_id())
