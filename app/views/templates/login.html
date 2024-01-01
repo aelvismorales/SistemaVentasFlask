@@ -1,46 +1,45 @@
-{% extends 'base.html' %} {% block navbar %} {% if log %}
-<li class="nav-item">
-  <a class="nav-link" href="{{'url_for(auth.logout)'}}"
-    ><strong>Log out</strong></a
-  >
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="{{url_for('product.crear_producto')}}"
-    ><strong>Crear Productos</strong></a
-  >
-</li>
+{% extends 'base.html' %}
 
-{%endif%} {% endblock %} {% block content %} {% from "macro.html" import
-render_field %}
-<div class="container">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <br />
-      <br />
-      <form id="loginForm" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <div class="row control-group">
-          <div class="form-group col-xs-12 floating label-form-group controls">
-            {{render_field(form_login.username,class="form-control")}}
-            <p class="help-block text-danger"></p>
-          </div>
-        </div>
-        <div class="row control-group">
-          <div class="'form-group col-xs-12 floating-label-form-group controls">
-            {{render_field(form_login.password,class="form-control")}}
-            <p class="help-block text-danger"></p>
-          </div>
+{% block content %} 
+  {% from "macro.html" import render_field %}
+  <section class="vh-100">
+    <div class="container py-5 h-100">
+      <div class="row d-flex align-items-center justify-content-center h-100">
+        <div class="col-md-8 col-lg-7 col-xl-6">
+          <img src="../static/img/logo.png" alt="logo" class="img-fluid">
         </div>
 
-        <br />
-        <div id="success"></div>
-        <div class="row">
-          <div class="form-group cols=xs=12">
-            <button type="submit" class="btn btn-primary">Send</button>
-          </div>
+        <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+          <form id="LoginForm" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <!-- Username input -->
+            <div class="form-floating mb-4 ">
+              {{ form_login.username(class="form-control form-control-lg", id="username-input", type="text",placeholder="username") }}
+              {{ form_login.username.label(class="form-label", for="username-input") }}
+            </div>
+            <!-- Password input-->
+            <div class="form-floating mb-4 ">
+              {{ form_login.password(class="form-control form-control-lg", id="password-input", type="password",placeholder="password") }}
+              {{ form_login.password.label(class="form-label", for="password-input") }}
+            </div>
+            <div class="flex justify-content-around align-items-center mb-4">
+              <!-- Checkbox -->
+              <div class="form-check">
+                {{ form_login.remember(class="form-check-input", id="remember-input") }}
+                {{ form_login.remember.label(class="form-check-label", for="remember-input") }}
+              </div>
+
+            </div>
+
+            <!-- Submit button -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg btn-block">Ingresar</button>
+            </div>
+            
+          </form>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
+
 {% endblock %}

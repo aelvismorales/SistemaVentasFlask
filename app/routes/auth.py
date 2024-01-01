@@ -43,8 +43,6 @@ def login():
             succes_message='Bienvenido {}'.format(form.username.data)
             flash(succes_message,category='message')
             login_user(user)
-
-
             return redirect(url_for("product.crear_producto"))
         else:
             error_message='Usuario o contraseña no validos!'

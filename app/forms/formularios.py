@@ -1,7 +1,7 @@
 from ast import For
 from email.policy import default
 from flask_wtf import FlaskForm
-from wtforms import StringField,PasswordField,SelectField,FloatField,SearchField,HiddenField,FieldList,FormField,DateField
+from wtforms import StringField,PasswordField,SelectField,FloatField,SearchField,HiddenField,FieldList,FormField,DateField,BooleanField
 from wtforms.validators import DataRequired,Length
 
 class CrearCuenta(FlaskForm):
@@ -12,6 +12,7 @@ class CrearCuenta(FlaskForm):
 class Login(FlaskForm):
     username=StringField('Username',validators=[Length(min=4,max=30,message="Ingrese un nombre de usuario valido"),DataRequired(message="El nombre de usuario es requerido")])
     password=PasswordField('Password',validators=[Length(min=4,max=10,message="La contraseña puede tener un maximo de 10 caracteres"),DataRequired(message="La contraseña es requerida")])
+    remember=BooleanField('Remember me')
 
 class CrearProducto(FlaskForm):
     nombre_producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])
