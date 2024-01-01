@@ -5,11 +5,6 @@ from flask_login import login_user,logout_user,login_required
 from datetime import timedelta
 auth=Blueprint("auth",__name__)
 
-@auth.before_request
-def before_request():
-    session.permanent=True
-    session.modified=True
-    current_app.permanent_session_lifetime=timedelta(hours=4)
 
 @auth.route('/')
 def index():
@@ -38,11 +33,12 @@ def login():
     if form.validate_on_submit():
         username=form.username.data
         password=form.password.data
+        remember=form.remember.data
         user=Usuario.query.filter_by(nombre_usuario=username).first()
         if user and user.verificar_contrasena(password):
             succes_message='Bienvenido {}'.format(form.username.data)
             flash(succes_message,category='message')
-            login_user(user)
+            login_user(user,remember=remember,duration=timedelta(hours=4))
             return redirect(url_for("product.crear_producto"))
         else:
             error_message='Usuario o contraseña no validos!'
@@ -53,4 +49,5 @@ def login():
 @login_required
 def logout():
     logout_user()
+    flash('Has cerrado sesión correctamente',category='message')
     return redirect(url_for("auth.login"))

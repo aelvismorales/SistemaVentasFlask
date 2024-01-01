@@ -1,5 +1,17 @@
-{%extends 'base.html' %} {% block navbar %} {{ super() }} {% endblock %} {% block
-content %} {% from "macro.html" import render_field %}
+{%extends 'base.html' %} 
+
+{% block navbar %}
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page"><strong>Crear Productos</strong></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{url_for('auth.logout')}}"><strong>Cerrar Sesion</strong></a>
+  </li>
+{% endblock %}
+
+{% block content %}
+{% from "macro.html" import render_field %}
 <div class="container">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">

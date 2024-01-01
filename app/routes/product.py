@@ -7,27 +7,10 @@ from app import db
 
 product=Blueprint("product",__name__)
 
-@product.before_request
-def beforerequest():
-    global loge
-    loge=False
-    global produ 
-    produ=False
-
-    global editarnota
-    editarnota=False
-    
-    if 'username' in session:
-        loge=True
-    if 'producto' in session:
-        produ=True
-    if 'editar_activo' in session:
-        editarnota=True
-
 @product.route("/producto",methods=["GET","POST"])
 def crear_producto():
     productForm=CrearProducto()
-    if request.method=='POST' and productForm.validate():
+    if productForm.validate_on_submit():
         product=Producto.query.filter_by(nombre_producto=productForm.nombre_producto.data).first()
         if product is None:
             precio_venta=productForm.precio_venta_producto.data
@@ -36,8 +19,8 @@ def crear_producto():
             db.session.add(producto)
             succes_message='Se creo el producto "{}"'.format(productForm.nombre_producto.data)
             flash(succes_message,category='message')
-            return render_template('crear_producto.html',producto_form=productForm,log=loge)
-    return render_template('crear_producto.html',producto_form=productForm,log=loge)
+            return render_template('crear_producto.html',producto_form=productForm)
+    return render_template('crear_producto.html',producto_form=productForm)
 
 @product.route('/eliminarproducto/<string:id>',methods=['GET'])
 def eliminarproducto(id):
@@ -60,11 +43,11 @@ def buscar_producto():
 
         productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data.upper()+'%')).all()
         if productos is not None:
-           return render_template('buscar_productos.html',buscar_form=buscar_producto,productos=productos,log=loge)
+           return render_template('buscar_productos.html',buscar_form=buscar_producto,productos=productos,)
         else:
             error_message='No se pudo encontrar el producto intente nuevamente'
             flash(error_message,category='error')
-    return render_template('buscar_productos.html',buscar_form=buscar_producto,log=loge,prd=produ,editar=editarnota)
+    return render_template('buscar_productos.html',buscar_form=buscar_producto)
 
 @product.route('/editar/<int:id>',methods=['GET','POST'])
 def editar_id(id):
@@ -80,7 +63,7 @@ def editar_id(id):
         db.session.add(producto)
         succes_message='Se actualizo el producto {}'.format(producto.nombre_producto)
         flash(succes_message,category='message')
-    return render_template('editar_producto_id.html',editar_form=editar_producto,log=loge,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv(),product_stock=producto.get_stock())
+    return render_template('editar_producto_id.html',editar_form=editar_producto,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv(),product_stock=producto.get_stock())
 
 #Funcion utilizada para poder agregar mas productos a una lista ( nota de pedido)
 def array_merge( first_array , second_array ):

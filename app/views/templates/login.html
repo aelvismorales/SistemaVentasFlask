@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 
 {% block content %} 
   {% from "macro.html" import render_field %}
@@ -33,7 +34,7 @@
 
             <!-- Submit button -->
             <div class="d-grid">
-              <button type="submit" class="btn btn-primary btn-lg btn-block">Ingresar</button>
+              <button type="submit" class="btn btn-primary btn-lg btn-block">Log In</button>
             </div>
             
           </form>
@@ -41,5 +42,4 @@
       </div>
     </div>
   </section>
-
 {% endblock %}
