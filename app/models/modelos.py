@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
-from datetime import datetime
+from datetime import datetime,timezone,timedelta
 from flask_login import UserMixin,LoginManager,AnonymousUserMixin
 
 
@@ -118,10 +118,10 @@ class Producto(db.Model):
     __tablename__="producto"
     id=db.Column(db.Integer,primary_key=True)
     nombre_producto=db.Column(db.String(200))
-    fecha_creacion=db.Column(db.DateTime,default=datetime.now)
-    fecha_actualizacion_producto=db.Column(db.DateTime,default=datetime.now)
-    precio_costo_producto=db.Column(db.Float)
-    precio_venta_producto=db.Column(db.Float)
+    fecha_creacion=db.Column(db.DateTime,default=datetime.now(timezone.utc)-timedelta(hours=5))
+    fecha_actualizacion_producto=db.Column(db.DateTime,default=datetime.now(timezone.utc)-timedelta(hours=5))
+    precio_costo_producto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    precio_venta_producto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
     stock=db.Column(db.Float)
 
     def __init__(self,nombre_producto,precio_costo_producto,precio_venta_producto,stock):
@@ -129,7 +129,9 @@ class Producto(db.Model):
         self.precio_costo_producto=precio_costo_producto
         self.precio_venta_producto=precio_venta_producto
         self.stock=stock
-        
+    
+    def __repr__(self) -> str:
+        return '<Producto %r, precio_venta: %.2f, precio_costo: %.2f>' % (self.nombre_producto,self.precio_venta_producto,self.precio_costo_producto)
             
     def get_fecha_actualizacion_producto(self):
         return self.fecha_actualizacion_producto.strftime('%d/%m/%Y')
@@ -137,11 +139,16 @@ class Producto(db.Model):
     def get_str_nombre(self):
         return str(self.nombre_producto)
     def get_str_pc(self):
-        return str(self.precio_costo_producto.__round__(1))
+        return str(self.precio_costo_producto)
     def get_str_pv(self):
-        return str(self.precio_venta_producto.__round__(1))
+        return str(self.precio_venta_producto)
     def get_stock(self):
         return self.stock
+
+    def get_json(self):
+        json={"id":self.id,"nombre_producto":self.nombre_producto,"precio_costo_producto":self.precio_costo_producto,"precio_venta_producto":self.precio_venta_producto,"stock":self.stock,"fecha_actualizacion_producto":self.fecha_actualizacion_producto.strftime('%d/%m/%Y'),"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y')}
+
+        return json if json is not None else {}
 
 class Comprador(db.Model):
     __tablename__="comprador"
