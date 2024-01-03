@@ -1,14 +1,17 @@
 from flask import Blueprint,request,flash,render_template,redirect,url_for,session,current_app
 from ..models.modelos import db,Usuario,Role
 from ..forms.formularios import CrearCuenta,Login
-from flask_login import login_user,logout_user,login_required
+from flask_login import login_user,logout_user,login_required,current_user
 from datetime import timedelta
 auth=Blueprint("auth",__name__)
 
 
 @auth.route('/')
 def index():
-	return render_template('index.html',log=True)
+    if current_user.is_authenticated:
+        return redirect(url_for("product.buscar_producto"))
+    else:
+    	return redirect(url_for("auth.login"))
 
 @auth.route('/crear',methods=["GET","POST"])
 def crear():
@@ -39,7 +42,7 @@ def login():
             succes_message='Bienvenido {}'.format(form.username.data)
             flash(succes_message,category='message')
             login_user(user,remember=remember,duration=timedelta(hours=4))
-            return redirect(url_for("product.crear_producto"))
+            return redirect(url_for("product.buscar_producto"))
         else:
             error_message='Usuario o contraseña no validos!'
             flash(error_message,category='error')
@@ -49,5 +52,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    if session.get('search_results'):
+        session.pop('search_results')
     flash('Has cerrado sesión correctamente',category='message')
     return redirect(url_for("auth.login"))

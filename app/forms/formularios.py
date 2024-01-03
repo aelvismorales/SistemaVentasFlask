@@ -36,7 +36,7 @@ class OpcionesFiltros(FlaskForm):
   
 
 class EditarProducto(FlaskForm):
-    nombre__producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido")])
+    nombre_producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido")])
     precio_costo_producto=FloatField('Precio costo producto')
     precio_venta_producto=FloatField('Precio venta producto')
     stock=FloatField('Stock',validators=[DataRequired('Ingrese el stock')])

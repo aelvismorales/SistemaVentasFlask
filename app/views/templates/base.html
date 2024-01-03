@@ -12,15 +12,6 @@
       crossorigin="anonymous"
     />
     {% block csslink %} {%endblock%}
-
-    <!-- JavaScript Bundle with Popper -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <title>Sistema Ventas</title>
   </head>
 
@@ -46,7 +37,7 @@
       {% if messages %} 
         {% for category,message in messages %} 
           {% if category =='error'%}
-            <div class="alert alert-warning alert-dismissible fade show fixed-top" role="alert">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
               {{ message }}
               <button
                 type="button"
@@ -56,7 +47,7 @@
               ></button>
             </div>
           {% else %}
-            <div class="alert alert-success alert-dismissible fade show fixed-top" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
               {{ message }}
               <button
                 type="button"
@@ -72,4 +63,16 @@
 
     {% block content %} {%endblock%}
   </body>
-</html>
+
+  <!-- JavaScript Bundle with Popper -->
+  <script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+  crossorigin="anonymous">
+  </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  {% block scripts%} {%endblock%}
+
+  </html>

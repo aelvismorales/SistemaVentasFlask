@@ -1,6 +1,12 @@
 {%extends 'base.html' %}
 {% block navbar %}
-    {{ super() }}
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page"><strong>Productos</strong></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{url_for('auth.logout')}}"><strong>Cerrar Sesion</strong></a>
+  </li>
 {% endblock %}
 
 {% block content %}
@@ -8,71 +14,127 @@
 <br />
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <form class="form-inline" id="buscarForm" method="POST">
+            <div class="col-8">
+                <form id="buscarForm" method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                    <div class="row control-group">
-                    <div class="form-group col-xs-12 floating-label-form-group controls">
-                            {{render_field(buscar_form.nombreproducto,class="form-control",placeholder="Search")}}
-                        <p class="help-block text-danger"></p>
-                    </div>
-                    <div id="success"></div>
-                    <div class="row">
-                        <div class="form-group cols=xs=12">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
-                        </div>
+                    {{ buscar_form.nombreproducto.label(class="form-label")}}
+                    <div class="input-group mb-3">
+                        {{buscar_form.nombreproducto(class="form-control",placeholder="Search",id="inputSearch")}}        
+                        <button class="btn btn-outline-success" type="submit" name="submit_buscar">Buscar</button>
                     </div>
                 </form>
+            </div>
+            <div class="col-4 d-flex justify-content-center align-items-center mt-3 ">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">Crear Producto </button>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nombre Producto</th>
+                    <th scope="col">Precio Costo</th>
+                    <th scope="col">Precio Venta</th>
+                    <th scope="col">Fecha Actualizacion</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Stock</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                
+                <tr id="{{ producto.id }}">
+                    <th scope="row">{{producto.id}}</th>
+                    <td>{{producto.nombre_producto}}</td>
+                    <td>{{producto.precio_costo_producto}}</td>
+                    <td>{{producto.precio_venta_producto}}</td>
+                    <td>{{producto.fecha_actualizacion_producto}}</td>
+                    <td>{{producto.cantidad}}</td>
+                    <td>{{producto.get_stock()}}</td>
+                    <td>
+                        <div class='btn-group-sm' role="group">
+                            <button type="button" class="btn btn-info mb-1 text-light editar-btn" data-id={{producto.id}}  >Editar </button>
+                            <button class="btn btn-danger mb-1 eliminar-btn" data-id="{{ producto.id }}"  data-nombre="{{producto.nombre_producto}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="crearProductoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="crearProductoModalLabel">CREAR PRODUCTO</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <form id="crearProductoForm" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                            <div class="mb-3">
+                                {{ producto_form.nombre_producto.label(class="form-label")}}
+                                {{ producto_form.nombre_producto(class="form-control", id="inputNombreProducto")}}
+                            </div>
+                            <div class="mb-3">
+                                {{ producto_form.precio_costo_producto.label(class="form-label")}}
+                                {{ producto_form.precio_costo_producto(class="form-control",placeholder="0.00")}}
+                            </div>
+                            <div class="mb-3">
+                                {{ producto_form.precio_venta_producto.label(class="form-label")}}
+                                {{ producto_form.precio_venta_producto(class="form-control",placeholder="0.00")}}
+                            </div>
+                            <div class="mb-3">
+                                {{ producto_form.stock.label(class="form-label")}}
+                                {{ producto_form.stock(class="form-control",placeholder="0")}}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="crearProductoForm" name="submit_crear">Crear Producto</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="container">            
-        <div class="product-item">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nombre Producto</th>
-                            <th scope="col">Precio Costo</th>
-                            <th scope="col">Precio Venta</th>
-                            <th scope="col">Fecha Actualizacion</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Stock</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {%for producto in productos%}
-                        <form method="post" action="{{url_for('product.add')}}">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                            <tr>
-                                <th scope="row">{{producto.id}}</th>
-                                <td>{{producto.nombre_producto}}</td>
-                                <td>{{producto.precio_costo_producto}}</td>
-                                <td>{{producto.precio_venta_producto}}</td>
-                                <td>{{producto.get_fecha_actualizacion_producto()}}</td>
-                                <td> 
-                                    <input type="hidden" name="code" value="{{ producto.id }}"/>
-                                    <input type="text" class="product-quantity" name="quantity" value="1" size="2" />
-                                    <input type="submit" value="Agregar a Nota de Pedido" class="btnAddAction" />
-                                </td>
-                                <td>{{producto.get_stock()}}</td>
-                                <div class='btn-group-sm' role="group">
-                                    <td> 
-                                        <a class="btn btn-primary" href="{{ url_for('product.editar_id', id=producto.id) }}">Actualizar</a>
-                                        <a class="btn btn-danger" href="{{ url_for('product.eliminarproducto',id=producto.id)}}">Eliminar</a>
-                                    </td>
+    <div class="modal fade" id="editarModal"  tabindex="-1" aria-labelledby="editarProductoModalLabel" aria-hidden="true"role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header"> 
+                    <h5 class="modal-title" id="editarProductoModalLabel">EDITAR PRODUCTO</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Contenido cargado con JQuery y Ajax sera mostrado aqui-->
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                </div>
-                                
-                            </tr>
-                        </form>
-                        {% endfor %}
-                    </tbody>
-                </table>
-        </div> 
-    </div>  
+      <!-- Modal para confirmar la eliminación -->
+    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de eliminar <span id="nombreProductoEliminar"></span><span id="idProductoEliminar" class="text-white"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmarEliminar">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {% if prd==True %}
     <br>
@@ -215,16 +277,99 @@
 
            
     {%endif%}
-    <!-- <script>
-        var date = new Date();
-        var day = date.getDate();
-        var month = date.getMonth() + 1;
-        var year = date.getFullYear();
-
-        if (month < 10) month = "0" + month;
-        if (day < 10) day = "0" + day;
-
-        var today = year + "-" + month + "-" + day;       
-        document.getElementById("FechaActualizar").value = today;
-    </script> -->
 {% endblock %}
+
+{% block scripts%}
+    <script>
+        var crearModal = document.getElementById('crearProductoModal')
+        var inputNombreProducto = document.getElementById('inputNombreProducto')
+        crearModal.addEventListener('shown.bs.modal', function () {inputNombreProducto.focus()})
+        var editarModal = document.getElementById('editarModal')
+        const botonesEditar=document.querySelectorAll('.editar-btn')
+
+        botonesEditar.forEach((boton)=>{
+            boton.addEventListener('click',async (event)=>{
+                const id=boton.getAttribute('data-id')
+                var url=`/editar/${id}`;
+                try{
+                    const response= await fetch(url,{
+                        method:'GET'
+                    });
+                    if (response.ok){
+                        const html_content= await response.text();                       
+                        document.getElementById('editarModal').querySelector('.modal-body').innerHTML=html_content;
+                        
+                        const editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
+                        editarModal.show();
+                        
+                        // Handle the submit event inside the modal
+                        const editarForm=document.getElementById('editarForm');
+                        editarForm.addEventListener('submit', async(e)=>{
+                            e.preventDefault();
+                            const formData=new FormData(editarForm);
+                            try{
+                                const submitResponse= await fetch(url,{
+                                    method:'POST',
+                                    body:formData
+                                });
+                                if (submitResponse.ok){
+                                    editarModal.hide();
+                                    location.reload();
+                                } else{
+                                    console.log('Error en la enviar el Formulario');
+                                }
+                            }
+                            catch(error){
+                                console.log(error);
+                            }
+                        })
+                    
+                    } else{
+                        console.log('Error en la respuesta');
+                    }
+                }
+                catch(error){
+                    console.log(error);
+                }
+            });
+        })
+        
+    </script>
+
+    <script>
+        // Capturar el clic en el botón "Eliminar"
+        const botonesEliminar = document.querySelectorAll('.eliminar-btn');
+      
+        botonesEliminar.forEach((boton) => {
+          boton.addEventListener('click', (event) => {
+            const id = boton.getAttribute('data-id');
+            const nombre_producto = boton.getAttribute('data-nombre');
+            document.getElementById('nombreProductoEliminar').innerText = nombre_producto;
+            document.getElementById('idProductoEliminar').innerText = id ;
+        });
+        });
+      
+        // Eliminar el elemento después de confirmar en el modal
+        document.getElementById('confirmarEliminar').addEventListener('click', async () => {
+          const id = document.getElementById('idProductoEliminar').innerText;
+          var url_delete=`/eliminarproducto/${id}`;
+          // Aquí puedes agregar la lógica para eliminar el elemento en tu backend si es necesario
+          try{
+            const response= await fetch(url_delete,{
+                method:'GET'
+            });
+            if (response.ok){
+                location.reload();
+            } else{
+                console.log(response.message);
+                console.log('Error en la respuesta');
+            }
+          }catch(error){
+                console.log(error);
+            }
+        });
+      </script>
+
+{% endblock %}
+
+
