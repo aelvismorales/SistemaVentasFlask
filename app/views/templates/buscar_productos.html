@@ -1,9 +1,22 @@
 {%extends 'base.html' %}
+
+{% block csslink %}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/buscar_productos.css')}}" />
+{%endblock%}
+
 {% block navbar %}
-<li class="nav-item">
+ <li class="nav-item">
     <a class="nav-link active" aria-current="page"><strong>Productos</strong></a>
   </li>
 
+  <li class="nav-item">
+    <a class="nav-link" href="#" aria-current="page"><strong>Ve Notas de Pedido</strong></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#" aria-current="page"><strong>Ver Compradores</strong></a>
+  </li>
+  
   <li class="nav-item">
     <a class="nav-link" href="{{url_for('auth.logout')}}"><strong>Cerrar Sesion</strong></a>
   </li>
@@ -12,59 +25,72 @@
 {% block content %}
 {% from "macro.html" import render_field %}
 <br />
-    <div class="container">
-        <div class="row">
-            <div class="col-8">
-                <form id="buscarForm" method="post">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                    {{ buscar_form.nombreproducto.label(class="form-label")}}
-                    <div class="input-group mb-3">
-                        {{buscar_form.nombreproducto(class="form-control",placeholder="Search",id="inputSearch")}}        
-                        <button class="btn btn-outline-success" type="submit" name="submit_buscar">Buscar</button>
+    <div class="row">
+        <div class="col-9">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8">
+                        <form id="buscarForm" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                            {{ buscar_form.nombreproducto.label(class="form-label")}}
+                            <div class="input-group mb-3">
+                                {{buscar_form.nombreproducto(class="form-control",placeholder="Search",id="inputSearch")}}        
+                                <button class="btn btn-outline-success" type="submit" name="submit_buscar">Buscar</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>
-            <div class="col-4 d-flex justify-content-center align-items-center mt-3 ">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">Crear Producto </button>
+                    <div class="col-4 d-flex justify-content-center align-items-center mt-3 ">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">Crear Producto </button>
+                    </div>
+                </div>
+        
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre Producto</th>
+                            <th scope="col">Precio Costo</th>
+                            <th scope="col">Precio Venta</th>
+                            <th scope="col">Fecha Actualizacion</th>
+                            <th scope="col">Stock</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                        <tr id="{{ producto.id }}">
+                            <th scope="row">{{producto.id}}</th>
+                            <td>{{producto.nombre_producto}}</td>
+                            <td>{{producto.precio_costo_producto}}</td>
+                            <td>{{producto.precio_venta_producto}}</td>
+                            <td>{{producto.fecha_actualizacion_producto}}</td>
+                            <td>{{producto.get_stock()}}</td>
+                            <td>                 
+                                <div class='btn-group-sm' role="group">
+                                    <button type="button" id="agregarProducto" class="btn btn-success btn-sm mb-1" data-id={{producto.id}} data-nombre="{{producto.nombre_producto}}" data-precio="{{producto.precio_venta_producto}}" data-cantidad="1.00">Agregar </button>
+                                    <button type="button" class="btn btn-info mb-1 text-light editar-btn" data-id={{producto.id}}  >Editar </button>
+                                    <button class="btn btn-danger mb-1 eliminar-btn" data-id="{{ producto.id }}"  data-nombre="{{producto.nombre_producto}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Nombre Producto</th>
-                    <th scope="col">Precio Costo</th>
-                    <th scope="col">Precio Venta</th>
-                    <th scope="col">Fecha Actualizacion</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Stock</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for producto in productos %}
-                
-                <tr id="{{ producto.id }}">
-                    <th scope="row">{{producto.id}}</th>
-                    <td>{{producto.nombre_producto}}</td>
-                    <td>{{producto.precio_costo_producto}}</td>
-                    <td>{{producto.precio_venta_producto}}</td>
-                    <td>{{producto.fecha_actualizacion_producto}}</td>
-                    <td>{{producto.cantidad}}</td>
-                    <td>{{producto.get_stock()}}</td>
-                    <td>
-                        <div class='btn-group-sm' role="group">
-                            <button type="button" class="btn btn-info mb-1 text-light editar-btn" data-id={{producto.id}}  >Editar </button>
-                            <button class="btn btn-danger mb-1 eliminar-btn" data-id="{{ producto.id }}"  data-nombre="{{producto.nombre_producto}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</button>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="col-3">
+            <div class="container">    
+                <div id="listaProductos" class="productos-side-bar">
+                    <p id="subTotalLista" style="color: #B12704; font-size: 20px; font-weight: bold;"></p>
+                    <button type="button" class="boton-side-bar" id="boton-generar">Generar Nota</button>
+                </div>
+                <div class="vaciar-productos">
+                    <button id="vaciar">Vaciar Productos</button>
+                </div>                   
+            </div>
+        </div>
     </div>
-
+    
     <div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="crearProductoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -136,7 +162,7 @@
         </div>
     </div>
 
-    {% if prd==True %}
+   <!-- {% if prd==True %}
     <br>
     <br>
     <form id="buscar_comprador" method="POST" action="{{url_for('buyer.buscarcompradorbydni')}}">
@@ -276,7 +302,7 @@
         </div>
 
            
-    {%endif%}
+    {%endif%}-->
 {% endblock %}
 
 {% block scripts%}
@@ -368,7 +394,210 @@
                 console.log(error);
             }
         });
-      </script>
+
+        function actualizarSubTotal(){
+            var JSONproductos = localStorage.getItem('productos');
+            var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+            var subTotal= products.reduce((total,producto)=>{
+                return total+producto.precio_venta_producto*producto.cantidad;
+            },0);
+            subTotal=parseFloat(subTotal).toFixed(2);  
+            localStorage.setItem('subTotal',subTotal);
+            document.getElementById('subTotalLista').innerText = 'S/.' + subTotal;
+            
+        }
+
+        // Capturar el clic en el botón "Agregar Producto"
+        var productos=[];
+        const botonesAgregar = document.querySelectorAll('#agregarProducto');
+        
+        var contenedor = document.getElementById('listaProductos');
+
+        botonesAgregar.forEach((boton)=>{
+            boton.addEventListener('click',(event)=>{
+                // Recuperar la lista de productos de localStorage
+                var productosJSON = localStorage.getItem('productos');
+
+                // Convertir la lista de productos de formato JSON a un array de objetos
+                var productos = productosJSON ? JSON.parse(productosJSON) : [];
+
+                const id=boton.getAttribute('data-id');
+                const nombre_producto=boton.getAttribute('data-nombre');
+                const precio_venta_producto= parseFloat(boton.getAttribute('data-precio'));
+                const cantidad= parseFloat( boton.getAttribute('data-cantidad'));
+                // Check if a product with the same id already exists in the array
+                var productExists = productos.some(function(producto) {
+                    return producto.id === id;
+                });
+
+                if (!productExists) {
+                    // If the product does not exist, add it to the array
+                    productos.push({id:id,nombre_producto:nombre_producto,precio_venta_producto:precio_venta_producto,cantidad:cantidad});
+                    console.log(productos);
+
+                    // Convertir la lista de productos a formato JSON
+                    productosJSON = JSON.stringify(productos);
+
+                    // Guardar la lista de productos en localStorage
+                    localStorage.setItem('productos', productosJSON);
+                } else {
+                    // If the product already exists, show an error message
+                    alert('El producto ya existe en la lista');
+                }
+                actualizarSubTotal();
+                location.reload();
+            })
+        })
+        
+        
+        // Cuando la página se carga, recuperar el subtotal de localStorage y mostrarlo
+        window.onload = function() {
+            var subtotal = localStorage.getItem('subTotal');
+            if (subtotal) {
+                document.getElementById('subTotalLista').innerText = 'S/.' + subtotal;
+            }
+        };
+
+        var productosJSON = localStorage.getItem('productos');
+        var productos_json = JSON.parse(productosJSON);
+        // Crear un elemento HTML para cada producto en la lista
+        for (var i = 0; i < productos_json.length; i++) {
+            var producto = productos_json[i];
+
+            // Crear un elemento div para el producto
+            var divProducto = document.createElement('div');
+            divProducto.setAttribute('class', 'producto-item');
+
+            // Crear un elemento p para el nombre del producto
+            var pNombre = document.createElement('p');
+            pNombre.textContent = producto.nombre_producto;
+            divProducto.appendChild(pNombre);
+
+            // Crear un elemento p para el precio del producto
+            let divInputContainer = document.createElement('div');
+            let pPrecioPrefix = document.createElement('span');
+            pPrecioPrefix.textContent = 'S/. ';
+            divInputContainer.appendChild(pPrecioPrefix);
+
+            let pPrecioInput=document.createElement('input');
+            pPrecioInput.setAttribute('type','number');
+            pPrecioInput.setAttribute('min', '1');
+            pPrecioInput.setAttribute('step', '0.01');
+            pPrecioInput.setAttribute('value', producto.precio_venta_producto);
+            pPrecioInput.setAttribute('data-id', producto.id);
+            divInputContainer.appendChild(pPrecioInput);
+
+            divProducto.appendChild(divInputContainer);
+
+            pPrecioInput.addEventListener('input', (event) => {
+                const id = pPrecioInput.getAttribute('data-id');
+                const precio = pPrecioInput.value;
+                var JSONproductos = localStorage.getItem('productos');
+                var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+                var productosActualizados = products.map((producto) => {
+                    if (producto.id === id) {
+                        producto.precio_venta_producto = precio;
+                    }
+                    return producto;
+                });
+                JSONproductos = JSON.stringify(productosActualizados);
+                localStorage.setItem('productos', JSONproductos);
+
+                // Actualizar SubTotal
+                actualizarSubTotal();
+            });
+
+            var divCantidad = document.createElement('div');
+            divCantidad.setAttribute('class', 'cantidad-item');
+            divProducto.appendChild(divCantidad);
+
+            // Crear un elemento p para la cantidad del producto
+            let pCantidad = document.createElement('input');
+            pCantidad.setAttribute('type', 'number');
+            pCantidad.setAttribute('min', '1');
+            pCantidad.setAttribute('step', '0.01');
+            pCantidad.setAttribute('value', producto.cantidad);
+            pCantidad.setAttribute('data-id', producto.id);
+            divCantidad.appendChild(pCantidad);
+
+            pCantidad.addEventListener('input', (event) => {
+                const id = pCantidad.getAttribute('data-id');
+                const cantidad = pCantidad.value;
+                var JSONproductos = localStorage.getItem('productos');
+                var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+                var productosActualizados = products.map((producto) => {
+                    if (producto.id === id) {
+                        producto.cantidad = cantidad;
+                    }
+                    return producto;
+                });
+                JSONproductos = JSON.stringify(productosActualizados);
+                localStorage.setItem('productos', JSONproductos);
+
+                // Actualizar SubTotal
+                actualizarSubTotal();
+            });
+
+
+            // Crear boton eliminar de la lista
+            let botonEliminar = document.createElement('button');
+            let iconoEliminar = document.createElement('img');
+            iconoEliminar.setAttribute('src', '/static/img/trash_icon.png');
+            iconoEliminar.classList.add('icono-eliminar');
+            botonEliminar.appendChild(iconoEliminar);
+            botonEliminar.setAttribute('class','boton-side-bar')
+            botonEliminar.setAttribute('data-id', producto.id);
+            botonEliminar.addEventListener('click', (event) => {
+                const id = botonEliminar.getAttribute('data-id');
+                var JSONproductos = localStorage.getItem('productos');
+                var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+                var productosFiltrados = products.filter((producto) => {
+                    return producto.id !== id;
+                });
+                JSONproductos = JSON.stringify(productosFiltrados);
+                localStorage.setItem('productos', JSONproductos);
+                actualizarSubTotal();
+                location.reload();
+            });
+
+            divCantidad.appendChild(botonEliminar);
+
+            // Agregar el div del producto al contenedor
+            contenedor.appendChild(divProducto);
+        }
+
+        // Capturar el clic en el botón "Vaciar Productos"
+        document.getElementById('vaciar').addEventListener('click', () => {
+            // Eliminar la lista de productos de localStorage
+            var JSONproductos = localStorage.getItem('productos');
+            var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+
+            // Vaciar el array
+            products.length = 0;
+
+            // Guardar el array vacío de nuevo en localStorage
+            localStorage.setItem('productos', JSON.stringify(products));
+
+            localStorage.removeItem('subTotal');
+            // Actualizar SubTotal
+            actualizarSubTotal();
+            location.reload();
+        });
+
+        // Capturar el clic en el botón "Generar Nota"
+        document.getElementById('boton-generar').addEventListener('click', () => {
+            // Abrir la página de generar nota
+            //Validad que existe algun item en la lista de productos o sino mostrar un mensaje de error no hay productos
+            var JSONproductos = localStorage.getItem('productos');
+            var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+            if (products.length==0){
+                alert('No hay productos en la lista');              
+            }
+            else{
+                window.location.href = '/crearnotaventa';
+            }
+    });
+    </script>
 
 {% endblock %}
 

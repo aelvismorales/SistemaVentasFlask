@@ -1,0 +1,45 @@
+{%extends 'base.html' %}
+
+{% block csslink %}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/nota_pedido.css')}}" />
+{%endblock%}
+
+{% block navbar %}
+ <li class="nav-item">
+    <a class="nav-link" aria-current="page" href="{{ url_for('product.buscar_producto')}}"><strong>Productos</strong></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#" aria-current="page"><strong>Ve Notas de Pedido</strong></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="#" aria-current="page"><strong>Ver Compradores</strong></a>
+  </li>
+  
+  <li class="nav-item">
+    <a class="nav-link" href="{{url_for('auth.logout')}}"><strong>Cerrar Sesion</strong></a>
+  </li>
+{% endblock %}
+
+{% block content %} 
+  <div class="container">
+    <div class="header-nota">
+        <h2>Nota de Pedido</h2>
+        <p>{{ current_user.get_nombre()}}</p>
+    </div>
+    <div class="container-comprador">
+        <div class="datos-usuario">
+            <form action="#" id="datosComprador" method="post">
+                <div class="datos">
+                    
+                </div>
+            </form>
+        </div>
+        <div class="metodo-pago">
+
+
+        </div>
+    </div>
+  </div>
+
+{%endblock%}

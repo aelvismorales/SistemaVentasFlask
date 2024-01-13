@@ -1,3 +1,4 @@
+from decimal import Decimal
 from flask import Blueprint, jsonify,request,render_template,redirect,url_for,session,flash
 from ..forms.formularios import CrearProducto,BuscarProducto,EditarProducto
 from ..models.modelos import Producto
@@ -72,39 +73,4 @@ def editar_id(id):
         succes_message='Se actualizo el producto {}'.format(producto.nombre_producto)
         flash(succes_message,category='message')
     return render_template('editar_producto_id.html',editar_form=editar_producto,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv(),product_stock=producto.get_stock())
-
-#Funcion utilizada para poder agregar mas productos a una lista ( nota de pedido)
-def array_merge( first_array , second_array ):
-	if isinstance( first_array , list ) and isinstance( second_array , list ):
-		return first_array + second_array
-	elif isinstance( first_array , dict ) and isinstance( second_array , dict ):
-		return dict( list( first_array.items() ) + list( second_array.items() ) )
-	elif isinstance( first_array , set ) and isinstance( second_array , set ):
-		return first_array.union( second_array )
-	return False
-
-#Agregar el producto a la nota de pedido
-@product.route('/add',methods=['POST'])
-def add():
-	id=request.form['code']
-	cantidad=float(request.form['quantity'])
-	total_venta=0
-	producto=Producto.query.get(id)
-	if cantidad and id and request.method == 'POST':
-		if producto is not None:
-			DictProducts={str(id):{'id':id,'name':producto.nombre_producto,'precio':producto.precio_venta_producto,'cantidad':cantidad,'precio_individual':(producto.precio_venta_producto*cantidad).__round__(2)}}
-			if 'producto' in session:
-				session.modified = True
-				if str(id) in session['producto']:
-					flash('El producto ya se encuentra en el carrito','error')
-					return redirect(url_for('product.buscar_producto'))
-				else:
-					session['producto']=array_merge(session['producto'],DictProducts)
-					for key,producto in session['producto'].items():
-						total_venta=total_venta+session['producto'][key]['precio_individual']
-					session['total_venta']=total_venta.__round__(2)
-					return redirect(url_for('product.buscar_producto'))
-			else:
-				session['producto']=DictProducts
-				return redirect(url_for('product.buscar_producto'))
 

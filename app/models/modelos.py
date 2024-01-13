@@ -45,6 +45,8 @@ class Usuario(UserMixin,db.Model):
     def can(self,permiso):
         return self.rol is not None and self.rol.has_permiso(permiso)
     
+    def get_nombre(self):
+        return self.nombre_usuario
     def is_admin(self):
         return self.can(Permisos.ADMINISTRADOR)   
 

@@ -1,5 +1,7 @@
+from decimal import Decimal
 from flask import Blueprint,request,render_template,redirect,url_for,session,flash,jsonify
 from ..models.modelos import Comprador,Nota_de_Pedido,Producto
+from ..forms.formularios import CrearNotaPedido
 from sqlalchemy import asc, desc
 from datetime import datetime
 import json
@@ -18,6 +20,11 @@ def beforerequest():
         loge=True
     if 'producto' in session:
         produ=True
+
+@note.route('/crearnotaventa',methods=['GET','POST'])
+def crear_nota_venta():
+	
+	return render_template('nota_pedido.html')
 
 @note.route('/crearnotapedido',methods=['GET','POST'])
 def crear_nota_pedido():
@@ -463,11 +470,12 @@ def updateproduct():
 	total_venta=0
 	if cantidad and request.method == 'POST':
 		session.modified = True
+
 		session['producto'][key]['cantidad']=cantidad
-		session['producto'][key]['precio_individual']=(cantidad*float(session['producto'][key]['precio'])).__round__(2)
+		session['producto'][key]['precio_individual']=Decimal(cantidad*float(session['producto'][key]['precio'])).quantize(Decimal("1e-{0}".format(2)))
 		for key,producto in session['producto'].items():
-			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta.__round__(2)
+			total_venta=total_venta+Decimal(session['producto'][key]['precio_individual'])
+		session['total_venta']=total_venta
 		return redirect(url_for('product.buscar_producto'))
 	return redirect(url_for('product.buscar_producto'))
 
@@ -480,11 +488,11 @@ def updateprice():
 	if price and request.method == 'POST':
 		session.modified = True
 		session['producto'][key]['precio']=price
-		session['producto'][key]['precio_individual']=(session['producto'][key]['cantidad']*float(session['producto'][key]['precio'])).__round__(2)
+		session['producto'][key]['precio_individual']=Decimal(session['producto'][key]['cantidad']*float(session['producto'][key]['precio'])).quantize(Decimal("1e-{0}".format(2)))
 
 		for key,producto in session['producto'].items():
-			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta.__round__(2)
+			total_venta=total_venta+Decimal(session['producto'][key]['precio_individual'])
+		session['total_venta']=total_venta
 		return redirect(url_for('product.buscar_producto'))
 	return redirect(url_for('product.buscar_producto'))
 

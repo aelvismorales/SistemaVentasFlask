@@ -45,6 +45,8 @@ class CrearNotaPedido(FlaskForm):
     direccion_comprador=StringField('Direccion',validators=[Length(max=200,message="Ingrese un direccion valida"),DataRequired(message="Se necesita una direccion")])
     numero_telefono=StringField('Numero de celular',validators=[Length(max=10,message="Ingrese un numero de telefono válido"),DataRequired('Ingrese un numero de telefono')],default='')
     dni=StringField('DNI:',validators=[DataRequired('Ingrese un DNI valido.'),Length(max=10)])
+    estado=SelectField("Estado",validators=[DataRequired("Seleccione una opción")],choices=[('CANCELADO','CANCELADO'),('POR-CANCELAR','POR CANCELAR'),('PROFORMA','PROFORMA')],render_kw={'CANCELADO':'CANCELADO'})
+    estado_pedido=SelectField("Estado Pedido",validators=[DataRequired("Seleccione una opción")],choices=[('ENTREGADO','ENTREGADO'),('POR-ENTREGAR','POR ENTREGAR')])
 
 class CrearComprador(FlaskForm):
     
