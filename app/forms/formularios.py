@@ -47,7 +47,7 @@ class CrearNotaPedido(FlaskForm):
     dni=StringField('DNI:',validators=[DataRequired('Ingrese un DNI valido.'),Length(max=10)])
     estado=SelectField("Estado",validators=[DataRequired("Seleccione una opción")],choices=[('CANCELADO','CANCELADO'),('POR-CANCELAR','POR CANCELAR'),('PROFORMA','PROFORMA')],render_kw={'CANCELADO':'CANCELADO'})
     estado_pedido=SelectField("Estado Pedido",validators=[DataRequired("Seleccione una opción")],choices=[('ENTREGADO','ENTREGADO'),('POR-ENTREGAR','POR ENTREGAR')])
-
+    
 class CrearComprador(FlaskForm):
     
     nombre_comprador=StringField('Nombre del comprador',validators=[Length(max=200,message="Ingrese un nombre válido"),DataRequired('Ingrese un nombre')])

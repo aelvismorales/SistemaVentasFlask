@@ -23,7 +23,69 @@ def beforerequest():
 
 @note.route('/crearnotaventa',methods=['GET','POST'])
 def crear_nota_venta():
-	
+	if request.method=='POST':
+		data= request.get_json()
+		nombre= data['nombre_comprador'] if data['nombre_comprador'] else "Varios"
+		direccion=data['direccion_comprador'] if data['direccion_comprador'] else "-"
+		dni=data['dni_comprador'] if data['dni_comprador'] else "-"
+		telefono=data['telefono_comprador'] if data['telefono_comprador'] else "-"
+		estado_nota=data['inputEstado1'] if data['inputEstado1'] else None
+		estado_nota_2=data['inputEstado2'] if data['inputEstado2'] else None
+		productos=data['productos']
+		total_venta= Decimal(data['total_venta']).quantize(Decimal("1e-{0}".format(2))) # Suma total de todos los productos
+		total_pagado= Decimal(data['total_pagado']).quantize(Decimal("1e-{0}".format(2))) # Valor total pagado por el cliente
+		vuelto=data['vuelto'] # Vuelto que se le da al cliente
+		acuenta= True if data['acuenta'] =='True' else False
+		existe_comprador=Comprador.query.filter_by(dni=dni).first()
+		estado_nota=estado_nota+"-"+estado_nota_2
+		if existe_comprador:
+			datos_producto_json= json.dumps(productos)
+			if acuenta:
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=existe_comprador.id)
+				nota.comentario="Dejo a cuenta S/ {} soles. ".format(total_pagado)
+			else:
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=existe_comprador.id)
+				nota.comentario=""
+
+			# Actualizando stock de productos en la bse de datos
+			for product in productos:
+				producto=Producto.query.filter_by(nombre_producto=product['nombre_producto']).first()
+				producto.stock-= product['cantidad']
+				db.session.add(producto)
+				db.session.commit()
+			if nota:
+				db.session.add(nota)
+				db.session.commit()
+				return jsonify({'message':'Se creo la nota de pedido para {}'.format(nombre),'id':nota.get_id()},201)
+			else:
+				return jsonify({'message':'No se pudo crear la nota de pedido, intentelo nuevamente'},400)
+
+		else:
+			datos_producto_json= json.dumps(productos)
+			comprador_nuevo=Comprador(nombre,telefono,direccion,dni)
+			db.session.add(comprador_nuevo)
+			db.session.commit()
+			if acuenta:
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=comprador_nuevo.id)
+				nota.comentario="Dejo a cuenta S/ {} soles. ".format(total_pagado)
+			else:
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=comprador_nuevo.id)
+				nota.comentario=""
+			# Actualizando stock de productos en la bse de datos
+			for product in productos:
+				producto=Producto.query.filter_by(nombre_producto=product['nombre_producto']).first()
+				producto.stock-= product['cantidad']
+				db.session.add(producto)
+				db.session.commit()
+			if nota:
+				db.session.add(nota)
+				db.session.commit()
+
+				return jsonify({'message':'Se creo la nota de pedido para {} y se registro como nuevo comprador'.format(nombre),'id':nota.get_id()},201)
+			else:
+				return jsonify({'message':'No se pudo crear la nota de pedido, intentelo nuevamente'},400)			
+
+
 	return render_template('nota_pedido.html')
 
 @note.route('/crearnotapedido',methods=['GET','POST'])

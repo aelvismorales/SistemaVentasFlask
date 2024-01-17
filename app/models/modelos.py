@@ -257,7 +257,7 @@ class Nota_de_Pedido(db.Model):
         self.nombre_comprador=nombre_comprador
         self.direccion_comprador=direccion_comprador
         self.estado=estado
-        self.notasdepedidos=comprador_id
+        self.comprador_id=comprador_id
         self.fecha_cancelacion=fecha_cancelacion
         self.comentario=comentario
         self.numero_comprador=numero_comprador
