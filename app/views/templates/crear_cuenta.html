@@ -46,9 +46,12 @@
       <form method="POST" class="container">
         <div class="mb-3">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <!-- {{ form_usuario.csrf_token }} -->
           {{form_usuario.username.label(class="form-label", for="username-input")}}
-          {{form_usuario.username(class="form-control",id="username-input", type="text")}}	
+          {{form_usuario.username(class="form-control",id="username-input", type="text")}}
+        </div>
+        <div class="mb-3">
+          {{form_usuario.nickname.label(class="form-label", for="nickname-input")}}
+          {{form_usuario.nickname(class="form-control",id="nickname-input", type="text")}}
         </div>
         <div class="mb-3">
           {{form_usuario.password.label(class="form-label", for="password-input")}}

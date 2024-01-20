@@ -1,4 +1,4 @@
-from flask import Blueprint,request,render_template,redirect,url_for,session,flash
+from flask import Blueprint, jsonify,request,render_template,redirect,url_for,session,flash
 from ..forms.formularios import CrearComprador
 from ..models.modelos import Comprador
 
@@ -89,16 +89,14 @@ def vercompradores():
 
 @buyer.route('/buscarcompradorbydni',methods=['GET','POST'])
 def buscarcompradorbydni():
-	dni=request.form['dni_comprador']
+	data=request.get_json()
+	dni=data['dni_comprador']
 	if dni and request.method=='POST':
 		comprador=Comprador.query.filter_by(dni=dni).first()
-		if comprador is not None:
-			session.modified = True
-			session['nombre_comprador']=comprador.get_nombre()
-			session['direccion_comprador']=comprador.get_direccion()
-			session['dni_comprador']=comprador.get_dni()
-			session['telefono_comprador']=comprador.get_telefono()
+		if comprador:
+			return jsonify({'message':'Se obtuvo el comprador correctamente','nombre_comprador':comprador.get_nombre(),'direccion_comprador':comprador.get_direccion()
+				   ,'dni_comprador':comprador.get_dni(),'telefono_comprador':comprador.get_telefono()
+				   },200)
 		else:
-			error_message='El comprador no existe porfavor cree uno'
-			flash(error_message,category='error')
-	return redirect(url_for('product.buscar_producto'))
+			return jsonify({'message':'El comprador no existe porfavor cree uno'},404)
+	

@@ -31,14 +31,14 @@
   <div class="container-general">
     <div class="header-nota">
         <h2>Nota de Pedido</h2>
-        <p>{{ current_user.get_nombre()}}</p>
+        <p>{{ current_user.get_nickname()}}</p>
     </div>
     <div class="container-comprador">
-      <form action="#">
+      <form action="#" method="post" id="buscarUsuarioDNI">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Buscar por DNI" aria-label="Buscar por DNI" aria-describedby="button-addon2">
-          <button class="btn btn-outline-success" type="button" id="buscarUsuarioDNI">Buscar</button>
+          <input type="text" class="form-control" placeholder="Buscar por DNI" aria-label="Buscar por DNI" aria-describedby="button-addon2" name="dni_comprador">
+          <button class="btn btn-outline-success" type="submit" id="botonBuscarUsuarioDNI">Buscar</button>
         </div>
       </form>
 
@@ -60,7 +60,7 @@
             <div class="mb-3 row">
               <label class="col-sm-2 col-form-label" for="direccion_comprador">Direccion:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" name="direccion_comprador" id="direccion_comprador" required>
+                <input class="form-control" type="text" name="direccion_comprador" id="direccion_comprador"  required>
               </div>
             </div>
             
@@ -68,7 +68,7 @@
             <div class="mb-3 row">
               <label class="col-sm-2 col-form-label" for="dni_comprador">DNI:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" name="dni_comprador" id="dni_comprador" required>
+                <input class="form-control" type="text" name="dni_comprador" id="dni_comprador"  required>
               </div>
             </div>
 
@@ -76,7 +76,7 @@
             <div class="mb-3 row">
               <label class="col-sm-2 col-form-label" for="telefono_comprador">Telefono:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" name="telefono_comprador" id="telefono_comprador" required>
+                <input class="form-control" type="text" name="telefono_comprador" id="telefono_comprador"  required>
               </div>
             </div>
             
@@ -206,6 +206,8 @@
       document.getElementById("pagoYAPEInput").disabled = !this.checked;
     });
 
+    
+
     // Se colecta los inputs de los pagos y se calcula el vuelto
     const cancelaDinero = document.getElementById("cancela-dinero");
     const vueltoDinero = document.getElementById("vuelto-dinero");
@@ -248,7 +250,7 @@
         vueltoDinero.textContent = "Vuelto: S/ " + localStorage.getItem("vueltoText");
 
       });
-
+      
     })
     
     // Se colecta el formulario y se obtiene los datos del comprador
@@ -332,7 +334,6 @@
                 ></button>
               </div>
             `;	
-            
           }
         });
       } else {
@@ -373,6 +374,110 @@
       document.getElementById("totalProductos").textContent = "0.00";
     });
   </script> 
+
+  <script>
+    //Si ya existen datos cargarlos cuando el DoomLoader terminte
+
+    document.addEventListener('DOMContentLoaded',function(){
+      if (localStorage.getItem("nombre_comprador") != null) {
+        document.getElementById("nombre_comprador").value = localStorage.getItem("nombre_comprador");
+        document.getElementById("direccion_comprador").value = localStorage.getItem("direccion_comprador");
+        document.getElementById("telefono_comprador").value = localStorage.getItem("telefono_comprador");
+        document.getElementById("dni_comprador").value = localStorage.getItem("dni_comprador");
+      } else{
+        document.getElementById("nombre_comprador").value = '';
+        document.getElementById("direccion_comprador").value = '';
+        document.getElementById("telefono_comprador").value = '';
+        document.getElementById("dni_comprador").value = '';
+      }
+    
+    })
+
+    // Obtener datos de Compradores por DNI o RUC
+    const buscarUsuarioDNI = document.getElementById("buscarUsuarioDNI");
+    const botonBuscarUsuarioDNI = document.getElementById("botonBuscarUsuarioDNI");
+    botonBuscarUsuarioDNI.addEventListener('click',(event)=>{
+      event.preventDefault();
+      const formData = new FormData(buscarUsuarioDNI);
+      let data = {};
+      formData.forEach((value,key)=>{
+        data[key] = value;
+      });
+
+      $.ajax({
+        url: "{{ url_for('buyer.buscarcompradorbydni') }}",
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json;",
+        dataType: "json",
+        headers: {"X-CSRFToken": "{{ csrf_token() }}"},
+        success:function(response){
+          console.log(response);
+          if (response[1]==200){
+            document.getElementById("messagesLoader").innerHTML = `
+              <div class="alert alert-success alert-dismissible fade show" role="alert">
+                ${response[0].message}
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="Close"
+                ></button>
+              </div>
+            `;
+            localStorage.setItem("nombre_comprador", response[0].nombre_comprador);
+            localStorage.setItem("direccion_comprador", response[0].direccion_comprador);
+            localStorage.setItem("telefono_comprador", response[0].telefono_comprador);
+            localStorage.setItem("dni_comprador", response[0].dni_comprador);
+
+            document.getElementById("nombre_comprador").value = localStorage.getItem("nombre_comprador");
+            document.getElementById("direccion_comprador").value = localStorage.getItem("direccion_comprador");
+            document.getElementById("telefono_comprador").value = localStorage.getItem("telefono_comprador");
+            document.getElementById("dni_comprador").value = localStorage.getItem("dni_comprador");
+          } else{
+            document.getElementById("messagesLoader").innerHTML = `
+              <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                ${response[0].message}
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="Close"
+                ></button>
+              </div>
+            `;
+
+            document.getElementById("nombre_comprador").value = '';
+            document.getElementById("direccion_comprador").value = '';
+            document.getElementById("telefono_comprador").value = '';
+            document.getElementById("dni_comprador").value = '';
+
+            localStorage.removeItem("nombre_comprador", response[0].nombre_comprador);
+            localStorage.removeItem("direccion_comprador", response[0].direccion_comprador);
+            localStorage.removeItem("telefono_comprador", response[0].telefono_comprador);
+            localStorage.removeItem("dni_comprador", response[0].dni_comprador);
+
+          }
+          
+            
+        },error:function(error){
+          console.error(error);
+          document.getElementById("messagesLoader").innerHTML = `
+          <div class="alert alert-info alert-dismissible fade show" role="alert">
+            El comprador no existe por favor registrelo
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+        `;
+        }
+      })
+    })
+
+  </script>
 
   <!--Script recuperar lista de productos-->
   <script>

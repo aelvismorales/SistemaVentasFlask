@@ -23,7 +23,7 @@ def crear():
             flash(mensaje,category='error')
         else:
             role_id=Role.query.filter_by(nombre_rol=form.rol.data).first()
-            usuario=Usuario(form.username.data,form.password.data,role_id.get_id())
+            usuario=Usuario(form.username.data,form.password.data,form.nickname.data,role_id.get_id())
             db.session.add(usuario)
             db.session.commit()
             flash(f'Felicidades por registrarte {form.username.data}', category="message")

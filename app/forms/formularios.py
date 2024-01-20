@@ -6,6 +6,7 @@ from wtforms.validators import DataRequired,Length
 
 class CrearCuenta(FlaskForm):
     username=StringField('Username',validators=[Length(min=4,max=30,message="Ingrese un nombre de usuario valido"),DataRequired(message="El nombre de usuario es requerido")])
+    nickname=StringField('Nickname',validators=[Length(min=4,max=30,message="Ingrese un nickname valido"),DataRequired(message="El nickname es requerido")])
     password=PasswordField('Password',validators=[Length(min=4,max=10,message="La contraseña puede tener un maximo de 10 caracteres"),DataRequired(message="La contraseña es requerida")])
     rol=SelectField("Rol",validators=[DataRequired("Seleccione una opción")],choices=[('Usuario','Usuario'),('Administrador','Administrador')])
 

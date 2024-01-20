@@ -1,7 +1,6 @@
 from decimal import Decimal
 from flask import Blueprint,request,render_template,redirect,url_for,session,flash,jsonify
 from ..models.modelos import Comprador,Nota_de_Pedido,Producto
-from ..forms.formularios import CrearNotaPedido
 from sqlalchemy import asc, desc
 from datetime import datetime
 import json
@@ -32,25 +31,35 @@ def crear_nota_venta():
 		estado_nota=data['inputEstado1'] if data['inputEstado1'] else None
 		estado_nota_2=data['inputEstado2'] if data['inputEstado2'] else None
 		productos=data['productos']
+		
 		total_venta= Decimal(data['total_venta']).quantize(Decimal("1e-{0}".format(2))) # Suma total de todos los productos
 		total_pagado= Decimal(data['total_pagado']).quantize(Decimal("1e-{0}".format(2))) # Valor total pagado por el cliente
-		vuelto=data['vuelto'] # Vuelto que se le da al cliente
+	
 		acuenta= True if data['acuenta'] =='True' else False
+		
+		vuelto = Decimal(data['vuelto']).quantize(Decimal("1e-{0}".format(2))) if data['vuelto'] else 0.00 # Vuelto que se le da al cliente
+
+		pago_Efectivo = Decimal(data['pagoEfectivoInput']).quantize(Decimal("1e-{0}".format(2)))  if  data.get('pagoEfectivoInput', "0") != "0" else 0.00 # Pago en efectivo
+		pago_Visa = Decimal(data['pagoVisaInput']).quantize(Decimal("1e-{0}".format(2))) if data.get('pagoVisaInput', "0") != "0"  else 0.00 # Pago con tarjeta visa
+		pago_BCP = Decimal(data['pagoBCPInput']).quantize(Decimal("1e-{0}".format(2))) if data.get('pagoBCPInput', "0") != "0" else 0.00 # Pago con tarjeta BCP
+		pago_BBVA = Decimal(data['pagoBBVAInput']).quantize(Decimal("1e-{0}".format(2))) if data.get('pagoBBVAInput', "0") != "0" else 0.00
+		pago_YAPE = Decimal(data['pagoYAPEInput']).quantize(Decimal("1e-{0}".format(2))) if data.get('pagoYAPEInput', "0") != "0" else 0.00
+		
 		existe_comprador=Comprador.query.filter_by(dni=dni).first()
 		estado_nota=estado_nota+"-"+estado_nota_2
 		if existe_comprador:
 			datos_producto_json= json.dumps(productos)
 			if acuenta:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=existe_comprador.id)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=existe_comprador.id
+						,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
 				nota.comentario="Dejo a cuenta S/ {} soles. ".format(total_pagado)
 			else:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=existe_comprador.id)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=existe_comprador.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
 				nota.comentario=""
-
 			# Actualizando stock de productos en la bse de datos
 			for product in productos:
 				producto=Producto.query.filter_by(nombre_producto=product['nombre_producto']).first()
-				producto.stock-= product['cantidad']
+				producto.stock-= Decimal(product['cantidad']).quantize(Decimal("1e-{0}".format(2)))
 				db.session.add(producto)
 				db.session.commit()
 			if nota:
@@ -66,15 +75,15 @@ def crear_nota_venta():
 			db.session.add(comprador_nuevo)
 			db.session.commit()
 			if acuenta:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=comprador_nuevo.id)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=comprador_nuevo.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
 				nota.comentario="Dejo a cuenta S/ {} soles. ".format(total_pagado)
 			else:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=comprador_nuevo.id)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=comprador_nuevo.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
 				nota.comentario=""
 			# Actualizando stock de productos en la bse de datos
 			for product in productos:
 				producto=Producto.query.filter_by(nombre_producto=product['nombre_producto']).first()
-				producto.stock-= product['cantidad']
+				producto.stock-= Decimal(product['cantidad']).quantize(Decimal("1e-{0}".format(2)))
 				db.session.add(producto)
 				db.session.commit()
 			if nota:
@@ -85,89 +94,7 @@ def crear_nota_venta():
 			else:
 				return jsonify({'message':'No se pudo crear la nota de pedido, intentelo nuevamente'},400)			
 
-
 	return render_template('nota_pedido.html')
-
-@note.route('/crearnotapedido',methods=['GET','POST'])
-def crear_nota_pedido():
-	nombre_comprador=request.form['comprador_name']
-	direccion_comprador=request.form['direccion_comprador']
-	dni_comprador=request.form['dni_comprador']
-	telefono_comprador=request.form['telefono_comprador']
-	estado_nota=request.form.get('estado')
-	estado_nota_2=request.form.get('estado2')
-	total_venta=0
-	if 'producto' in session:
-		session.modified=True
-		for key,producto in session['producto'].items():
-			total_venta=total_venta+session['producto'][key]['precio_individual']
-		session['total_venta']=total_venta.__round__(2)
-
-		if nombre_comprador and direccion_comprador and estado_nota and request.method == 'POST':
-			existe_comprador=Comprador.query.filter_by(dni=dni_comprador).first()
-			estado_nota=estado_nota+estado_nota_2
-			if existe_comprador is not None:
-				datos_producto_json= json.dumps(session['producto'])
-				if session['acuenta']>0:
-					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'],comprador_id=existe_comprador)
-					nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
-					session.modified=True
-					session['deuda']=total_venta-session['acuenta']
-				else:
-					nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,comprador_id=existe_comprador)
-					
-				
-				for key,product in session['producto'].items():
-					producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
-					producto.stock-= session['producto'][key]['cantidad']	
-				if nota is not None:
-					db.session.add(nota)
-					db.session.commit()
-					session.modified = True
-					session['nombre_comprador']=nombre_comprador
-					session['direccion_comprador']=direccion_comprador
-					session['dni_comprador']=dni_comprador
-					session['telefono_comprador']=telefono_comprador
-					session['numero_nota']=nota.get_id()
-					session['fecha_nota']=nota.get_fecha()
-					session['estado_nota']=estado_nota
-					succes_message='Se creo la nota de pedido para {}'.format(nombre_comprador)
-					flash(succes_message,category='message')
-				else:
-					error_message='No se pudo crear la nota de pedido, intentelo nuevamente'
-					flash(error_message,category='error')
-			else:
-					datos_producto_json= json.dumps(session['producto'])
-					comprador_nuevo=Comprador(nombre_comprador,telefono_comprador,direccion_comprador,dni_comprador)
-					if session["acuenta"] > 0:
-						nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,deuda=total_venta-session['acuenta'],acuenta=session['acuenta'])
-						nota.comentario="Dejo a cuenta S/ {} soles. ".format(session["acuenta"])
-						session.modified=True
-						session['deuda']=total_venta-session['acuenta']
-					else:
-						nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador)
-						
-					
-					for key,product in session['producto'].items():
-						producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
-						producto.stock-=session['producto'][key]['cantidad']
-
-					if nota is not None:
-						db.session.add(nota)
-						db.session.commit()
-						db.session.add(comprador_nuevo)
-						db.session.commit()
-						session.modified = True
-						session['nombre_comprador']=nombre_comprador
-						session['direccion_comprador']=direccion_comprador
-						session['dni_comprador']=dni_comprador
-						session['telefono_comprador']=telefono_comprador
-						session['numero_nota']=nota.get_id()
-						session['fecha_nota']=nota.get_fecha()
-						session['estado_nota']=estado_nota
-						succes_message='Se creo la nota de pedido para {} y se registro como nuevo comprador'.format(nombre_comprador)
-						flash(succes_message,category='message')
-	return redirect(url_for('product.buscar_producto'))
 
 @note.route('/editarnotaventa/<string:id>',methods=['GET','POST'])
 def editarnotaventa(id=None):

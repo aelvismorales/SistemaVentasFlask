@@ -23,12 +23,14 @@ class Usuario(UserMixin,db.Model):
     __tablename__="usuario"
     id=db.Column(db.Integer,primary_key=True)
     nombre_usuario=db.Column(db.String(50),unique=True)
+    nickname=db.Column(db.String(50),unique=True)
     contrasena_usuario=db.Column(db.String(128))
     fecha_creacion=db.Column(db.DateTime,default=datetime.now)
     rol_id=db.Column(db.Integer,db.ForeignKey('roles.id',name="fk_rol_usuario"),nullable=False)
 
-    def __init__(self,nombre_usuario,contrasena_usuario,rol_id=None):
+    def __init__(self,nombre_usuario,contrasena_usuario,nickname,rol_id=None):
         self.nombre_usuario=nombre_usuario
+        self.nickname=nickname
         self.contrasena_usuario=self.crear_contrasena(contrasena_usuario)
         if self.rol_id is None:
             if rol_id is None:
@@ -54,6 +56,8 @@ class Usuario(UserMixin,db.Model):
         return self.rol_id
     def get_id(self):
         return self.id
+    def get_nickname(self):
+        return self.nickname
 
 class Role(db.Model):
     __tablename__="roles"
@@ -124,7 +128,7 @@ class Producto(db.Model):
     fecha_actualizacion_producto=db.Column(db.DateTime,default=datetime.now(timezone.utc)-timedelta(hours=5))
     precio_costo_producto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
     precio_venta_producto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
-    stock=db.Column(db.Float)
+    stock=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
 
     def __init__(self,nombre_producto,precio_costo_producto,precio_venta_producto,stock):
         self.nombre_producto=nombre_producto
@@ -189,23 +193,35 @@ class Comprador(db.Model):
     def get_tipo(self):
         return self.tipo_comprador
     
-
+#TODO COLUMNAS DE INPUTS DE PAGO Y DEUDA
 class Nota_de_Pedido(db.Model):
     __tablename__="notapedido"
     id=db.Column(db.Integer,primary_key=True)
-    fecha_creacion=db.Column(db.DateTime)
-    #fecha_creacion=db.Column(db.DateTime,default=datetime.now)
+    #fecha_creacion=db.Column(db.DateTime)
+    fecha_creacion=db.Column(db.DateTime,default=datetime.now(timezone.utc)-timedelta(hours=5))
     nombre_comprador=db.Column(db.String(60))
     nombre_producto=db.Column(db.String(15000))
-    total_venta=db.Column(db.Float)
-    acuenta=db.Column(db.Float)
-    deuda=db.Column(db.Float)
+
+    total_venta=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    acuenta=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    deuda=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+
     direccion_comprador=db.Column(db.String(200))
     estado=db.Column(db.String(50))
     fecha_cancelacion=db.Column(db.DateTime)
     comentario=db.Column(db.String(500))
     numero_comprador=db.Column(db.String(20))
     dni_comprador=db.Column(db.String(20))
+
+    vuelto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoEfectivo=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoVisa=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoBBVA=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoBCP=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoYape=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+
+
+
     comprador_id=db.Column(db.Integer,db.ForeignKey('comprador.id'))
 
     def get_id(self):
@@ -248,12 +264,36 @@ class Nota_de_Pedido(db.Model):
     
     def get_acuenta(self):
         return self.acuenta
+    
+    def get_vuelto(self):
+        return self.vuelto
+    
+    def get_pagoEfectivo(self):
+        return self.pagoEfectivo
+    
+    def get_pagoVisa(self):
+        return self.pagoVisa
+    
+    def get_pagoBBVA(self):
+        return self.pagoBBVA
+    
+    def get_pagoBCP(self):
+        return self.pagoBCP
+    
+    def get_pagoYape(self):
+        return self.pagoYape
+    
 
-    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_creacion=datetime.today(),fecha_cancelacion=None,comentario="",comprador_id=None):
+    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_cancelacion=None,comentario="",comprador_id=None,vuelto=0.00,pagoVisa=0.00,pagoEfectivo=0.00,pagoBBVA=0.00,pagoBCP=0.00,pagoYape=0.00):
 
         self.nombre_producto=nombre_producto
-        self.fecha_creacion=fecha_creacion
         self.total_venta=total_venta
+        self.vuelto=vuelto
+        self.pagoVisa=pagoVisa
+        self.pagoEfectivo=pagoEfectivo
+        self.pagoBBVA=pagoBBVA
+        self.pagoBCP=pagoBCP
+        self.pagoYape=pagoYape
         self.nombre_comprador=nombre_comprador
         self.direccion_comprador=direccion_comprador
         self.estado=estado
