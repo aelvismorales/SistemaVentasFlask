@@ -283,25 +283,34 @@ class Nota_de_Pedido(db.Model):
     def get_pagoYape(self):
         return self.pagoYape
     
+    def get_json(self):
+        json = {"id":self.id, "fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'), "nombre_producto":self.nombre_producto, "nombre_comprador":self.nombre_comprador, "direccion_comprador":self.direccion_comprador, "total_venta":self.total_venta, "estado":self.estado, 
+                "fecha_cancelacion":self.fecha_cancelacion.strftime('%d/%m/%Y') if self.fecha_cancelacion is not None else None, "comentario":self.comentario, "numero_comprador":self.numero_comprador, "dni_comprador":self.dni_comprador, "deuda":self.deuda, "acuenta":self.acuenta, 
+                "vuelto":self.vuelto, "pagoVisa":self.pagoVisa, "pagoEfectivo":self.pagoEfectivo, "pagoBBVA":self.pagoBBVA, "pagoBCP":self.pagoBCP, "pagoYape":self.pagoYape}
 
+        return json if json is not None else {}
+    
     def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_cancelacion=None,comentario="",comprador_id=None,vuelto=0.00,pagoVisa=0.00,pagoEfectivo=0.00,pagoBBVA=0.00,pagoBCP=0.00,pagoYape=0.00):
 
-        self.nombre_producto=nombre_producto
+        self.nombre_comprador=nombre_comprador
+        self.direccion_comprador=direccion_comprador
+        self.dni_comprador=dni_comprador
+        self.numero_comprador=numero_comprador
         self.total_venta=total_venta
+        self.estado=estado
+        self.nombre_producto=nombre_producto
+
         self.vuelto=vuelto
         self.pagoVisa=pagoVisa
         self.pagoEfectivo=pagoEfectivo
         self.pagoBBVA=pagoBBVA
         self.pagoBCP=pagoBCP
         self.pagoYape=pagoYape
-        self.nombre_comprador=nombre_comprador
-        self.direccion_comprador=direccion_comprador
-        self.estado=estado
+
+        
         self.comprador_id=comprador_id
         self.fecha_cancelacion=fecha_cancelacion
         self.comentario=comentario
-        self.numero_comprador=numero_comprador
-        self.dni_comprador=dni_comprador
         self.deuda=deuda
         self.acuenta=acuenta
 

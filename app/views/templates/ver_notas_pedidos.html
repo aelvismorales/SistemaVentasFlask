@@ -1,0 +1,302 @@
+{%extends 'base.html' %}
+
+
+{% block navbar %}
+<li class="nav-item">
+    <a class="nav-link" href="{{url_for('product.buscar_producto')}}" aria-current="page"><strong>Productos</strong></a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page"><strong>Ver Notas de Pedido</strong></a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#" aria-current="page"><strong>Ver Compradores</strong></a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{{url_for('auth.logout')}}"> <strong>Cerrar Sesion</strong></a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="container-fluid">
+        <!--Contendor de Opciones o Filtros para la Tabla de Contenido-->
+        <div class="row">
+            <div class="col-xl-8">
+                <!-- Fomulario para filtrar por Compradores-->
+                <form action="#" id="buscarCompradorForm">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Buscar Comprador" aria-label="Buscar Comprador" aria-describedby="buscar_comprador" id="buscar_comprador">
+                        <button class="btn btn-outline-success" type="submit" id="boton-buscar-comprador">Buscar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-xl-4">
+                <!-- Inputs Tipo Fecha de Inicio y Fin-->
+                <form action="#" id="buscarFechaForm">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="span_buscar_fecha_inicio">Fecha Inicio</span>
+                        <input type="date" class="form-control" placeholder="Fecha Inicio" aria-label="Fecha Inicio" aria-describedby="buscar_fecha_inicio" id="buscar_fecha_inicio">
+
+                        <span class="input-group-text" id="span_buscar_fecha_fin">Fecha Fin</span>
+                        <input type="date" class="form-control" placeholder="Fecha Fin" aria-label="Fecha Fin" aria-describedby="buscar_fecha_fin" id="buscar_fecha_fin">
+
+                        <button class="btn btn-outline-success" type="submit" id="boton-buscar-fecha">Buscar</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="container-sm">
+            <div class="row ">     
+                <div class="col-md-4">
+                    <div class="input-group mb-3">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="checkbox" aria-label="Check para habilitar input ID" id="checkID">
+                        </div>
+                        <input type="text" class="form-control" placeholder="Buscar por ID" aria-label="Buscar por ID" aria-describedby="buscar_id" id="inputID" disabled>
+                    </div>
+                </div>
+    
+                <div class="col-md-4">
+                    <div class="input-group mb-3">
+                        <div class="input-group-text">
+                            <input type="checkbox" class="form-check-input" value="" aria-label="Check para habilitar input DNI" id="checkDNI">
+                        </div>
+                        <input type="text" class="form-control" placeholder="Buscar por DNI" aria-label="Buscar por DNI" aria-describedby="buscar_dni" id="inputDNI" disabled>
+                    </div>
+                </div>
+    
+                <div class="col-md-4">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="span_estado">Estado:</span>
+                        <select class="form-select" aria-label="Estado1" id="inputEstado1">
+                            <option selected disabled value="">Seleccione</option>
+                            <option value="CANCELADO">CANCELADO</option>
+                            <option value="POR-CANCELAR">POR CANCELAR</option>
+                            <option value="PROFORMA">PROFORMA</option>
+                        </select>
+    
+                        <select class="form-select" aria-label="Estado2" aria-placeholder="Seleccione" id="inputEstado2">
+                            <option selected disabled value="">Seleccione</option>
+                            <option value="-">-</option>
+                            <option value="ENTREGADO">ENTREGADO</option>
+                            <option value="POR-ENTREGAR">POR ENTREGAR</option>
+                        </select>                    
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
+
+    <div class="container-fluid">
+        <!--Contendor de Tabla de Contenido y Resumen de Ventas -->
+        <div class="row">
+            <div class="col-12 col-lg-10">
+                <!-- Tabla de Contenido Resumen-->
+                <div class="table-responsive" id="tabla-contenido-ventas">
+                    <table class="table">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Comprador</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Fecha Cancelacion</th>
+                                <th scope="col">Comentario</th>
+                                <th scope="col">Deuda</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyTablaVentas">
+                            {% for nota in nota_pedido %}
+                            <tr id="{{ nota.id }}">
+                                <th scope="row">{{nota.id}}</th>
+                                <td>{{nota.fecha_creacion}}</td>
+                                <td>{{nota.nombre_comprador}}</td>
+                                <td>{{nota.estado}}</td>
+                                <td>{{nota.total_venta}}</td>
+                                <td>{{ nota.fecha_cancelacion if nota.fecha_cancelacion is not none else '' }}</td>
+                                <td>{{nota.comentario}}</td>
+                                <td>{{nota.deuda}}</td>
+                                <td>
+                                    <div class="d-flex flex-nowrap gap-2" >
+                                        <button type="button" class="btn btn-outline-dark btn-sm">Imprimir</button>
+                                        <button type="button" class="btn btn-outline-primary btn-sm">Ver</button>
+                                        <button type="button" class="btn btn-outline-info btn-sm">Editar</button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm">Anular</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            
+            <div class="col-lg-2 d-flex justify-content-center" style="max-height: 305px;">
+                <!-- Resumen de Ventas Numerico-->
+                <div class="card" style="width: 18rem;">
+                    <div class="card-header">
+                        <h5 style="text-align: center; font-weight: bolder;">Total Venta del Dia</h5>
+                    </div>
+                    <div class="body-resumen">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>General: S/.</strong> <span id="general_resumen">{{ total_venta_resumen if total_venta_resumen is not none else 0.00 }}</span></li>
+                            <li class="list-group-item"> <strong>Efectivo: S/</strong> <span id="efectivo_resumen">{{ total_pago_efectivo if total_pago_efectivo is not none else 0.00}}</span></li>
+                            <li class="list-group-item"><strong>Visa: S/</strong> <span id="visa_resumen">{{ total_pago_visa if total_pago_visa is not none else 0.00}}</span></li>
+                            <li class="list-group-item"><strong>BBVA: S/</strong> <span id="bbva_resumen">{{ total_pago_bbva if total_pago_bbva is not none else 0.00}}</span> </li>
+                            <li class="list-group-item"><strong>BCP: S/</strong> <span id="bcp_resumen">{{ total_pago_bcp if total_pago_bcp is not none else 0.00}}</span> </li>
+                            <li class="list-group-item"><strong>Yape: S/</strong> <span id="yape_resumen">{{ total_pago_yape if total_pago_yape is not none else 0.00}}</span> </li>
+                        </ul>
+                    </div>    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script >
+        // Obteniendo los datos del Formulario Fecha Form
+        document.getElementById('buscarFechaForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            let fechaInicio = document.getElementById('buscar_fecha_inicio').value;
+            let fechaFin = new Date(document.getElementById('buscar_fecha_fin').value);
+
+            let url = new URL(window.location.href);
+            let params = new URLSearchParams(url.search);
+
+            if (fechaInicio){
+                //Agregabdo un día a la fecha final para que se incluya en la búsqueda
+                fechaFin.setDate(fechaFin.getDate() + 1);
+                params.set('fecha_inicio', fechaInicio);
+                params.set('fecha_final', fechaFin.toISOString().split('T')[0]); // Convertir la fecha a formato ISO y quitar la hora
+
+            } else {
+                params.delete('fecha_inicio');
+                params.delete('fecha_final');
+            }
+
+            params.delete('dni')
+            params.delete('id') // Eliminar el parámetro id de la URL
+
+            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+            window.location.href = url.toString();
+        });
+
+        // Obteniendo los datos del Formulario CompradorNombre Form
+        document.getElementById('buscarCompradorForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            let comprador = document.getElementById('buscar_comprador').value;
+
+            let url = new URL(window.location.href);
+            let params = new URLSearchParams(url.search);
+
+            if (comprador){
+                params.set('comprador', comprador);
+            } else {
+                params.delete('comprador');
+            }
+            params.delete('dni')
+            params.delete('id') // Eliminar el parámetro id de la URL
+            
+            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+            window.location.href = url.toString();
+        });
+
+        const checkID = document.getElementById('checkID');
+        const inputID = document.getElementById('inputID');
+        checkID.addEventListener('change', function(){
+            inputID.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
+        });
+
+        // Si el check esta activo, se manda el valor del inputID como argumento al URL, si esta desactivado se manda un string vacio
+        inputID.addEventListener('change', function(){
+            let url = new URL(window.location.href);
+
+            // Crear un nuevo objeto URLSearchParams vacío
+            let params = new URLSearchParams(url.search);
+
+            params.set('id', checkID.checked ? this.value : '');
+            
+            params.delete('fecha_inicio');
+            params.delete('fecha_final');
+            params.delete('comprador');
+            params.delete('dni')
+            
+            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+            window.location.href = url.toString();
+        });
+        
+        const checkDNI = document.getElementById('checkDNI');
+        const inputDNI = document.getElementById('inputDNI');
+        checkDNI.addEventListener('change', function(){
+            inputDNI.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
+        });
+
+        // Si el check esta activo, se manda el valor del inputDNI como argumento al URL, si esta desactivado se manda un string vacio
+        inputDNI.addEventListener('change', function(){
+            let url = new URL(window.location.href);
+
+            // Crear un nuevo objeto URLSearchParams vacío
+            let params = new URLSearchParams(url.search);
+
+            params.set('dni', checkDNI.checked ? this.value : '');
+
+            params.delete('id');
+            params.delete('fecha_inicio');
+            params.delete('fecha_final');
+            params.delete('comprador');
+
+            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+            window.location.href = url.toString();
+        });
+
+        const inputEstado1 = document.getElementById('inputEstado1');
+        const inputEstado2 = document.getElementById('inputEstado2');
+
+        inputEstado1.addEventListener('change', function(){
+            let url = new URL(window.location.href);
+
+            // Crear un nuevo objeto URLSearchParams vacío
+            let params = new URLSearchParams(url.search);
+
+            params.set('estado', this.value);
+
+            params.delete('estado2');
+            params.delete('id');
+            params.delete('fecha_inicio');
+            params.delete('fecha_final');
+            params.delete('comprador');
+            params.delete('dni');
+
+            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+            window.location.href = url.toString();
+        });
+
+        inputEstado2.addEventListener('change', function(){
+            let url = new URL(window.location.href);
+
+            // Crear un nuevo objeto URLSearchParams vacío
+            let params = new URLSearchParams(url.search);
+
+            params.set('estado2', this.value);
+
+            params.delete('id');
+            params.delete('fecha_inicio');
+            params.delete('fecha_final');
+            params.delete('comprador');
+            params.delete('dni');
+
+            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+            window.location.href = url.toString();
+        });
+
+    </script>
+{% endblock %}
