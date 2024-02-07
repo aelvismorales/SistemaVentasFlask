@@ -9,11 +9,11 @@
     <a class="nav-link" aria-current="page" href="{{ url_for('product.buscar_producto')}}"><strong>Productos</strong></a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#" aria-current="page"><strong>Ve Notas de Pedido</strong></a>
+    <a class="nav-link" href="{{url_for('note.ver_notas_pedido')}}" aria-current="page"><strong>Ve Notas de Pedido</strong></a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="#" aria-current="page"><strong>Ver Compradores</strong></a>
+    <a class="nav-link" href="{{ url_for('buyer.vercompradores') }}" aria-current="page"><strong>Ver Compradores</strong></a>
   </li>
   
   <li class="nav-item">

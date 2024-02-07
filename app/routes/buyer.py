@@ -78,14 +78,14 @@ def eliminarcomprador(id):
 
 @buyer.route('/vercompradores',methods=['GET','POST'])
 def vercompradores():
-	dni_comprador=request.form.get('dni_comprador')
-	if dni_comprador and request.method=='POST':
-		if dni_comprador=='*':
-			compradores=Comprador.query.all()
-		else:
-			compradores=Comprador.query.filter_by(dni=dni_comprador).all()
-		return render_template('ver_compradores.html',form_comprador=compradores,log=loge)
-	return render_template('ver_compradores.html',log=loge)
+#	dni_comprador=request.form.get('dni_comprador')
+#	if dni_comprador and request.method=='POST':
+#		if dni_comprador=='*':
+#			compradores=Comprador.query.all()
+#		else:
+#			compradores=Comprador.query.filter_by(dni=dni_comprador).all()
+#		return render_template('ver_compradores.html',form_comprador=compradores,log=loge)
+	return render_template('ver_crear_compradores.html')
 
 @buyer.route('/buscarcompradorbydni',methods=['GET','POST'])
 def buscarcompradorbydni():

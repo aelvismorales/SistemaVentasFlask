@@ -1,28 +1,21 @@
-p{
+.nombre-item{
+    font-size: larger;
+    font-weight: 400;
     margin-bottom: 2px;
 }
+.precio-prefix{
+    font-size:medium;
+    font-weight: 600;
+}
+
 .productos-side-bar{
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
 }
 
-.productos-side-bar .producto-item{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    max-width: 270px;
-    overflow: hidden;
-    word-wrap: break-word;
-    border-top: 1px solid #CFCFCF;
-    margin-bottom: 5px;
-}
-
-.productos-side-bar .boton-side-bar{
+.boton-generar-side-bar{
     border-radius: 10px;
+    padding: 5px 10px 5px 10px;
     box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.1), 0 0 0 1px #CFCFCF;
     background-color: #FFFFFF;
     transition: background-color 0.5s ease;
@@ -30,14 +23,13 @@ p{
     margin-bottom: 10px;
 }
 
-.productos-side-bar .boton-side-bar:hover{
+.boton-side-bar:hover{
     background-color: #f5f5f5;
 }
 
-.productos-side-bar .producto-item .cantidad-item{
+.cantidad-item{
     display: flex;
     justify-content: center;
-    align-self: center;
     margin-top: 5px;
 }
 
@@ -45,7 +37,6 @@ p{
     width: 100px;
     height: 30px;
     margin-right: 20px;
-    margin-bottom: 5px;
     border-radius: 10px;
     box-shadow: 0 0 0 1px #CFCFCF;
     background-color: #FFFFFF;
@@ -57,32 +48,35 @@ p{
     background-color: #f5f5f5;
 }
 
-.productos-side-bar .producto-item .boton-side-bar {
+.boton-eliminar {
     margin-left: 20px;
-    margin-bottom: 5px;
     display: flex;
     justify-content: center;
-    align-self: center;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.1), 0 0 0 1px #CFCFCF;
+    background-color: #FFFFFF;
+    transition: background-color 0.5s ease;
+    border: none;
 }
 
-.productos-side-bar .producto-item .boton-side-bar .icono-eliminar {
+.boton-eliminar:hover{
+    background-color: #FF7070;
+}
+
+.icono-eliminar {
     width: 20px;  /* Cambia esto al ancho que desees */
     height: 20px;  /* Cambia esto a la altura que desees */
 }
 
 .vaciar-productos{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-top: #CFCFCF 1px solid;
-}
-.vaciar-productos button{
     border-radius: 10px;
+    padding: 5px 10px 5px 10px;
     box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.1), 0 0 0 1px #CFCFCF;
     background-color:#FF7070;
     border: none;
     margin-top: 10px;
 }
-.vaciar-productos button:hover{
+.vaciar-productos:hover{
     background-color: #db5454;
 }

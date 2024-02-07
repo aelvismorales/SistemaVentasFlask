@@ -18,6 +18,8 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:admin@localhost/sistemaventas'
+    #SQLALCHEMY_DATABASE_URI='mysql+pymysql://remote:admin@192.168.100.17:3307/sistemaventas'
+
 
 class TestingConfig(Config):
     TESTING = True
@@ -25,7 +27,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     SECRET_KEY=environ.get('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI=environ.get('DATABASE_URL').replace('postgres','postgresql')
+    #SQLALCHEMY_DATABASE_URI=environ.get('DATABASE_URL').replace('postgres','postgresql')
 
 config = {
  'development': DevelopmentConfig,

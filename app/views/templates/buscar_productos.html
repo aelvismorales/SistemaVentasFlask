@@ -14,7 +14,7 @@
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="#" aria-current="page"><strong>Ver Compradores</strong></a>
+    <a class="nav-link" href="{{ url_for('buyer.vercompradores') }}" aria-current="page"><strong>Ver Compradores</strong></a>
   </li>
   
   <li class="nav-item">
@@ -23,73 +23,85 @@
 {% endblock %}
 
 {% block content %}
-{% from "macro.html" import render_field %}
-<br />
-    <div class="row">
-        <div class="col-9">
-            <div class="container">
-                <div class="row">
-                    <div class="col-8">
-                        <form id="buscarForm" method="post">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                            {{ buscar_form.nombreproducto.label(class="form-label")}}
-                            <div class="input-group mb-3">
-                                {{buscar_form.nombreproducto(class="form-control",placeholder="Search",id="inputSearch")}}        
-                                <button class="btn btn-outline-success" type="submit" name="submit_buscar">Buscar</button>
-                            </div>
-                        </form>
+  <div class="container-fluid mt-3">
+    <div class="container-fluid">
+        <!--Contendor de Buscar y Crear Producto Modal-->
+        <div class="row">
+            <div class="col-sm-8 col-12">
+                <form id="buscarForm" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <div class="input-group mb-3">
+                        {{buscar_form.nombreproducto(class="form-control",placeholder="Buscar Producto...",id="inputSearch")}}        
+                        <button class="btn btn-outline-success" type="submit" name="submit_buscar">Buscar</button>
                     </div>
-                    <div class="col-4 d-flex justify-content-center align-items-center mt-3 ">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">Crear Producto </button>
-                    </div>
-                </div>
-        
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nombre Producto</th>
-                            <th scope="col">Precio Costo</th>
-                            <th scope="col">Precio Venta</th>
-                            <th scope="col">Fecha Actualizacion</th>
-                            <th scope="col">Stock</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for producto in productos %}
-                        <tr id="{{ producto.id }}">
-                            <th scope="row">{{producto.id}}</th>
-                            <td>{{producto.nombre_producto}}</td>
-                            <td>{{producto.precio_costo_producto}}</td>
-                            <td>{{producto.precio_venta_producto}}</td>
-                            <td>{{producto.fecha_actualizacion_producto}}</td>
-                            <td>{{producto.get_stock()}}</td>
-                            <td>                 
-                                <div class='btn-group-sm' role="group">
-                                    <button type="button" id="agregarProducto" class="btn btn-success btn-sm mb-1" data-id={{producto.id}} data-nombre="{{producto.nombre_producto}}" data-precio="{{producto.precio_venta_producto}}" data-cantidad="1.00">Agregar </button>
-                                    <button type="button" class="btn btn-info mb-1 text-light editar-btn" data-id={{producto.id}}  >Editar </button>
-                                    <button class="btn btn-danger mb-1 eliminar-btn" data-id="{{ producto.id }}"  data-nombre="{{producto.nombre_producto}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                </form>
             </div>
-        </div>
-        <div class="col-3">
-            <div class="container">    
-                <div id="listaProductos" class="productos-side-bar">
-                    <p id="subTotalLista" style="color: #B12704; font-size: 20px; font-weight: bold;"></p>
-                    <button type="button" class="boton-side-bar" id="boton-generar">Generar Nota</button>
-                </div>
-                <div class="vaciar-productos">
-                    <button id="vaciar">Vaciar Productos</button>
-                </div>                   
+            <div class="col-sm-4 col-12">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">Crear Producto </button>
             </div>
         </div>
     </div>
+    <div class="container-fluid">
+        <!--Contendor de Tabla y NavLateral Productos-->
+        <div class="row">
+            <div class="col-sm-10 col-12">
+                <div class="table-responsive" id="tabla-contenido-productos">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Nombre Producto</th>
+                                <th scope="col">Precio Costo</th>
+                                <th scope="col">Precio Venta</th>
+                                <th scope="col">Fecha Actualizacion</th>
+                                <th scope="col">Stock</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in productos %}
+                            <tr id="{{ producto.id }}">
+                                <th scope="row">{{producto.id}}</th>
+                                <td>{{producto.nombre_producto}}</td>
+                                <td>{{producto.precio_costo_producto}}</td>
+                                <td>{{producto.precio_venta_producto}}</td>
+                                <td>{{producto.fecha_actualizacion_producto}}</td>
+                                <td>{{producto.get_stock()}}</td>
+                                <td>                 
+                                    <div class='d-flex flex-nowrap gap-2'>
+                                        <button type="button" id="agregarProducto" class="btn btn-success btn-sm mb-1" data-id={{producto.id}} data-nombre="{{producto.nombre_producto}}" data-precio="{{producto.precio_venta_producto}}" data-cantidad="1.00">Agregar </button>
+                                        <button type="button" class="btn btn-info mb-1 text-light editar-btn" data-id={{producto.id}}  >Editar </button>
+                                        <button class="btn btn-danger mb-1 eliminar-btn" data-id="{{ producto.id }}"  data-nombre="{{producto.nombre_producto}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-sm-2 col-12">
+                <!-- Contendor de Productos Actuales-->
+                <div class="card text-center" style="width: 18rem;">
+                    <div class="card-header">
+                        <p id="subTotalLista" style="color: #B12704; font-size: 20px; font-weight: bold;"></p>
+                        <button type="button" class="boton-generar-side-bar" id="boton-generar">Generar Nota</button>
+                    </div>
+                    <div class="list-group">    
+                        <div id="listaProductos" class="productos-side-bar">
+                            
+                        </div>             
+                    </div>
+                    <div class="card-footer">
+                        <button id="vaciar" class="vaciar-productos">Vaciar Productos</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+  </div>
     
     <div class="modal fade" id="crearProductoModal" tabindex="-1" aria-labelledby="crearProductoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -323,17 +335,19 @@
             function agregarProductoAlDOM(id, nombre_producto, precio_venta_producto, cantidad) {
                 // Crear un elemento div para el producto
                 var divProducto = document.createElement('div');
-                divProducto.setAttribute('class', 'producto-item');
+                divProducto.setAttribute('class', 'list-group-item');
                 divProducto.setAttribute('data-id', id);
 
                 // Crear un elemento p para el nombre del producto
                 var pNombre = document.createElement('p');
+                pNombre.setAttribute('class', 'nombre-item');
                 pNombre.textContent = nombre_producto;
                 divProducto.appendChild(pNombre);
 
                 // Crear un elemento p para el precio del producto
                 let divInputContainer = document.createElement('div');
                 let pPrecioPrefix = document.createElement('span');
+                pPrecioPrefix.setAttribute('class', 'precio-prefix');
                 pPrecioPrefix.textContent = 'S/. '+precio_venta_producto;
                 divInputContainer.appendChild(pPrecioPrefix);
                 divProducto.appendChild(divInputContainer);
@@ -376,8 +390,8 @@
                 let botonEliminar = document.createElement('button');
                 let iconoEliminar = document.createElement('img');
                 iconoEliminar.setAttribute('src', '/static/img/trash_icon.png');
-                iconoEliminar.classList.add('icono-eliminar');
-                botonEliminar.setAttribute('class','boton-side-bar')
+                iconoEliminar.setAttribute('class', 'icono-eliminar');
+                botonEliminar.setAttribute('class', 'boton-eliminar');
                 botonEliminar.setAttribute('data-id',id);
                 botonEliminar.appendChild(iconoEliminar);
                 

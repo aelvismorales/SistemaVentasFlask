@@ -1,0 +1,66 @@
+{%extends 'base.html'%}
+
+{% block navbar %}
+<li class="nav-item">
+    <a class="nav-link" href="{{url_for('product.buscar_producto')}}" aria-current="page"><strong>Productos</strong></a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{{url_for('note.ver_notas_pedido')}}" aria-current="page"><strong>Ver Notas de Pedido</strong></a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page"><strong>Ver Compradores</strong></a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{{url_for('auth.logout')}}"> <strong>Cerrar Sesion</strong></a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="container-fluid mt-3">
+        <div class="row justify-content-around">
+            <div class="col-sm-8 col-12">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Buscar comprador" id="inputSearch">
+                    <button class="btn btn-outline-success" name="submit_buscar" id="submit_buscar">Buscar</button>
+                </div>
+            </div>
+            <div class="col-sm-4 col-12"> <!-- col-sm-4 se aplica para pantallas mas grandes que 540px y el col-12 para pantallas mas chicas-->
+              <button type="button" class="btn btn-primary" name="btn-crear-comprador" id="btn-crear-comprador">Crear Comprador</button>
+            </div>
+        </div>
+        <div class="container-fluid" id="tabla-contenido">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">RUC</th>
+                            <th scope="col">Direccion</th>
+                            <th scope="col">Telefono</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comprador in compradores %}
+                        <tr>
+                            <td>{{comprador.nombre}}</td>
+                            <td>{{comprador.ruc}}</td>
+                            <td>{{comprador.direccion}}</td>
+                            <td>{{comprador.telefono}}</td>
+                            <td>{{comprador.correo}}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" name="btn-editar-comprador" id="btn-editar-comprador" data-id="{{comprador.id}}">Editar</button>
+                                <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}">Eliminar</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
