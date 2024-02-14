@@ -48,12 +48,13 @@
               
                               </thead>
                               <tbody>
-                                {% for key,product in notas.items() %}
+                                {% for product in notas %}
                                 <tr>
                                     <td style="font-size:80%;"> <strong>{{product.cantidad}}</strong></td>
-                                    <td style="font-size:80%;"><strong>{{product.name}}</strong></td>
-                                    <td style="font-size:80%;"><strong>{{product.precio}}</strong></td>
-                                    <td style="font-size:80%;"><strong>{{product.precio_individual}}</strong></td>
+                                    <td style="font-size:80%;"><strong>{{product.nombre_producto}}</strong></td>
+                                    <td style="font-size:80%;"><strong>{{product.precio_venta_producto}}</strong></td>
+                                    <td style="font-size:80%;"><strong>{{ ((product.precio_venta_producto|float) * (product.cantidad|float))|round(2,'floor') }}</strong></td>
+                                    
                                 </tr> 
                                 {% endfor %}                  
                                 <tr>

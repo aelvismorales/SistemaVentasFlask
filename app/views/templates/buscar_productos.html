@@ -2,6 +2,8 @@
 
 {% block csslink %}
     <link rel="stylesheet" href="{{url_for('static',filename='css/buscar_productos.css')}}" />
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 {%endblock%}
 
 {% block navbar %}
@@ -46,7 +48,7 @@
         <div class="row">
             <div class="col-sm-10 col-12">
                 <div class="table-responsive" id="tabla-contenido-productos">
-                    <table class="table">
+                    <table class="table" id="tabla-de-contenido-productos">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
@@ -87,6 +89,7 @@
                     <div class="card-header">
                         <p id="subTotalLista" style="color: #B12704; font-size: 20px; font-weight: bold;"></p>
                         <button type="button" class="boton-generar-side-bar" id="boton-generar">Generar Nota</button>
+                        <button id="boton-editar" class="boton-generar-side-bar">Editar</button>
                     </div>
                     <div class="list-group">    
                         <div id="listaProductos" class="productos-side-bar">
@@ -95,6 +98,7 @@
                     </div>
                     <div class="card-footer">
                         <button id="vaciar" class="vaciar-productos">Vaciar Productos</button>
+                    
                     </div>
                 </div>
             </div>
@@ -178,288 +182,330 @@
 {% endblock %}
 
 {% block scripts%}
-    <script>
-        var crearModal = document.getElementById('crearProductoModal')
-        var inputNombreProducto = document.getElementById('inputNombreProducto')
-        crearModal.addEventListener('shown.bs.modal', function () {inputNombreProducto.focus()})
-        var editarModal = document.getElementById('editarModal')
-        const botonesEditar=document.querySelectorAll('.editar-btn')
-
-        botonesEditar.forEach((boton)=>{
-            boton.addEventListener('click',async (event)=>{
-                const id=boton.getAttribute('data-id')
-                var url=`/editar/${id}`;
-                try{
-                    const response= await fetch(url,{
-                        method:'GET'
-                    });
-                    if (response.ok){
-                        const html_content= await response.text();                       
-                        document.getElementById('editarModal').querySelector('.modal-body').innerHTML=html_content;
-                        
-                        const editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
-                        editarModal.show();
-                        
-                        // Handle the submit event inside the modal
-                        const editarForm=document.getElementById('editarForm');
-                        editarForm.addEventListener('submit', async(e)=>{
-                            e.preventDefault();
-                            const formData=new FormData(editarForm);
-                            try{
-                                const submitResponse= await fetch(url,{
-                                    method:'POST',
-                                    body:formData
-                                });
-                                if (submitResponse.ok){
-                                    editarModal.hide();
-                                    location.reload();
-                                } else{
-                                    console.log('Error en la enviar el Formulario');
-                                }
-                            }
-                            catch(error){
-                                console.log(error);
-                            }
-                        })
-                    
-                    } else{
-                        console.log('Error en la respuesta');
-                    }
-                }
-                catch(error){
-                    console.log(error);
-                }
-            });
-        })
-        
-    </script>
-
-    <script>
-        // Capturar el clic en el botón "Eliminar"
-        const botonesEliminar = document.querySelectorAll('.eliminar-btn');
-      
-        botonesEliminar.forEach((boton) => {
-          boton.addEventListener('click', (event) => {
-            const id = boton.getAttribute('data-id');
-            const nombre_producto = boton.getAttribute('data-nombre');
-            document.getElementById('nombreProductoEliminar').innerText = nombre_producto;
-            document.getElementById('idProductoEliminar').innerText = id ;
-        });
-        });
-      
-        // Eliminar el elemento después de confirmar en el modal
-        document.getElementById('confirmarEliminar').addEventListener('click', async () => {
-          const id = document.getElementById('idProductoEliminar').innerText;
-          var url_delete=`/eliminarproducto/${id}`;
-          // Aquí puedes agregar la lógica para eliminar el elemento en tu backend si es necesario
-          try{
-            const response= await fetch(url_delete,{
-                method:'GET'
-            });
-            if (response.ok){
-                location.reload();
-            } else{
-                console.log(response.message);
-                console.log('Error en la respuesta');
+<!-- Script para Filtrar la Tabla de Contenido -->
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function() {
+      new DataTable("#tabla-de-contenido-productos");
+    });
+    $('#tabla-de-contenido-productos').DataTable({
+        "autoWidth": false,
+        "processing": true,
+        "searching": false,
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando la página _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
             }
-          }catch(error){
+        }
+    });
+</script>
+
+<script>
+    var crearModal = document.getElementById('crearProductoModal')
+    var inputNombreProducto = document.getElementById('inputNombreProducto')
+    crearModal.addEventListener('shown.bs.modal', function () {inputNombreProducto.focus()})
+    var editarModal = document.getElementById('editarModal')
+    const botonesEditar=document.querySelectorAll('.editar-btn')
+
+    botonesEditar.forEach((boton)=>{
+        boton.addEventListener('click',async (event)=>{
+            const id=boton.getAttribute('data-id')
+            var url=`/editar/${id}`;
+            try{
+                const response= await fetch(url,{
+                    method:'GET'
+                });
+                if (response.ok){
+                    const html_content= await response.text();                       
+                    document.getElementById('editarModal').querySelector('.modal-body').innerHTML=html_content;
+                    
+                    const editarModal = new bootstrap.Modal(document.getElementById('editarModal'));
+                    editarModal.show();
+                    
+                    // Handle the submit event inside the modal
+                    const editarForm=document.getElementById('editarForm');
+                    editarForm.addEventListener('submit', async(e)=>{
+                        e.preventDefault();
+                        const formData=new FormData(editarForm);
+                        try{
+                            const submitResponse= await fetch(url,{
+                                method:'POST',
+                                body:formData
+                            });
+                            if (submitResponse.ok){
+                                editarModal.hide();
+                                location.reload();
+                            } else{
+                                console.log('Error en la enviar el Formulario');
+                            }
+                        }
+                        catch(error){
+                            console.log(error);
+                        }
+                    })
+                
+                } else{
+                    console.log('Error en la respuesta');
+                }
+            }
+            catch(error){
                 console.log(error);
             }
         });
+    })
+    
+</script>
 
-        function actualizarSubTotal(){
-            var JSONproductos = localStorage.getItem('productos');
-            var products = JSONproductos ? JSON.parse(JSONproductos) : [];
-            var subTotal= products.reduce((total,producto)=>{
-                return total+producto.precio_venta_producto*producto.cantidad;
-            },0);
-            subTotal=parseFloat(subTotal).toFixed(2);  
-            localStorage.setItem('subTotal',subTotal);
-            document.getElementById('subTotalLista').innerText = 'S/.' + subTotal;
-            
-        }
-
-      
-        // Cuando la página se carga, recuperar el subtotal de localStorage y mostrarlo
-        window.onload = function() {
-            var subtotal = localStorage.getItem('subTotal');
-            if (subtotal) {
-                document.getElementById('subTotalLista').innerText = 'S/.' + subtotal;
-            }
-        };
-
-        // Capturar el clic en el botón "Vaciar Productos"
-        document.getElementById('vaciar').addEventListener('click', () => {
-            // Eliminar la lista de productos de localStorage
-            var JSONproductos = localStorage.getItem('productos');
-            var products = JSONproductos ? JSON.parse(JSONproductos) : [];
-
-            // Vaciar el array
-            products.length = 0;
-
-            // Guardar el array vacío de nuevo en localStorage
-            localStorage.setItem('productos', JSON.stringify(products));
-
-            localStorage.removeItem('subTotal');
-            // Actualizar SubTotal
-            actualizarSubTotal();
+<script>
+    // Capturar el clic en el botón "Eliminar"
+    const botonesEliminar = document.querySelectorAll('.eliminar-btn');
+    
+    botonesEliminar.forEach((boton) => {
+        boton.addEventListener('click', (event) => {
+        const id = boton.getAttribute('data-id');
+        const nombre_producto = boton.getAttribute('data-nombre');
+        document.getElementById('nombreProductoEliminar').innerText = nombre_producto;
+        document.getElementById('idProductoEliminar').innerText = id ;
+    });
+    });
+    
+    // Eliminar el elemento después de confirmar en el modal
+    document.getElementById('confirmarEliminar').addEventListener('click', async () => {
+        const id = document.getElementById('idProductoEliminar').innerText;
+        var url_delete=`/eliminarproducto/${id}`;
+        // Aquí puedes agregar la lógica para eliminar el elemento en tu backend si es necesario
+        try{
+        const response= await fetch(url_delete,{
+            method:'GET'
+        });
+        if (response.ok){
             location.reload();
-        });
+        } else{
+            console.log(response.message);
+            console.log('Error en la respuesta');
+        }
+        }catch(error){
+            console.log(error);
+        }
+    });
 
-        // Capturar el clic en el botón "Generar Nota"
-        document.getElementById('boton-generar').addEventListener('click', () => {
-            // Abrir la página de generar nota
-            var JSONproductos = localStorage.getItem('productos');
-            var products = JSONproductos ? JSON.parse(JSONproductos) : [];
-            if (products.length==0){
-                alert('No hay productos en la lista');              
-            }
-            else{
-                window.location.href = '/crearnotaventa';
-            }
-        });
-    
-    
-        document.addEventListener('DOMContentLoaded', function() {
+    function actualizarSubTotal(){
+        var JSONproductos = localStorage.getItem('productos');
+        var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+        var subTotal= products.reduce((total,producto)=>{
+            return total+producto.precio_venta_producto*producto.cantidad;
+        },0);
+        subTotal=parseFloat(subTotal).toFixed(2);  
+        localStorage.setItem('subTotal',subTotal);
+        
+        document.getElementById('subTotalLista').innerText = 'S/.' + subTotal;
+        
+    }
 
-            // Capturar el clic en el botón "Agregar Producto"
-            var productos=[];
-            const botonesAgregar = document.querySelectorAll('#agregarProducto');
-            //Validad que existe algun item en la lista de productos o sino mostrar un mensaje de error no hay productos
-            const contenedor = document.getElementById('listaProductos');
-            // Recuperar la lista de productos de localStorage al cargar la página
+    
+    // Cuando la página se carga, recuperar el subtotal de localStorage y mostrarlo
+    window.onload = function() {
+        var subtotal = localStorage.getItem('subTotal');
+        if (subtotal) {
+            document.getElementById('subTotalLista').innerText = 'S/.' + subtotal;
+        }
+    };
+
+    // Capturar el clic en el botón "Vaciar Productos"
+    document.getElementById('vaciar').addEventListener('click', () => {
+        // Eliminar la lista de productos de localStorage
+        var JSONproductos = localStorage.getItem('productos');
+        var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+
+        // Vaciar el array
+        products.length = 0;
+
+        // Guardar el array vacío de nuevo en localStorage
+        localStorage.setItem('productos', JSON.stringify(products));
+
+        localStorage.removeItem('subTotal');
+        // Actualizar SubTotal
+        actualizarSubTotal();
+        location.reload();
+    });
+
+    // Capturar el clic en el botón "Generar Nota"
+    document.getElementById('boton-generar').addEventListener('click', () => {
+        // Abrir la página de generar nota
+        var JSONproductos = localStorage.getItem('productos');
+        var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+        if (products.length==0){
+            alert('No hay productos en la lista');              
+        }
+        else{
+            window.location.href = '/crearnotaventa';
+        }
+    });
+
+    //Extrayendo de localStorage si es que se esta en modo edicion
+    const modoEdicion=localStorage.getItem("modoEdicion",false);
+    if (modoEdicion){
+        const btnEditar=document.getElementById('boton-editar');
+        btnEditar.disabled=false
+        btnEditar.addEventListener('click',()=>{
+            localStorage.setItem('total_venta_session',localStorage.getItem('subTotal'));
+            window.location.href = '/editarnotaventa/'+"{{session['id_nota']}}";
+        });
+    }else{
+        const btnEditar=document.getElementById('boton-editar');
+        btnEditar.disabled=true
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Capturar el clic en el botón "Agregar Producto"
+        var productos=[];
+        const botonesAgregar = document.querySelectorAll('#agregarProducto');
+        //Validad que existe algun item en la lista de productos o sino mostrar un mensaje de error no hay productos
+        const contenedor = document.getElementById('listaProductos');
+        // Recuperar la lista de productos de localStorage al cargar la página
+        var productosJSON = localStorage.getItem('productos');
+        var productos = productosJSON ? JSON.parse(productosJSON) : [];
+
+        // Función para crear y agregar el elemento div del producto
+        function agregarProductoAlDOM(id, nombre_producto, precio_venta_producto, cantidad) {
+            // Crear un elemento div para el producto
+            var divProducto = document.createElement('div');
+            divProducto.setAttribute('class', 'list-group-item');
+            divProducto.setAttribute('data-id', id);
+
+            // Crear un elemento p para el nombre del producto
+            var pNombre = document.createElement('p');
+            pNombre.setAttribute('class', 'nombre-item');
+            pNombre.textContent = nombre_producto;
+            divProducto.appendChild(pNombre);
+
+            // Crear un elemento p para el precio del producto
+            let divInputContainer = document.createElement('div');
+            let pPrecioPrefix = document.createElement('span');
+            pPrecioPrefix.setAttribute('class', 'precio-prefix');
+            pPrecioPrefix.textContent = 'S/. '+precio_venta_producto;
+            divInputContainer.appendChild(pPrecioPrefix);
+            divProducto.appendChild(divInputContainer);
+
+
+            var divCantidad = document.createElement('div');
+            divCantidad.setAttribute('class', 'cantidad-item');
+            divProducto.appendChild(divCantidad);
+
+            // Crear un elemento p para la cantidad del producto
+            let pCantidad = document.createElement('input');
+            pCantidad.setAttribute('class', 'inputCantidad');
+            pCantidad.setAttribute('type', 'number');
+            pCantidad.setAttribute('min', '1');
+            pCantidad.setAttribute('step', '0.01');
+            pCantidad.setAttribute('value', cantidad);
+            pCantidad.setAttribute('data-id', id);
+            divCantidad.appendChild(pCantidad);
+
+            pCantidad.addEventListener('input', (event) => {
+                const id = pCantidad.getAttribute('data-id');
+                const cantidad = pCantidad.value;
+                var JSONproductos = localStorage.getItem('productos');
+                var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+                var productosActualizados = products.map((producto) => {
+                    if (producto.id === id) {
+                        producto.cantidad = cantidad;
+                    }
+                    return producto;
+                });
+                JSONproductos = JSON.stringify(productosActualizados);
+                localStorage.setItem('productos', JSONproductos);
+
+                // Actualizar SubTotal
+                actualizarSubTotal();
+            });
+
+
+            // Crear boton eliminar de la lista
+            let botonEliminar = document.createElement('button');
+            let iconoEliminar = document.createElement('img');
+            iconoEliminar.setAttribute('src', '/static/img/trash_icon.png');
+            iconoEliminar.setAttribute('class', 'icono-eliminar');
+            botonEliminar.setAttribute('class', 'boton-eliminar');
+            botonEliminar.setAttribute('data-id',id);
+            botonEliminar.appendChild(iconoEliminar);
+            
+
+            botonEliminar.addEventListener('click', (event) => {
+                const id = botonEliminar.getAttribute('data-id');
+                let divProducto = document.querySelector(`div[data-id="${id}"]`);
+                divProducto.remove();
+
+                var JSONproductos = localStorage.getItem('productos');
+                var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+                var productosFiltrados = products.filter((producto) => producto.id !== id);
+
+                // Guardar la lista actualizada en localStorage
+                localStorage.setItem('productos', JSON.stringify(productosFiltrados));
+                
+                actualizarSubTotal();
+            });
+
+            divCantidad.appendChild(botonEliminar);
+
+            // Agregar el div del producto al contenedor
+            contenedor.appendChild(divProducto);
+    }
+
+    // Recorrer la lista de productos y agregarlos al DOM al cargar la página
+    productos.forEach(function(producto) {
+        agregarProductoAlDOM(producto.id, producto.nombre_producto, producto.precio_venta_producto, producto.cantidad);
+    });
+
+    // Ahora, el evento click para agregar productos
+    botonesAgregar.forEach((boton) => {
+        boton.addEventListener('click', (event) => {
+            
+            const id=boton.getAttribute('data-id');
+
+            const nombre_producto=boton.getAttribute('data-nombre');
+            const precio_venta_producto= parseFloat(boton.getAttribute('data-precio'));
+            const cantidad= parseFloat( boton.getAttribute('data-cantidad'));
+            // Check if a product with the same id already exists in the array
             var productosJSON = localStorage.getItem('productos');
             var productos = productosJSON ? JSON.parse(productosJSON) : [];
 
-            // Función para crear y agregar el elemento div del producto
-            function agregarProductoAlDOM(id, nombre_producto, precio_venta_producto, cantidad) {
-                // Crear un elemento div para el producto
-                var divProducto = document.createElement('div');
-                divProducto.setAttribute('class', 'list-group-item');
-                divProducto.setAttribute('data-id', id);
-
-                // Crear un elemento p para el nombre del producto
-                var pNombre = document.createElement('p');
-                pNombre.setAttribute('class', 'nombre-item');
-                pNombre.textContent = nombre_producto;
-                divProducto.appendChild(pNombre);
-
-                // Crear un elemento p para el precio del producto
-                let divInputContainer = document.createElement('div');
-                let pPrecioPrefix = document.createElement('span');
-                pPrecioPrefix.setAttribute('class', 'precio-prefix');
-                pPrecioPrefix.textContent = 'S/. '+precio_venta_producto;
-                divInputContainer.appendChild(pPrecioPrefix);
-                divProducto.appendChild(divInputContainer);
-
-
-                var divCantidad = document.createElement('div');
-                divCantidad.setAttribute('class', 'cantidad-item');
-                divProducto.appendChild(divCantidad);
-
-                // Crear un elemento p para la cantidad del producto
-                let pCantidad = document.createElement('input');
-                pCantidad.setAttribute('class', 'inputCantidad');
-                pCantidad.setAttribute('type', 'number');
-                pCantidad.setAttribute('min', '1');
-                pCantidad.setAttribute('step', '0.01');
-                pCantidad.setAttribute('value', cantidad);
-                pCantidad.setAttribute('data-id', id);
-                divCantidad.appendChild(pCantidad);
-
-                pCantidad.addEventListener('input', (event) => {
-                    const id = pCantidad.getAttribute('data-id');
-                    const cantidad = pCantidad.value;
-                    var JSONproductos = localStorage.getItem('productos');
-                    var products = JSONproductos ? JSON.parse(JSONproductos) : [];
-                    var productosActualizados = products.map((producto) => {
-                        if (producto.id === id) {
-                            producto.cantidad = cantidad;
-                        }
-                        return producto;
-                    });
-                    JSONproductos = JSON.stringify(productosActualizados);
-                    localStorage.setItem('productos', JSONproductos);
-
-                    // Actualizar SubTotal
-                    actualizarSubTotal();
-                });
-
-
-                // Crear boton eliminar de la lista
-                let botonEliminar = document.createElement('button');
-                let iconoEliminar = document.createElement('img');
-                iconoEliminar.setAttribute('src', '/static/img/trash_icon.png');
-                iconoEliminar.setAttribute('class', 'icono-eliminar');
-                botonEliminar.setAttribute('class', 'boton-eliminar');
-                botonEliminar.setAttribute('data-id',id);
-                botonEliminar.appendChild(iconoEliminar);
-                
-
-                botonEliminar.addEventListener('click', (event) => {
-                    const id = botonEliminar.getAttribute('data-id');
-                    let divProducto = document.querySelector(`div[data-id="${id}"]`);
-                    divProducto.remove();
-
-                    var JSONproductos = localStorage.getItem('productos');
-                    var products = JSONproductos ? JSON.parse(JSONproductos) : [];
-                    var productosFiltrados = products.filter((producto) => producto.id !== id);
-
-                    // Guardar la lista actualizada en localStorage
-                    localStorage.setItem('productos', JSON.stringify(productosFiltrados));
-                    
-                    actualizarSubTotal();
-                });
-
-                divCantidad.appendChild(botonEliminar);
-
-                // Agregar el div del producto al contenedor
-                contenedor.appendChild(divProducto);
-        }
-
-        // Recorrer la lista de productos y agregarlos al DOM al cargar la página
-        productos.forEach(function(producto) {
-            agregarProductoAlDOM(producto.id, producto.nombre_producto, producto.precio_venta_producto, producto.cantidad);
-        });
-
-        // Ahora, el evento click para agregar productos
-        botonesAgregar.forEach((boton) => {
-            boton.addEventListener('click', (event) => {
-                
-                const id=boton.getAttribute('data-id');
-
-                const nombre_producto=boton.getAttribute('data-nombre');
-                const precio_venta_producto= parseFloat(boton.getAttribute('data-precio'));
-                const cantidad= parseFloat( boton.getAttribute('data-cantidad'));
-                // Check if a product with the same id already exists in the array
-                var productosJSON = localStorage.getItem('productos');
-                var productos = productosJSON ? JSON.parse(productosJSON) : [];
-
-                const productExists = productos.some(function(producto) {
-                    return producto.id === id;
-                });
-                if (!productExists) {
-                    // Si el producto no existe, agregarlo a la lista y al DOM
-                    productos.push({ id, nombre_producto, precio_venta_producto, cantidad });
-                    
-                    // Convertir la lista de productos a formato JSON y guardar en localStorage
-                    const productosJSON = JSON.stringify(productos);
-                    localStorage.setItem('productos', productosJSON);
-                    
-                    agregarProductoAlDOM(id, nombre_producto, precio_venta_producto, cantidad);
-                } 
-                else {
-                // Si el producto ya existe, mostrar un mensaje de error
-                alert('El producto ya existe en la lista');
-                }
-                // Actualizar cualquier otra lógica que necesites realizar después de agregar un producto
-                actualizarSubTotal();
+            const productExists = productos.some(function(producto) {
+                return producto.id === id;
             });
+            if (!productExists) {
+                // Si el producto no existe, agregarlo a la lista y al DOM
+                productos.push({ id, nombre_producto, precio_venta_producto, cantidad });
+                
+                // Convertir la lista de productos a formato JSON y guardar en localStorage
+                const productosJSON = JSON.stringify(productos);
+                localStorage.setItem('productos', productosJSON);
+                
+                agregarProductoAlDOM(id, nombre_producto, precio_venta_producto, cantidad);
+            } 
+            else {
+            // Si el producto ya existe, mostrar un mensaje de error
+            alert('El producto ya existe en la lista');
+            }
+            // Actualizar cualquier otra lógica que necesites realizar después de agregar un producto
+            actualizarSubTotal();
         });
     });
+});
 
 
-    </script>
+</script>
 
 
 {% endblock %}
