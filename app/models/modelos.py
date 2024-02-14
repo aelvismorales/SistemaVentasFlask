@@ -203,8 +203,10 @@ class Nota_de_Pedido(db.Model):
     nombre_producto=db.Column(db.String(15000))
 
     total_venta=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
-    acuenta=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
-    deuda=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    bool_acuenta=db.Column(db.Boolean,default=False) #Este valor va a ser True si el cliente paga algo al momento de la venta y si acuenta es mayor a 0 y si acuenta y total_venta son iguales es False
+    acuenta=db.Column(db.Numeric(precision=10,scale=2),nullable=False) # Pago inicial, este valor va a ir aumentando con dada pago adicional
+    deuda=db.Column(db.Numeric(precision=10,scale=2),nullable=False) # Deuda total, este valor va a ir disminuyendo con cada pago adicional
+    bool_deuda=db.Column(db.Boolean,default=False) #Este valor va a ser True si el cliente no paga nada al momento de la venta y si deuda es mayor a 0.
 
     direccion_comprador=db.Column(db.String(200))
     estado=db.Column(db.String(50))
@@ -285,12 +287,12 @@ class Nota_de_Pedido(db.Model):
     
     def get_json(self):
         json = {"id":self.id, "fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'), "nombre_producto":self.nombre_producto, "nombre_comprador":self.nombre_comprador, "direccion_comprador":self.direccion_comprador, "total_venta":self.total_venta, "estado":self.estado, 
-                "fecha_cancelacion":self.fecha_cancelacion.strftime('%d/%m/%Y') if self.fecha_cancelacion is not None else None, "comentario":self.comentario, "numero_comprador":self.numero_comprador, "dni_comprador":self.dni_comprador, "deuda":self.deuda, "acuenta":self.acuenta, 
-                "vuelto":self.vuelto, "pagoVisa":self.pagoVisa, "pagoEfectivo":self.pagoEfectivo, "pagoBBVA":self.pagoBBVA, "pagoBCP":self.pagoBCP, "pagoYape":self.pagoYape}
+                "fecha_cancelacion":self.fecha_cancelacion.strftime('%d/%m/%Y') if self.fecha_cancelacion is not None else None, "comentario":self.comentario, "numero_comprador":self.numero_comprador, "dni_comprador":self.dni_comprador, "deuda":self.deuda, "acuenta":self.acuenta,
+                "bool_acuenta":self.bool_acuenta,"bool_deuda":self.bool_deuda,"vuelto":self.vuelto, "pagoVisa":self.pagoVisa, "pagoEfectivo":self.pagoEfectivo, "pagoBBVA":self.pagoBBVA, "pagoBCP":self.pagoBCP, "pagoYape":self.pagoYape}
 
         return json if json is not None else {}
     
-    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_cancelacion=None,comentario="",comprador_id=None,vuelto=0.00,pagoVisa=0.00,pagoEfectivo=0.00,pagoBBVA=0.00,pagoBCP=0.00,pagoYape=0.00):
+    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_cancelacion=None,comentario="",comprador_id=None,vuelto=0.00,pagoVisa=0.00,pagoEfectivo=0.00,pagoBBVA=0.00,pagoBCP=0.00,pagoYape=0.00,bool_acuenta=False,bool_deuda=False):
 
         self.nombre_comprador=nombre_comprador
         self.direccion_comprador=direccion_comprador
@@ -314,5 +316,7 @@ class Nota_de_Pedido(db.Model):
         self.deuda=deuda
         self.acuenta=acuenta
 
+        self.bool_deuda=bool_deuda
+        self.bool_acuenta=bool_acuenta
         
 
