@@ -3,6 +3,7 @@
 {% block csslink %}
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 {% endblock %}
 
 {% block navbar %}
@@ -155,7 +156,7 @@
             
             <div class="col-lg-2 d-flex justify-content-center" style="max-height: 305px;">
                 <!-- Resumen de Ventas Numerico-->
-                <div class="card" style="width: 18rem;">
+                <div class="card" style="width: 18rem;" id="resumen-venta-numerico">
                     <div class="card-header">
                         <h5 style="text-align: center; font-weight: bolder;">Total Venta del Dia</h5>
                     </div>
@@ -277,6 +278,15 @@
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
+
 <!-- Inicializando Tabla de Resumen de Notas de Pedido con los Filtros de DataTables-->
 <script>
     $(document).ready(function() {
@@ -286,6 +296,44 @@
         "autoWidth": false,
         "processing": true,
         "searching": false,
+        "dom":'Blrftip',
+        "buttons": [
+                {
+                    extend: 'copy',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7]
+                    }
+                },
+                {
+                    extend: 'csv',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7]
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7]
+                    }
+                },
+                {
+                    extend: 'pdf',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7]
+                    }
+                },
+                {
+                    extend: 'print',
+                    text:'Imprimir',
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5,6,7]
+                    },
+                    customize: function(win){
+                        var contenidoClonado = $('#resumen-venta-numerico').clone();
+                        $(win.document.body).append(contenidoClonado);
+                    }
+                }
+            ],
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros",
             "zeroRecords": "No se encontraron resultados",
@@ -577,8 +625,8 @@
 
 </script>
 
+<!--Funciones para Ver la Nota de Pedido y Imprimir la Nota de Pedido-->
 <script>
-    // Funciones para Ver la Nota de Pedido y Imprimir la Nota de Pedido
     const btnVer = document.querySelectorAll('#btn-ver');
     const contenidoModal = document.getElementById('contenido-modal');
     const btnImprimir = document.getElementById('imprimir-modal');  
@@ -628,7 +676,6 @@
                     })
                 .catch(error => console.error('Error:', error));
 
-
             verModal.show();
         })
     })
@@ -668,6 +715,7 @@
     })
 </script>
 
+<!--Funciones para Editar la Nota de Pedido-->
 <script>
     // Funciones para Editar la Nota de Pedido
     const btnEditar = document.querySelectorAll('#btn-editar');

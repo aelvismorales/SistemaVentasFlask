@@ -184,9 +184,6 @@ def vernotapedido(id):
 		return jsonify({'message':'No se pudo encontrar la nota de pedido'},400)
 
 
-
-
-
 @note.route('/editarnotaventa/',methods=['GET','POST'])
 def editarNotaVentaNoId():
 	#Check for requirements, if they want to generate a new one or only edit.
@@ -303,19 +300,12 @@ def anularnota(id):
 		flash(succes_message,category='message')
 	return redirect(url_for('note.vernotapedido'))
 
-
-
-
-
 #Utilizando actualmente
 @note.route('/ver_notas_pedido',methods=['GET','POST'])
 def ver_notas_pedido():
 	# request.args.get('page', 1, type=int) , de esta manera obtenemos args desde url
-	# Esta funcion nos permitira ver todas las notas de pedido que se han creado
 
 	if request.method=='GET':
-		# Recibiendo los argumentos de la url para fecha_inicio y fecha_final
-
 		#Verificar la cantidad de argumentos que estoy recibiendo
 		args=request.args
 		arg_names=list(args.keys())
@@ -329,136 +319,125 @@ def ver_notas_pedido():
 		total_pago_yape=Decimal(0).quantize(Decimal("1e-{0}".format(2)))
 
 		if 'fecha_inicio' in arg_names and 'fecha_final' in arg_names and 'comprador' in arg_names:
-			fecha_inicio_actual = request.args.get('fecha_inicio', default=(datetime.today().date()).strftime('%Y/%m/%d'), type=str)
-			fecha_final_actual = request.args.get('fecha_final', default=(datetime.today().date() + timedelta(days=1)).strftime('%Y/%m/%d'), type=str)
-			comprador=request.args.get('comprador',default='VARIOS',type=str)
+			fecha_inicio_actual = request.args.get('fecha_inicio', default=None, type=str)
+			fecha_final_actual = request.args.get('fecha_final', default=None, type=str)
+			comprador=request.args.get('comprador',default=None,type=str)
 
 			# Verificar si se esta filtrando por estado
 			estado_nota=request.args.get('estado',default='',type=str)
 			estado_nota_2=request.args.get('estado2',default='',type=str)
 			estado_nota_final=estado_nota+"-"+estado_nota_2
 
-			# Verificacion de Filtro por estado y si no existe se filtra por comprador y fecha_inicio - fecha_final
+			filtro_estado = None
+
 			if estado_nota and estado_nota_2:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.estado==estado_nota_final).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)				
+				filtro_estado = Nota_de_Pedido.estado == estado_nota_final
+			elif estado_nota_2:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota_2 + '%')
+			elif estado_nota:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota + '%')
+
+			# Resumen de Ventas
+			if filtro_estado is not None:
+				if fecha_final_actual and fecha_inicio_actual and comprador:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%'),filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
+				elif fecha_final_actual and fecha_inicio_actual:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
+				elif comprador:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%'),filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
 			else:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%')).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)		
+				if fecha_final_actual and fecha_inicio_actual and comprador:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%')).order_by(asc(Nota_de_Pedido.id)).all()
+				elif fecha_final_actual and fecha_inicio_actual:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual)).order_by(asc(Nota_de_Pedido.id)).all()
+				elif comprador:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%')).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
+			
+			# Resumen de Ventas
+			if notas_pedidos_actual:
+				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
+				for nota in json_notas_pedidos_actual:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+						# Suma general
+						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+				return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
+			else:
+				flash('No se pudo encontrar ninguna nota de pedido','error')
+				return render_template('ver_notas_pedidos.html')
 
 		elif 'fecha_inicio' in arg_names and 'fecha_final' in arg_names and 'dni' in arg_names:
-			fecha_inicio_actual = request.args.get('fecha_inicio', default=(datetime.today().date()).strftime('%Y/%m/%d'), type=str)
-			fecha_final_actual = request.args.get('fecha_final', default=(datetime.today().date() + timedelta(days=1)).strftime('%Y/%m/%d'), type=str)
-			dni=request.args.get('dni',default='',type=str)
+			fecha_inicio_actual = request.args.get('fecha_inicio', default=None, type=str)
+			fecha_final_actual = request.args.get('fecha_final', default=None, type=str)
+			dni=request.args.get('dni',default=None,type=str)
 
 			#Verificar si se esta filtrando por estado
 			estado_nota=request.args.get('estado',default='',type=str)
 			estado_nota_2=request.args.get('estado2',default='',type=str)
 			estado_nota_final=estado_nota+"-"+estado_nota_2
 
-			# Verificacion de Filtro por estado y si no existe se filtra por dni y fecha_inicio - fecha_final
+			filtro_estado = None
+
 			if estado_nota and estado_nota_2:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.dni_comprador==dni,Nota_de_Pedido.estado==estado_nota_final).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)				
+				filtro_estado = Nota_de_Pedido.estado == estado_nota_final
+			elif estado_nota_2:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota_2 + '%')
+			elif estado_nota:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota + '%')
+			
+			if filtro_estado is not None:
+				if fecha_final_actual and fecha_inicio_actual and dni:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.dni_comprador==dni,filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
+				elif fecha_final_actual and fecha_inicio_actual:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.dni_comprador==dni,filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
+				elif dni:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.dni_comprador==dni,filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
 			else:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.dni_comprador==dni).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)		
+				if fecha_final_actual and fecha_inicio_actual and dni:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.dni_comprador==dni).order_by(asc(Nota_de_Pedido.id)).all()
+				elif fecha_final_actual and fecha_inicio_actual:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.dni_comprador==dni).order_by(asc(Nota_de_Pedido.id)).all()
+				elif dni:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.dni_comprador==dni).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
+
+			# Resumen de Ventas
+			if notas_pedidos_actual:
+				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
+				for nota in json_notas_pedidos_actual:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+						# Suma general
+						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+				return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
+			else:
+				flash('No se pudo encontrar ninguna nota de pedido','error')
+				return render_template('ver_notas_pedidos.html')
 
 		elif 'fecha_inicio' in arg_names and 'fecha_final' in arg_names:
 			fecha_inicio_actual = request.args.get('fecha_inicio', default=(datetime.today().date()).strftime('%Y/%m/%d'), type=str)
@@ -469,61 +448,47 @@ def ver_notas_pedido():
 			estado_nota_2=request.args.get('estado2',default='',type=str)
 			estado_nota_final=estado_nota+"-"+estado_nota_2
 
-			# Verificacion de Filtro por estado y si no existe se filtra por fecha_inicio - fecha_final
+			filtro_estado = None
+
 			if estado_nota and estado_nota_2:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),Nota_de_Pedido.estado==estado_nota_final).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)				
+				filtro_estado = Nota_de_Pedido.estado == estado_nota_final
+			elif estado_nota_2:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota_2 + '%')
+			elif estado_nota:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota + '%')
+
+			if filtro_estado is not None:
+				if fecha_final_actual and fecha_inicio_actual:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual),filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
 			else:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual)).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)		
+				if fecha_final_actual and fecha_inicio_actual:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio_actual,fecha_final_actual)).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
+
+			# Resumen de Ventas
+			if notas_pedidos_actual:
+				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
+				for nota in json_notas_pedidos_actual:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+						# Suma general
+						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+				return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
+			else:
+				flash('No se pudo encontrar ninguna nota de pedido','error')
+				return render_template('ver_notas_pedidos.html')
 
 		elif 'comprador' in arg_names:
 			comprador=request.args.get('comprador',default='VARIOS',type=str)
@@ -533,125 +498,95 @@ def ver_notas_pedido():
 			estado_nota_2=request.args.get('estado2',default='',type=str)
 			estado_nota_final=estado_nota+"-"+estado_nota_2
 
-			# Verificacion de Filtro por estado y si no existe se filtra por comprador
+			filtro_estado = None
 			if estado_nota and estado_nota_2:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%'),Nota_de_Pedido.estado==estado_nota_final).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)				
+				filtro_estado = Nota_de_Pedido.estado == estado_nota_final
+			elif estado_nota_2:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota_2 + '%')
+			elif estado_nota:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota + '%')
+			
+			if filtro_estado is not None:
+				if comprador:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%'),filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
 			else:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%')).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
+				if comprador:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador+'%')).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
+
+			# Resumen de Ventas
+			if notas_pedidos_actual:
+				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
+				for nota in json_notas_pedidos_actual:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+						# Suma general
+						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+				return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
+			else:
+				flash('No se pudo encontrar ninguna nota de pedido','error')
+				return render_template('ver_notas_pedidos.html')
 
 		elif 'dni' in arg_names:
 			dni=request.args.get('dni',default='',type=str)
-
-			# Verificar si se esta filtrando por estado
+			
 			estado_nota=request.args.get('estado',default='',type=str)
 			estado_nota_2=request.args.get('estado2',default='',type=str)
 			estado_nota_final=estado_nota+"-"+estado_nota_2
 
-			# Verificacion de Filtro por estado y si no existe se filtra por dni
+			filtro_estado = None
 			if estado_nota and estado_nota_2:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.dni_comprador==dni,Nota_de_Pedido.estado==estado_nota_final).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)				
+				filtro_estado = Nota_de_Pedido.estado == estado_nota_final
+			elif estado_nota_2:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota_2 + '%')
+			elif estado_nota:
+				filtro_estado = Nota_de_Pedido.estado.like('%' + estado_nota + '%')
+			
+			# Verificar si se esta filtrando por estado
+			if filtro_estado is not None:
+				if dni:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.dni_comprador==dni,filtro_estado).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
 			else:
-				notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.dni_comprador==dni).order_by(asc(Nota_de_Pedido.id)).all()
-				if notas_pedidos_actual:
-					json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
-					for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
-							# Suma general
-							total_venta_resumen+=nota['total_venta']
-							# Suma por Efectivo
-							if nota['pagoEfectivo']:
-								total_pago_efectivo+=nota['pagoEfectivo']
-							# Suma por Visa
-							if nota['pagoVisa']:
-								total_pago_visa+=nota['pagoVisa']
-							# Suma por BCP
-							if nota['pagoBCP']:
-								total_pago_bcp+=nota['pagoBCP']
-							# Suma por BBVA
-							if nota['pagoBBVA']:
-								total_pago_bbva+=nota['pagoBBVA']
-							# Suma por Yape
-							if nota['pagoYape']:
-								total_pago_yape+=nota['pagoYape']
-					return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
+				if dni:
+					notas_pedidos_actual=Nota_de_Pedido.query.filter(Nota_de_Pedido.dni_comprador==dni).order_by(asc(Nota_de_Pedido.id)).all()
 				else:
-					flash('No se pudo encontrar ninguna nota de pedido','error')
-					return render_template('ver_notas_pedidos.html')
+					notas_pedidos_actual = None
+			
+			# Resumen de Ventas
+			if notas_pedidos_actual:
+				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
+				for nota in json_notas_pedidos_actual:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+						# Suma general
+						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+				return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
+			else:
+				flash('No se pudo encontrar ninguna nota de pedido','error')
+				return render_template('ver_notas_pedidos.html')
 			
 		elif 'id' in arg_names:
 			id=request.args.get('id',default='',type=str)
@@ -685,151 +620,6 @@ def ver_notas_pedido():
 			return render_template('ver_notas_pedidos.html')
 	else:
 		return jsonify({'message':'No se pudo cargar las notas de pedido'},400)
-
-
-
-
-
-@note.route('/vernotapedidoLast',methods=['GET','POST'])
-def vernotapedidoLast():
-	seleccion=request.form.get('seleccionbusqueda')
-	fecha=False
-	nombre=False
-	order=False
-	estado_nota=False
-	dni_comprador=False
-	resumen_Ventas=False
-	imprimir_resumen=False
-	id_cambio=False
-	# valVer=False
-	total_dia=0
-	total_dia_visa=0
-	total_dia_por_cancelar=0
-	nota_pedido=[]
-	if request.method=='POST':
-		if seleccion=='Fecha':
-			fecha=True
-			imprimir_resumen=True
-		elif seleccion=='Nombre':
-			nombre=True
-		elif seleccion=='Estado':
-			estado_nota=True
-		elif seleccion=='DNI':
-			dni_comprador=True
-		elif seleccion=='resumen':
-			resumen_Ventas=True
-		elif seleccion=='ID':
-			id_cambio=True
-		elif seleccion=='Ordenar por Cantidad':
-			order=True
-			nota_pedido=Nota_de_Pedido.query.order_by(desc(Nota_de_Pedido.total_venta)).all()
-			if nota_pedido is not None:
-				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,form_seleccion=seleccion,id_cambio=id_cambio,bool_fecha=fecha,bool_nombre=nombre,bool_order=order,bool_dni=dni_comprador,bool_imprimir=imprimir_resumen,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,)
-			else :
-				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
-				flash(error_message,category='error')
-		
-	return render_template('ver_nota_pedido.html',log=loge,form_seleccion=seleccion,bool_fecha=fecha,bool_nombre=nombre,id_cambio=id_cambio,bool_order=order,bool_estado=estado_nota,bool_dni=dni_comprador,bool_resumen=resumen_Ventas,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
-
-@note.route('/vernotaporestado',methods=['GET','POST'])
-def vernotaporestado():
-	opcion=request.form.get('opcionestado')
-	total_dia=0
-	total_dia_visa=0
-	total_dia_por_cancelar=0
-	if request.method=='POST' and opcion:
-		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.estado==opcion).order_by(asc(Nota_de_Pedido.id)).all()
-		return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
-	return redirect(url_for('note.vernotaporestado'))
-
-@note.route('/vernotaporfecha',methods=['GET','POST'])
-def vernotaporfecha():
-
-	fecha_inicio=request.form['fecha_inicio']
-	fecha_final=request.form['fecha_final']
-	total_dia=0
-	total_dia_visa=0
-	total_dia_bcp=0
-	total_dia_bbva=0
-	total_dia_yape=0
-	total_dia_por_cancelar=0
-	if fecha_inicio and fecha_final and request.method=='POST':
-		
-		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.fecha_creacion.between(fecha_inicio,fecha_final)).order_by(asc(Nota_de_Pedido.id)).all()
-		if nota_pedido is not None:
-
-			for note in nota_pedido:
-				if note.get_estado() in ['cancelado-','cancelado-por-recoger','cancelado-entregado']:
-					if note.get_acuenta()>0:
-						total_dia+=note.get_acuenta()
-					else:
-						total_dia+=note.get_total_venta()
-				elif note.get_estado() in ['cancelado-VISA-','cancelado-VISA-entregado','cancelado-VISA-por-recoger']:
-					if note.get_acuenta()>0:
-						total_dia_visa+=note.get_acuenta()
-					else:
-						total_dia_visa+=note.get_total_venta()
-
-				elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
-					if note.get_acuenta()>0:
-						total_dia_por_cancelar+=note.get_acuenta()
-					else:
-						total_dia_por_cancelar+=note.get_total_venta()
-				elif note.get_estado() in ['cancelado-BCP-','cancelado-BCP-por-recoger','cancelado-BCP-entregado']:
-					if note.get_acuenta()>0:
-						total_dia_bcp+=note.get_acuenta()
-					else:
-						total_dia_bcp+=note.get_total_venta()
-				elif note.get_estado() in ['cancelado-BBVA-','cancelado-BBVA-por-recoger','cancelado-BBVA-entregado']:
-					if note.get_acuenta()>0:
-						total_dia_bbva+=note.get_acuenta()
-					else:
-						total_dia_bbva+=note.get_total_venta()
-				elif note.get_estado() in ['cancelado-YAPE-','cancelado-YAPE-por-recoger','cancelado-YAPE-entregado']:
-					if note.get_acuenta()>0:
-						total_dia_yape+=note.get_acuenta()
-					else:
-						total_dia_yape+=note.get_total_venta()
-
-			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha_inicio,fechita_final=fecha_final,bool_imprimir=True)
-		else :
-			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
-			flash(error_message,category='error')
-
-	return redirect(url_for('note.vernotapedido'))
-	 
-@note.route('/vernotapornombre',methods=['GET','POST'])
-def vernotapornombre():
-	nombrecomprador=request.form.get('nombre_comprador')
-	total_dia=0
-	total_dia_visa=0
-	total_dia_por_cancelar=0
-	if nombrecomprador and request.method=='POST':
-		nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+nombrecomprador+'%')).order_by(asc(Nota_de_Pedido.id)).all()
-		if nota_pedido is not None:
-			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
-		else :
-			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
-			flash(error_message,category='error')
-
-	return redirect(url_for('note.vernotapedido'))
-
-@note.route('/vernotaporDNI',methods=['GET','POST'])
-def vernotaporDNI():
-	dni_comprador=request.form.get('dni_comprador')
-	total_dia=0
-	total_dia_visa=0
-	total_dia_por_cancelar=0
-	if dni_comprador and request.method=='POST':
-		comprador=Comprador.query.filter_by(dni=dni_comprador).first()
-		if comprador is not None:
-			nota_pedido=Nota_de_Pedido.query.filter(Nota_de_Pedido.nombre_comprador.like('%'+comprador.get_nombre()+'%')).order_by(asc(Nota_de_Pedido.id)).all()
-			if nota_pedido is not None:
-				return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
-			else :
-				error_message='No se pudo encontrar la nota de pedido intente nuevamente'
-				flash(error_message,category='error')
-	return redirect(url_for('note.vernotapedido'))
 
 @note.route('/vernotaID',methods=['GET','POST'])
 def vernotaID():
@@ -912,42 +702,7 @@ def imprimirresumen(fecha,fecha_final):
 	return render_template('resumen_por_imprimir.html',td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha)
 
 
-#Actualizar Cantidad de Productos en la nota de pedido
-@note.route('/updateproduct',methods=['POST'])
-def updateproduct():
-	cantidad=float(request.form['quantity'])
-	key=str(request.form['code'])
-	total_venta=0
-	if cantidad and request.method == 'POST':
-		session.modified = True
 
-		session['producto'][key]['cantidad']=cantidad
-		session['producto'][key]['precio_individual']=Decimal(cantidad*float(session['producto'][key]['precio'])).quantize(Decimal("1e-{0}".format(2)))
-		for key,producto in session['producto'].items():
-			total_venta=total_venta+Decimal(session['producto'][key]['precio_individual'])
-		session['total_venta']=total_venta
-		return redirect(url_for('product.buscar_producto'))
-	return redirect(url_for('product.buscar_producto'))
-
-#Actualizar precio de un producto en la nota de pedido
-@note.route('/updateprice',methods=['POST'])
-def updateprice():
-	price=float(request.form['price'])
-	key=str(request.form['code'])
-	total_venta=0
-	if price and request.method == 'POST':
-		session.modified = True
-		session['producto'][key]['precio']=price
-		session['producto'][key]['precio_individual']=Decimal(session['producto'][key]['cantidad']*float(session['producto'][key]['precio'])).quantize(Decimal("1e-{0}".format(2)))
-
-		for key,producto in session['producto'].items():
-			total_venta=total_venta+Decimal(session['producto'][key]['precio_individual'])
-		session['total_venta']=total_venta
-		return redirect(url_for('product.buscar_producto'))
-	return redirect(url_for('product.buscar_producto'))
-
-@note.route('/updatedebt',methods=['POST'])
-def updatedebt():
 	debt=float(request.form['debt'])
 	session['deuda']=0
 	if request.method=='POST':
@@ -979,31 +734,6 @@ def deleteproduct():
 		return redirect(url_for('product.buscar_producto'))
 
 	return redirect(url_for('product.buscar_producto'))
-
-#Limpiar todo la lista de productos de 	Nota de pedido
-@note.route('/empty')
-def empty_cart():
-	try:
-		session.pop('producto',None)
-		session.pop('total_venta',None)
-		session.pop('fecha_nota',None)
-		session.pop('numero_nota',None)
-		session.pop('estado_nota',None)
-		session.pop('dni_comprador',None)
-		session.pop('telefono_comprador',None)
-		session.pop('nombre_comprador',None)
-		session.pop('direccion_comprador',None)
-		session.pop('editar_activo',None)
-		session.pop('id_nota',None)
-		session.pop('fecha_hoy',None)
-		session.pop('acuenta',None)
-		session.pop('deuda',None)
-		
-		success_message='Se vacio la nota de pedido'
-		flash(success_message,category='message')
-		return redirect(url_for('product.buscar_producto'))
-	except Exception as e:
-		print(e)
 
 @note.route('/imprimir')
 def imprimir():
