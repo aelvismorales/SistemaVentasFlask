@@ -179,117 +179,225 @@
   {%endblock%}
 
   {% block scripts %}
+
+  <!--Logica del Manejo de Inputs de Pago,Vuelto y Validacion de Formulario-->
   <script>
-    // Se colecta los checkboxes y cambia el estado de los inputs de deshabilitado a habilitado y viceversa
-    const pagoEfectivo = document.getElementById("pagoEfectivo");
-    pagoEfectivo.addEventListener("change",function(){
-      document.getElementById("pagoEfectivoInput").disabled = !this.checked;
-    });
-
-    const pagoVisa = document.getElementById("pagoVisa");
-    pagoVisa.addEventListener("change",function(){
-      document.getElementById("pagoVisaInput").disabled = !this.checked;
-    });
-
-    const pagoBBVA = document.getElementById("pagoBBVA");
-    pagoBBVA.addEventListener("change",function(){
-      document.getElementById("pagoBBVAInput").disabled = !this.checked;
-    });
-
-    const pagoBCP = document.getElementById("pagoBCP");
-    pagoBCP.addEventListener("change",function(){
-      document.getElementById("pagoBCPInput").disabled = !this.checked;
-    });
-
-    const pagoYAPE = document.getElementById("pagoYAPE");
-    pagoYAPE.addEventListener("change",function(){
-      document.getElementById("pagoYAPEInput").disabled = !this.checked;
-    });
-
-    
-
-    // Se colecta los inputs de los pagos y se calcula el vuelto
-    const cancelaDinero = document.getElementById("cancela-dinero");
-    const vueltoDinero = document.getElementById("vuelto-dinero");
-
-    // Se colecta los inputs de los pagos para calcular la suma total de lo pagado ademas se calcula el vuelto
-    const inputsPago = [
-        document.getElementById('pagoEfectivoInput'),
-        document.getElementById('pagoVisaInput'),
-        document.getElementById('pagoBBVAInput'),
-        document.getElementById('pagoBCPInput'),
-        document.getElementById('pagoYAPEInput')
+    // Coleccion de los checboxes y los inputs, se cambia el estado de habilitado segun el cambio de checkbox.
+    const inputsPagoSelected = [
+      { checkbox: document.getElementById("pagoEfectivo"), input: document.getElementById("pagoEfectivoInput") },
+      { checkbox: document.getElementById("pagoVisa"), input: document.getElementById("pagoVisaInput") },
+      { checkbox: document.getElementById("pagoBBVA"), input: document.getElementById("pagoBBVAInput") },
+      { checkbox: document.getElementById("pagoBCP"), input: document.getElementById("pagoBCPInput") },
+      { checkbox: document.getElementById("pagoYAPE"), input: document.getElementById("pagoYAPEInput") }
     ];
 
-    // Recorre los inputs de los pagos y calcula la suma total de lo pagado
-    inputsPago.forEach(input=>{
-      input.addEventListener('input',function(){
-        let totalPago = 0;
-        inputsPago.forEach(input => {
-          if (input && input.value) {
-            totalPago += parseFloat(input.value);
-          }
-        });
-        const subTotal = parseFloat(localStorage.getItem('subTotal'));
-        localStorage.setItem('totalPagoText',parseFloat(totalPago).toFixed(2));
-        const vuelto = totalPago - subTotal;
-        localStorage.setItem('vueltoText',parseFloat(vuelto).toFixed(2));
-        
-        acuenta= document.getElementById("acuentaselect").value;
-        if (acuenta == "True" && totalPago < subTotal && vuelto <0) {
-          localStorage.setItem('pagoConforme',true)
-        } else if (totalPago < subTotal || (totalPago > subTotal && vuelto <= 0)) {
-          console.error('El total de los pagos no coincide con el subtotal');
-          localStorage.setItem('pagoConforme',false)
-        } else {
-          console.log('El total de los pagos coincide con el subtotal');
-          localStorage.setItem('pagoConforme',true)       
-        }
-
-        cancelaDinero.textContent = "Cancela con: S/ " + localStorage.getItem("totalPagoText");
-        vueltoDinero.textContent = "Vuelto: S/ " + localStorage.getItem("vueltoText");
-
+    inputsPagoSelected.forEach(({ checkbox, input }) => {
+      checkbox.addEventListener("change", function() {
+        input.disabled = !this.checked;
       });
-      
+    });
+
+    // Function para actualizar si las condiciones de pago son conformes
+    function updatePagoConforme() {
+      const acuenta = document.getElementById("acuentaselect").value;
+      const totalPago = parseFloat(localStorage.getItem('totalPagoText'));
+      const subTotal = parseFloat(localStorage.getItem('subTotal'));
+      const vuelto = parseFloat(localStorage.getItem('vueltoText'));
+      if (acuenta === "True") {
+        // If acuenta is True, totalPago should be less than subTotal and vuelto less than 0
+        if (totalPago < subTotal && vuelto < 0) {
+          localStorage.setItem('pagoConforme', true);
+        } else {
+          console.error('El total de los pagos no coincide con las condiciones de pago');
+          localStorage.setItem('pagoConforme', false);
+        }
+      } else {
+        // If acuenta is False, totalPago should be greater than or equal to subTotal and vuelto greater than or equal to 0
+        if (totalPago >= subTotal && vuelto >= 0) {
+          console.log('El total de los pagos coincide con las condiciones de pago');
+          localStorage.setItem('pagoConforme', true);
+        } else {
+          console.error('El total de los pagos no coincide con las condiciones de pago');
+          localStorage.setItem('pagoConforme', false);
+        }
+      }
+    }
+
+    // Se colecta los elementos de la vista para mostrar el dinero cancelado y el vuelto.
+    const cancelaDinero = document.getElementById("cancela-dinero");
+    const vueltoDinero = document.getElementById("vuelto-dinero");
+    // Funcion para actualizar el total de pago y el vuelto    
+    function updateTotalPagoText(){
+      let totalPago = 0;
+      inputsPagoSelected.forEach(({ checkbox, input }) => {
+        if (checkbox.checked && input.value) {
+          totalPago += parseFloat(input.value);
+        } else if (input.value) {
+          input.value = 0;
+          totalPago -= parseFloat(input.value);
+          if (totalPago < 0) {
+            totalPago = 0;
+            }
+          }
+      });
+
+      //total pago -> Es la cantidad que la persona cancela
+      //subTotal -> Es el total de la venta
+      localStorage.setItem('totalPagoText',parseFloat(totalPago).toFixed(2));
+      const subTotal = parseFloat(localStorage.getItem('subTotal'));
+      const vuelto = totalPago - subTotal;
+      localStorage.setItem('vueltoText',parseFloat(vuelto).toFixed(2));
+      updatePagoConforme();
+      cancelaDinero.textContent = "Cancela con: S/ " + localStorage.getItem("totalPagoText");
+      vueltoDinero.textContent = "Vuelto: S/ " + localStorage.getItem("vueltoText");
+
+    }
+
+    inputsPagoSelected.forEach(({checkbox,input})=>{
+      input.addEventListener("input",updateTotalPagoText);
+      checkbox.addEventListener("change",updateTotalPagoText);
     })
     
-    // Se colecta el formulario y se obtiene los datos del comprador
-    const formulario_DatosComprador = document.getElementById("datosComprador");
+    const acuenta=document.getElementById("acuentaselect");
+    acuenta.addEventListener("change",updateTotalPagoText);
+
 
     document.getElementById("botonDatosComprador").addEventListener("click",function(event){
-      event.preventDefault();
+      updateTotalPagoText();
+      updatePagoConforme();
+      // Obteniendo datos del comprador del Formulario
+      const formulario_DatosComprador = document.getElementById("datosComprador");
       const formData = new FormData(formulario_DatosComprador);
       let data = {};
-      formData.forEach((value,key)=>{
-        data[key] = value;
-      });
+      
+      // Verificar si el formulario tiene datos validos para enviar y si el Pago es conforme
+      if (formulario_DatosComprador.checkValidity()){
+        formData.forEach((value,key)=>{
+          data[key] = value;
+        });
 
-      // Obtener los productos de Local Storage
-      let productos = JSON.parse(localStorage.getItem("productos"));
+        // Validar que el nombre_comprador solo contenga letras, espacio o ['*','-','.]
+        if (data["nombre_comprador"].match(/^[a-zA-Z\s*-.]+$/) == null){
+          document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              El campo Comprador solo puede contener letras o ['*','-','.]
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          `;
+          return;
+        }
 
-      // Agregando los productos al objeto data
-      data["productos"] = productos;
-      data["total_venta"] = localStorage.getItem("subTotal");
-      data["total_pagado"] = localStorage.getItem("totalPagoText");
-      data["vuelto"]= localStorage.getItem("vueltoText");
+        // Validar que el campo DNI solo contenga numeros o ['*','-','.]
+        if (data["dni_comprador"].match(/^[0-9*-.]+$/) == null){
+          document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              El campo DNI solo puede contener numeros, o ['*','-','.]
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          `;
+          return;
+        }
 
-      // Pago Conforme
-      pago_conforme=localStorage.getItem("pagoConforme");
+        // Validar que el campo telefono_comprador solo contenga numeros o ['*','-','.]
+        if (data["telefono_comprador"].match(/^[0-9*-.]+$/) == null){
+          document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              El campo Telefono solo puede contener numeros, o ['*','-','.]
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          `;
+          return;
+        }
 
-      console.log(data);
-      if (pago_conforme == "true") {
-        $.ajax({
-          url:"/crearnotaventa",
-          type:"POST",
-          data:JSON.stringify(data),
-          contentType:"application/json;",
-          dataType:"json",
-          headers:{"X-CSRFToken": "{{ csrf_token() }}"},
-          success:function(response){
-            console.log(response);
-            localStorage.removeItem("productos");
-            localStorage.setItem("subTotal",0.00);
-            document.getElementById("messagesLoader").innerHTML = `
+        // Validar que los campos Comprador,DNI, Telefono y Direccion no esten vacios
+        if (data["nombre_comprador"] == "" || data["dni_comprador"] == "" || data["telefono_comprador"] == "" || data["direccion_comprador"] == ""){
+          document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              Los campos Comprador, DNI, Telefono y Direccion no pueden estar vacios, rellene los campos correspondiente
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          `;
+          return;
+        }
+
+        // Validar que inputEstado1 o inputEstado2 no sean iguales a "Seleccione"
+        if (data["inputEstado1"] == "Seleccione" || data["inputEstado2"] == "Seleccione"){
+          document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              Los campos no pueden estar vacios, seleccione un estado
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          `;
+          return;
+        }
+
+        // Obtener los productos de Local Storage
+        let productos = JSON.parse(localStorage.getItem("productos"));
+
+        // Agregando los productos al objeto data
+        data["productos"] = productos;
+        data["total_venta"] = localStorage.getItem("subTotal");
+        data["total_pagado"] = localStorage.getItem("totalPagoText");
+        data["vuelto"]= localStorage.getItem("vueltoText");
+        data["pagoEfectivoInput"]= document.getElementById("pagoEfectivoInput").value;
+        data["pagoVisaInput"]= document.getElementById("pagoVisaInput").value;
+        data["pagoBBVAInput"]= document.getElementById("pagoBBVAInput").value;
+        data["pagoBCPInput"]= document.getElementById("pagoBCPInput").value;
+        data["pagoYAPEInput"]= document.getElementById("pagoYAPEInput").value;
+
+        //Validar que los Input Pago no tengan valores negativos
+        if (parseFloat(data["pagoEfectivoInput"]) < 0 || parseFloat(data["pagoVisaInput"]) < 0 || parseFloat(data["pagoBBVAInput"]) < 0 || parseFloat(data["pagoBCPInput"]) < 0 || parseFloat(data["pagoYAPEInput"]) < 0){
+          document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              Los campos de Pago no pueden tener valores negativos
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          `;
+          return;
+        }
+
+        // Obtener el estado de pago conforme
+        pago_conforme=localStorage.getItem("pagoConforme");
+        if (pago_conforme=="true"){
+          $.ajax({
+            url:"/crearnotaventa",
+            type:"POST",
+            data:JSON.stringify(data),
+            contentType:"application/json;",
+            dataType:"json",
+            headers:{"X-CSRFToken": "{{ csrf_token() }}"},
+            success:function(response){
+              document.getElementById("messagesLoader").innerHTML = `
               <div class="alert alert-success alert-dismissible fade show" role="alert">
                 ${response[0].message}
                 <button
@@ -299,31 +407,48 @@
                   aria-label="Close"
                 ></button>
               </div>
-            `;
-            var JSONproductos = localStorage.getItem('productos');
-            var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+              `;
+              var JSONproductos = localStorage.getItem('productos');
+              var products = JSONproductos ? JSON.parse(JSONproductos) : [];
 
-            productos.forEach((element) => {
-              let id = element.id;
-              let tr = document.getElementById(id);
-              tr.parentNode.removeChild(tr);
-            });
+              products.forEach((element) => {
+                let id = element.id;
+                let tr = document.getElementById(id);
+                tr.parentNode.removeChild(tr);
+              });
 
-            // Vaciar el array
-            products.length = 0;
+              // Vaciar el array
+              products.length = 0;
+              localStorage.setItem('productos', JSON.stringify(products));
+              localStorage.setItem("subTotal",0.00);
+              localStorage.setItem("totalPagoText",0.00);
+              document.getElementById("hTotal").textContent = "Total: S/0.00";
+              document.getElementById("totalProductos").textContent = "0.00";
 
-            // Guardar el array vacío de nuevo en localStorage
-            localStorage.setItem('productos', JSON.stringify(products));
-            localStorage.setItem('subTotal',0.00);
-            document.getElementById("hTotal").textContent = "Total: S/0.00";
-            document.getElementById("totalProductos").textContent = "0.00";
+              cancelaDinero.textContent = "Cancela con: S/ " + "0.00";
+              vueltoDinero.textContent = "Vuelto: S/ " + "0.00";
 
-            cancelaDinero.textContent = "Cancela con: S/ " + "0.00";
-            vueltoDinero.textContent = "Vuelto: S/ " + "0.00";
-          },
-          error:function(error){
-            console.error(error);
-            document.getElementById("messagesLoader").innerHTML=`
+              // Limpiar los campos del comprador
+              localStorage.setItem("nombre_comprador", '');
+              localStorage.setItem("direccion_comprador", '');
+              localStorage.setItem("telefono_comprador", '');
+              localStorage.setItem("dni_comprador", '');
+            },
+            error:function(xhr,status,error){
+              console.error("XHR object:", xhr);
+              console.error("Status:", status);
+              console.error("Error:", error);
+
+              if (xhr.responseText){
+                try{
+                  var errorData = JSON.parse(xhr.responseText);
+                  console.error("ErrorData:", errorData);
+                }catch(e){
+                  console.error("Error to Parse Json as response",e);
+                }
+              }
+
+              document.getElementById("messagesLoader").innerHTML = `
               <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 No se pudo guardar la Nota de Pedido
                 <button
@@ -333,12 +458,13 @@
                   aria-label="Close"
                 ></button>
               </div>
-            `;	
-          }
-        });
-      } else {
-        console.error("El total de los pagos no coincide con el subtotal");
-        document.getElementById("messagesLoader").innerHTML = `
+              `;
+            }
+          })
+
+        }else{
+          console.error("El total de los pagos no coincide con el subtotal");
+          document.getElementById("messagesLoader").innerHTML = `
           <div class="alert alert-warning alert-dismissible fade show" role="alert">
             El total de los pagos no coincide con el subtotal
             <button
@@ -348,15 +474,45 @@
               aria-label="Close"
             ></button>
           </div>
+          `;
+        }
+      }else{
+        console.error("El formulario no tiene datos validos");
+        document.getElementById("messagesLoader").innerHTML = `
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            Los campos de comprador o pago no son validos, rellene los campos correspondientes, verificar que los campos de pago no sean negativos y que el total de los pagos coincida con el subtotal
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
         `;
       }
+      event.preventDefault();
     });
 
-    // Capturar el clic en el botón "Vaciar Productos"
-    document.getElementById('cancelarNotaPedido').addEventListener('click', (event) => {
-      // Eliminar la lista de productos de localStorage
+    function vaciarTabla(){
       var JSONproductos = localStorage.getItem('productos');
-      var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+      var productos = JSONproductos ? JSON.parse(JSONproductos) : [];
+
+      // Verificar si productos no esta vacio
+      if (productos.length == 0){
+        console.error("No hay productos en la lista");
+        document.getElementById("messagesLoader").innerHTML = `
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            No hay productos en la lista
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+        `;
+        return;
+      }
 
       productos.forEach((element) => {
         let id = element.id;
@@ -365,18 +521,28 @@
       });
 
       // Vaciar el array
-      products.length = 0;
-
+      productos.length = 0;
+      localStorage.setItem('productos', JSON.stringify(productos));
       // Guardar el array vacío de nuevo en localStorage
-      localStorage.setItem('productos', JSON.stringify(products));
       localStorage.setItem('subTotal',0.00);
+      localStorage.setItem('vueltoText',0.00);
+      localStorage.setItem('totalPagoText',0.00);
       document.getElementById("hTotal").textContent = "Total: S/0.00";
       document.getElementById("totalProductos").textContent = "0.00";
+      cancelaDinero.textContent = "Cancela con: S/ " + "0.00";
+      vueltoDinero.textContent = "Vuelto: S/ " + "0.00";
+
+    }
+    // Capturar el evento de cancelar la nota de pedido y vaciar la lista de productos
+    document.getElementById('cancelarNotaPedido').addEventListener('click', (event) => {
+      vaciarTabla();
+      event.preventDefault();
     });
   </script> 
 
+  <!--Script para obtener datos de Compradores por DNI o RUC-->
   <script>
-    //Si ya existen datos cargarlos cuando el DoomLoader terminte
+    //Si ya existen datos cargarlos cuando el DoomLoader este listo
 
     document.addEventListener('DOMContentLoaded',function(){
       if (localStorage.getItem("nombre_comprador") != null) {
@@ -390,19 +556,50 @@
         document.getElementById("telefono_comprador").value = '';
         document.getElementById("dni_comprador").value = '';
       }
-    
     })
 
     // Obtener datos de Compradores por DNI o RUC
     const buscarUsuarioDNI = document.getElementById("buscarUsuarioDNI");
     const botonBuscarUsuarioDNI = document.getElementById("botonBuscarUsuarioDNI");
+    
     botonBuscarUsuarioDNI.addEventListener('click',(event)=>{
       event.preventDefault();
+      
       const formData = new FormData(buscarUsuarioDNI);
       let data = {};
       formData.forEach((value,key)=>{
         data[key] = value;
       });
+
+      // Validar que data["dni_comprador"] no sea vacio y que contenga solo numeros
+      if (data["dni_comprador"] == ""){
+        document.getElementById("messagesLoader").innerHTML = `
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            El campo DNI no puede estar vacio
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+        `;
+        return;
+      }else if (data["dni_comprador"].match(/^[0-9*]+$/) == null ){
+        document.getElementById("messagesLoader").innerHTML = `
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            El campo DNI solo puede contener numeros
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+        `;
+        return;
+      }
+
 
       $.ajax({
         url: "{{ url_for('buyer.buscarcompradorbydni') }}",
@@ -412,7 +609,6 @@
         dataType: "json",
         headers: {"X-CSRFToken": "{{ csrf_token() }}"},
         success:function(response){
-          console.log(response);
           if (response[1]==200){
             document.getElementById("messagesLoader").innerHTML = `
               <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -425,11 +621,14 @@
                 ></button>
               </div>
             `;
+
+            // Guardar los datos del comprador en localStorage
             localStorage.setItem("nombre_comprador", response[0].nombre_comprador);
             localStorage.setItem("direccion_comprador", response[0].direccion_comprador);
             localStorage.setItem("telefono_comprador", response[0].telefono_comprador);
             localStorage.setItem("dni_comprador", response[0].dni_comprador);
 
+            // Mostrar los datos del comprador en el formulario
             document.getElementById("nombre_comprador").value = localStorage.getItem("nombre_comprador");
             document.getElementById("direccion_comprador").value = localStorage.getItem("direccion_comprador");
             document.getElementById("telefono_comprador").value = localStorage.getItem("telefono_comprador");
@@ -447,19 +646,19 @@
               </div>
             `;
 
+            // Limpiar los campos del comprador
             document.getElementById("nombre_comprador").value = '';
             document.getElementById("direccion_comprador").value = '';
             document.getElementById("telefono_comprador").value = '';
             document.getElementById("dni_comprador").value = '';
 
-            localStorage.removeItem("nombre_comprador", response[0].nombre_comprador);
-            localStorage.removeItem("direccion_comprador", response[0].direccion_comprador);
-            localStorage.removeItem("telefono_comprador", response[0].telefono_comprador);
-            localStorage.removeItem("dni_comprador", response[0].dni_comprador);
-
+            // Limpiar los datos del comprador en localStorage
+            localStorage.removeItem("nombre_comprador");
+            localStorage.removeItem("direccion_comprador");
+            localStorage.removeItem("telefono_comprador");
+            localStorage.removeItem("dni_comprador");
           }
           
-            
         },error:function(error){
           console.error(error);
           document.getElementById("messagesLoader").innerHTML = `
@@ -554,7 +753,7 @@
 
       inputCantidad.addEventListener("input",function(){
         let id = this.parentNode.parentNode.getAttribute("id");
-        let cantidad = this.value;
+        let cantidad = parseFloat(this.value);
         let precio = document.getElementById(id).childNodes[3].childNodes[0].value;
         let subtotal = cantidad*precio;
         document.getElementById(id).childNodes[4].textContent = subtotal.toFixed(2);
@@ -653,6 +852,7 @@
       document.getElementById("totalProductos").textContent = total.toFixed(2);
       document.getElementById("hTotal").textContent = "Total: S/"+total.toFixed(2);
       localStorage.setItem("subTotal",total.toFixed(2));
+      localStorage.setItem("total_venta_session",total.toFixed(2));
       
     }
 

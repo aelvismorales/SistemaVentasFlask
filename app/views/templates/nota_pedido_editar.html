@@ -9,7 +9,7 @@
     <a class="nav-link" aria-current="page" href="{{ url_for('product.buscar_producto')}}"><strong>Productos</strong></a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="#" aria-current="page"><strong>Ve Notas de Pedido</strong></a>
+    <a class="nav-link" href="{{url_for('note.ver_notas_pedido')}}" aria-current="page"><strong>Ve Notas de Pedido</strong></a>
   </li>
 
   <li class="nav-item">
@@ -30,7 +30,7 @@
 {% block content %} 
   <div class="container-general">
     <div class="header-nota">
-        <h2>Nota de Pedido</h2>
+        <h2>Edicion de Nota de Pedido</h2>
         <p>{{ current_user.get_nickname()}}</p>
     </div>
     <div class="container-comprador">
@@ -52,7 +52,7 @@
             <div class="mb-3 row">
               <label for="nombre_comprador" class="col-sm-2 col-form-label">Comprador:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control"  name="nombre_comprador" id="nombre_comprador" required>
+                <input type="text" class="form-control"  name="nombre_comprador" id="nombre_comprador" value="{{nota.nombre_comprador}}"required>
               </div>
             </div>
 
@@ -60,7 +60,7 @@
             <div class="mb-3 row">
               <label class="col-sm-2 col-form-label" for="direccion_comprador">Direccion:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" name="direccion_comprador" id="direccion_comprador"  required>
+                <input class="form-control" type="text" name="direccion_comprador" id="direccion_comprador" value="{{nota.direccion_comprador}}" required>
               </div>
             </div>
             
@@ -68,34 +68,35 @@
             <div class="mb-3 row">
               <label class="col-sm-2 col-form-label" for="dni_comprador">DNI:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" name="dni_comprador" id="dni_comprador"  required>
+                <input class="form-control" type="text" name="dni_comprador" id="dni_comprador" value="{{nota.dni_comprador}}" required>
               </div>
             </div>
 
             <!--Telefono Comprador-->
             <div class="mb-3 row">
-              <label class="col-sm-2 col-form-label" for="telefono_comprador">Telefono:</label>
+              <label class="col-sm-2 col-form-label" for="telefono_comprador" >Telefono:</label>
               <div class="col-sm-10">
-                <input class="form-control" type="text" name="telefono_comprador" id="telefono_comprador"  required>
+                <input class="form-control" type="text" name="telefono_comprador" id="telefono_comprador" value="{{nota.numero_comprador}}" required>
               </div>
             </div>
             
             <!--Estado 1-->
+            {% set estados= nota.estado.split("-")%}
             <div class="input-group mb-1">
               <label class="input-group-text" for="inputEstado1">Estado:</label>
               <select class="form-select" name="inputEstado1" id="inputEstado1" required>
-                <option selected>Seleccione</option>
-                <option value="CANCELADO">CANCELADO</option>
-                <option value="POR-CANCELAR">POR CANCELAR</option>
-                <option value="PROFORMA">PROFORMA</option>
+                <option {{ 'selected' if 'Seleccione' in estados else '' }}>Seleccione</option>
+                <option value="CANCELADO" {{ 'selected' if 'CANCELADO' in estados else '' }}>CANCELADO</option>
+                <option value="POR-CANCELAR" {{ 'selected' if 'POR' and 'CANCELAR' in estados else '' }}>POR CANCELAR</option>
+                <option value="PROFORMA" {{ 'selected' if 'PROFORMA' in estados else '' }}>PROFORMA</option>
               </select>
 
               <!--Estado 2-->
               <select class="form-select" name="inputEstado2" id="inputEstado2" aria-label="Estado2" required>
-                <option selected>Seleccione</option>
-                <option value="-">-</option>
-                <option value="ENTREGADO">ENTREGADO</option>
-                <option value="POR-ENTREGAR">POR ENTREGAR</option>
+                <option {{ 'selected' if 'Seleccione' in estados else '' }}>Seleccione</option>
+                <option value="-" {{ 'selected' if '-' in estados else '' }}>-</option>
+                <option value="ENTREGADO" {{ 'selected' if 'ENTREGADO' in estados else '' }}>ENTREGADO</option>
+                <option value="POR-ENTREGAR" {{ 'selected' if 'POR' and 'ENTREGAR' in estados else '' }}>POR ENTREGAR</option>
               </select>
             </div>
 
@@ -112,8 +113,8 @@
             <div class="input-group mb-2">
               <label class="input-group-text" for="acuenta">Acuenta</label>
               <select class="form-select" name="acuenta" id="acuentaselect">
-                <option selected value="False">No</option>
-                <option value="True">Si</option>
+                <option value="False" >No</option>
+                <option value="True" {{ 'selected' if nota.bool_acuenta else ''}}>Si</option>
               </select>
             </div>
 
@@ -121,7 +122,7 @@
               <input class="form-check-input" type="checkbox" value="" id="pagoEfectivo" aria-label="pagoEfectivo">
               <div class="input-group">
                 <span class="input-group-text" id="pagoEfectivoSpan">Efectivo</span>
-                <input class="form-control" type="number" name="pagoEfectivoInput" id="pagoEfectivoInput" placeholder="0.00" min="0.1" step="0.01"  disabled>
+                <input class="form-control" type="number" name="pagoEfectivoInput" id="pagoEfectivoInput" placeholder="0.00" min="0.1" step="0.01"  value="{{ nota.pagoEfectivo if nota.pagoEfectivo else 0.00}}" disabled>
               </div>
             </div>
 
@@ -129,7 +130,7 @@
               <input class="form-check-input" type="checkbox" value="" id="pagoVisa" aria-label="pagoVisa">
               <div class="input-group">
                 <span class="input-group-text" id="pagoVisaSpan">Visa</span>
-                <input class="form-control" type="number" name="pagoVisaInput" id="pagoVisaInput" placeholder="0.00" min="0.1" step="0.01" disabled>
+                <input class="form-control" type="number" name="pagoVisaInput" id="pagoVisaInput" placeholder="0.00" min="0.1" step="0.01" value="{{ nota.pagoVisa if nota.pagoVisa else 0.00}}" disabled>
               </div>
             </div>
 
@@ -137,7 +138,7 @@
               <input class="form-check-input" type="checkbox" value="" id="pagoBBVA" aria-label="pagoBBVA">
               <div class="input-group">
                 <span class="input-group-text" id="pagoBBVASpan">BBVA</span>
-                <input class="form-control" type="number" name="pagoBBVAInput" id="pagoBBVAInput" placeholder="0.00" min="0.1" step="0.01" disabled>
+                <input class="form-control" type="number" name="pagoBBVAInput" id="pagoBBVAInput" placeholder="0.00" min="0.1" step="0.01" value="{{nota.pagoBBVA if nota.pagoBBVA else 0.00}}" disabled>
               </div>
             </div>
 
@@ -145,7 +146,7 @@
               <input class="form-check-input" type="checkbox" value="" id="pagoBCP" aria-label="pagoBCP">
               <div class="input-group">
                 <span class="input-group-text" id="pagoBCPSpan">BCP</span>
-                <input class="form-control" type="number" name="pagoBCPInput" id="pagoBCPInput" placeholder="0.00" min="0.1" step="0.01" disabled>
+                <input class="form-control" type="number" name="pagoBCPInput" id="pagoBCPInput" placeholder="0.00" min="0.1" step="0.01" value="{{nota.pagoBCP if nota.pagoBCP else 0.00}}" disabled>
               </div>
             </div>
 
@@ -153,7 +154,7 @@
               <input class="form-check-input" type="checkbox" value="" id="pagoYAPE" aria-label="pagoYAPE">
               <div class="input-group">
                 <span class="input-group-text" id="pagoYapeSpan">Yape</span>
-                <input class="form-control" type="number" name="pagoYAPEInput" id="pagoYAPEInput" placeholder="0.00" min="0.1" step="0.01" disabled>
+                <input class="form-control" type="number" name="pagoYAPEInput" id="pagoYAPEInput" placeholder="0.00" min="0.1" step="0.01" value="{{nota.pagoYape if nota.pagoYape else 0.00}}" disabled>
               </div>
             </div>
           </div>
@@ -170,7 +171,8 @@
         <h4 id="hTotal"></h4>
       </div>
       <div class="botones">
-        <button class="btn btn-danger" id="cancelarNotaPedido">Vaciar</button>        
+        <button class="btn btn-danger" id="cancelarNotaPedido">Vaciar Productos</button>
+        <button class="btn btn-warning" id="cancelarEdicionNotaPedido">Cancelar Edicion </button>
         <button class="btn btn-success" id="botonDatosComprador" type="submit">Guardar</button>
         
       </div>
@@ -180,6 +182,9 @@
 
   {% block scripts %}
   <script>
+    //Creando en localStorage que se esta en modo edicion
+    localStorage.setItem("modoEdicion",true);
+
     // Se colecta los checkboxes y cambia el estado de los inputs de deshabilitado a habilitado y viceversa
     const pagoEfectivo = document.getElementById("pagoEfectivo");
     pagoEfectivo.addEventListener("change",function(){
@@ -223,14 +228,40 @@
 
     // Recorre los inputs de los pagos y calcula la suma total de lo pagado
     inputsPago.forEach(input=>{
+      let totalPago = 0;
+      inputsPago.forEach(input => {
+        if (input && input.value) {
+          totalPago += parseFloat(input.value);
+        }
+      });
+      const subTotal = parseFloat(localStorage.getItem('total_venta_session'));
+      localStorage.setItem('totalPagoText',parseFloat(totalPago).toFixed(2));
+      const vuelto = totalPago - subTotal;
+      localStorage.setItem('vueltoText',parseFloat(vuelto).toFixed(2));
+      
+      acuenta= document.getElementById("acuentaselect").value;
+      if (acuenta == "True" && totalPago < subTotal && vuelto <0) {
+        localStorage.setItem('pagoConforme',true)
+      } else if (totalPago < subTotal || (totalPago > subTotal && vuelto <= 0)) {
+        console.error('El total de los pagos no coincide con el subtotal');
+        localStorage.setItem('pagoConforme',false)
+      } else {
+        console.log('El total de los pagos coincide con el subtotal');
+        localStorage.setItem('pagoConforme',true)       
+      }
+
+      cancelaDinero.textContent = "Cancela con: S/ " + localStorage.getItem("totalPagoText");
+      vueltoDinero.textContent = "Vuelto: S/ " + localStorage.getItem("vueltoText");
+
       input.addEventListener('input',function(){
+        // Aquí va la misma lógica de verificación
         let totalPago = 0;
         inputsPago.forEach(input => {
           if (input && input.value) {
             totalPago += parseFloat(input.value);
           }
         });
-        const subTotal = parseFloat(localStorage.getItem('subTotal'));
+        const subTotal = parseFloat(localStorage.getItem('total_venta_session'));
         localStorage.setItem('totalPagoText',parseFloat(totalPago).toFixed(2));
         const vuelto = totalPago - subTotal;
         localStorage.setItem('vueltoText',parseFloat(vuelto).toFixed(2));
@@ -248,10 +279,8 @@
 
         cancelaDinero.textContent = "Cancela con: S/ " + localStorage.getItem("totalPagoText");
         vueltoDinero.textContent = "Vuelto: S/ " + localStorage.getItem("vueltoText");
-
       });
-      
-    })
+  });
     
     // Se colecta el formulario y se obtiene los datos del comprador
     const formulario_DatosComprador = document.getElementById("datosComprador");
@@ -269,26 +298,33 @@
 
       // Agregando los productos al objeto data
       data["productos"] = productos;
-      data["total_venta"] = localStorage.getItem("subTotal");
+      data["total_venta"] = localStorage.getItem("total_venta_session");
       data["total_pagado"] = localStorage.getItem("totalPagoText");
       data["vuelto"]= localStorage.getItem("vueltoText");
+
+      data["pagoEfectivo"] = document.getElementById("pagoEfectivoInput").value;
+      data["pagoVisa"] = document.getElementById("pagoVisaInput").value;
+      data["pagoBBVA"] = document.getElementById("pagoBBVAInput").value;
+      data["pagoBCP"] = document.getElementById("pagoBCPInput").value;
+      data["pagoYape"] = document.getElementById("pagoYAPEInput").value;
 
       // Pago Conforme
       pago_conforme=localStorage.getItem("pagoConforme");
 
-      console.log(data);
       if (pago_conforme == "true") {
         $.ajax({
-          url:"/crearnotaventa",
+          url:"/editarnotaventa/"+"{{session['id_nota']}}",
           type:"POST",
           data:JSON.stringify(data),
           contentType:"application/json;",
           dataType:"json",
           headers:{"X-CSRFToken": "{{ csrf_token() }}"},
           success:function(response){
-            console.log(response);
             localStorage.removeItem("productos");
-            localStorage.setItem("subTotal",0.00);
+            localStorage.setItem("total_venta_session",0.00);
+            localStorage.setItem('subTotal',0.00);
+            localStorage.removeItem("modoEdicion");
+            localStorage.removeItem("isCodeExecuted");
             document.getElementById("messagesLoader").innerHTML = `
               <div class="alert alert-success alert-dismissible fade show" role="alert">
                 ${response[0].message}
@@ -314,6 +350,7 @@
 
             // Guardar el array vacío de nuevo en localStorage
             localStorage.setItem('productos', JSON.stringify(products));
+            localStorage.setItem('total_venta_session',0.00);
             localStorage.setItem('subTotal',0.00);
             document.getElementById("hTotal").textContent = "Total: S/0.00";
             document.getElementById("totalProductos").textContent = "0.00";
@@ -369,6 +406,7 @@
 
       // Guardar el array vacío de nuevo en localStorage
       localStorage.setItem('productos', JSON.stringify(products));
+      localStorage.setItem('total_venta_session',0.00);
       localStorage.setItem('subTotal',0.00);
       document.getElementById("hTotal").textContent = "Total: S/0.00";
       document.getElementById("totalProductos").textContent = "0.00";
@@ -376,23 +414,6 @@
   </script> 
 
   <script>
-    //Si ya existen datos cargarlos cuando el DoomLoader terminte
-
-    document.addEventListener('DOMContentLoaded',function(){
-      if (localStorage.getItem("nombre_comprador") != null) {
-        document.getElementById("nombre_comprador").value = localStorage.getItem("nombre_comprador");
-        document.getElementById("direccion_comprador").value = localStorage.getItem("direccion_comprador");
-        document.getElementById("telefono_comprador").value = localStorage.getItem("telefono_comprador");
-        document.getElementById("dni_comprador").value = localStorage.getItem("dni_comprador");
-      } else{
-        document.getElementById("nombre_comprador").value = '';
-        document.getElementById("direccion_comprador").value = '';
-        document.getElementById("telefono_comprador").value = '';
-        document.getElementById("dni_comprador").value = '';
-      }
-    
-    })
-
     // Obtener datos de Compradores por DNI o RUC
     const buscarUsuarioDNI = document.getElementById("buscarUsuarioDNI");
     const botonBuscarUsuarioDNI = document.getElementById("botonBuscarUsuarioDNI");
@@ -481,12 +502,18 @@
 
   <!--Script recuperar lista de productos-->
   <script>
-    
+    if (!localStorage.getItem("isCodeExecuted")) {
+      var jsonProductosSession="{{session['productos']}}";
+      var correctedJsonString = jsonProductosSession.replace(/&#34;/g, '\"');
+      localStorage.setItem("total_venta_session","{{session['total_venta']}}");
+      localStorage.setItem("productos",correctedJsonString);
+      localStorage.setItem("isCodeExecuted", true);
+    }
     var productos= JSON.parse(localStorage.getItem("productos"));
 
     // Creamos la tabla
     let tabla=document.createElement("table");
-    tabla.setAttribute("class","table table-striped table-hover");
+    tabla.setAttribute("class","table table-striped table-hover responsive");
 
     // Creamos el encabezado
     let thead=document.createElement("thead");
@@ -652,10 +679,11 @@
       });
       document.getElementById("totalProductos").textContent = total.toFixed(2);
       document.getElementById("hTotal").textContent = "Total: S/"+total.toFixed(2);
-      localStorage.setItem("subTotal",total.toFixed(2));
+      localStorage.setItem("total_venta_session",total.toFixed(2));
+      localStorage.setItem('subTotal',total.toFixed(2));
       
     }
-
+    
     tabla.appendChild(tbody);
 
     let tableFooter = document.createElement("tfoot");
@@ -668,8 +696,8 @@
 
     let tdFooterTotal = document.createElement("td");
     tdFooterTotal.setAttribute("id","totalProductos");
-    tdFooterTotal.textContent = localStorage.getItem("subTotal");
-    document.getElementById("hTotal").textContent = "Total: S/"+localStorage.getItem("subTotal");
+    tdFooterTotal.textContent = localStorage.getItem("total_venta_session");
+    document.getElementById("hTotal").textContent = "Total: S/"+localStorage.getItem("total_venta_session");
     
     trFooter.appendChild(tdFooter);
     trFooter.appendChild(tdFooterTotal);
@@ -681,5 +709,17 @@
     tabla_productos = document.getElementById("tabla-productos");
     tabla_productos.appendChild(tabla);
 
+  </script>
+
+  <script>
+    // Cancelar Edicion
+    document.getElementById("cancelarEdicionNotaPedido").addEventListener("click",function(){
+      localStorage.removeItem("productos");
+      localStorage.setItem("total_venta_session",0.00);
+      localStorage.setItem('subTotal',0.00);
+      localStorage.removeItem("modoEdicion");
+      localStorage.removeItem("isCodeExecuted");
+      window.location.href = "{{url_for('note.ver_notas_pedido')}}";
+    });
   </script>
 {% endblock %}

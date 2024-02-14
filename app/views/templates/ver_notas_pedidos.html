@@ -1,5 +1,9 @@
 {%extends 'base.html' %}
 
+{% block csslink %}
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+{% endblock %}
 
 {% block navbar %}
 <li class="nav-item">
@@ -15,6 +19,13 @@
     <a class="nav-link" href="{{url_for('auth.logout')}}"> <strong>Cerrar Sesion</strong></a>
 </li>
 {% endblock %}
+
+{% block messages %} 
+  <div id="messagesLoader">
+
+  </div>
+{%endblock%}
+
 
 {% block content %}
 <div class="container-fluid mt-3">
@@ -49,8 +60,8 @@
 
         <div class="container-sm">
             <div class="row ">     
-                <div class="col-md-4">
-                    <div class="input-group mb-3">
+                <div class="col-md-2">
+                    <div class="input-group mb-4">
                         <div class="input-group-text">
                             <input class="form-check-input mt-0" type="checkbox" aria-label="Check para habilitar input ID" id="checkID">
                         </div>
@@ -58,8 +69,8 @@
                     </div>
                 </div>
     
-                <div class="col-md-4">
-                    <div class="input-group mb-3">
+                <div class="col-md-2">
+                    <div class="input-group mb-4">
                         <div class="input-group-text">
                             <input type="checkbox" class="form-check-input" value="" aria-label="Check para habilitar input DNI" id="checkDNI">
                         </div>
@@ -68,7 +79,7 @@
                 </div>
     
                 <div class="col-md-4">
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-4">
                         <span class="input-group-text" id="span_estado">Estado:</span>
                         <select class="form-select" aria-label="Estado1" id="inputEstado1">
                             <option selected disabled value="">Seleccione</option>
@@ -85,6 +96,11 @@
                         </select>                    
                     </div>
                 </div>
+                <div class="col-md-4">
+                    <div class="input-group mb-3">
+                        <button class="btn btn-outline-info" type="button" id="boton-limpiar-filtros" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                    </div>
+                </div>
             </div>
         </div>  
     </div>
@@ -95,7 +111,7 @@
             <div class="col-12 col-lg-10">
                 <!-- Tabla de Contenido Resumen-->
                 <div class="table-responsive" id="tabla-contenido-ventas">
-                    <table class="table">
+                    <table class="table" id="tabla-resumen-notas">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">#</th>
@@ -124,7 +140,7 @@
                                     <div class="d-flex flex-nowrap gap-2" >
                                         <button type="button" class="btn btn-outline-dark btn-sm" id="btn-imprimir" data-id="{{nota.id}}">Imprimir</button>
                                         <button type="button" class="btn btn-outline-primary btn-sm" id="btn-ver" data-id="{{nota.id}}">Ver</button>
-                                        <button type="button" class="btn btn-outline-info btn-sm" id="btn-editar" data-id="{{nota.id}}">Editar</button>
+                                        <button type="button" class="btn btn-outline-info btn-sm" id="btn-editar" data-id="{{nota.id}}" disabled>Editar</button>
                                         <button type="button" class="btn btn-outline-warning btn-sm" id="btn-anular" data-id="{{nota.id}}">Anular</button>
                                         <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}">Eliminar</button>
                                     </div>
@@ -168,7 +184,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close-ver-nota"></button>
             </div>
         
-            <div class="modal-body" style="padding: 1px;">
+            <div class="modal-body" style="padding: 1px;" id="contenido-modal">
                 <div class="container-fluid">
                     <div class="container-header">
                         <h3 style="text-align: center;"><strong>&nbsp;FERRETERIA PERALVILLO E.I.R.L</strong></h3>
@@ -209,10 +225,10 @@
                         
                         <div class="container comprador-info" style="margin-top: 16px; padding: 0px;">
                             <div class="row row-cols-2">
-                                <div class="col"><strong>Sr.(es):</strong></div>
-                                <div class="col"><strong>Telefono</strong></div>
-                                <div class="col"><strong>Direcci&oacute;n:</strong></div>
-                                <div class="col"><strong>DNI:</strong></div>
+                                <div class="col" id="modal-comprador"></div>
+                                <div class="col" id="modal-telefono"></div>
+                                <div class="col" id="modal-direccion"></div>
+                                <div class="col" id="modal-dni"></div>
                             </div>
                             <div class="container-fluid" style="padding: 0px;">
                                 <table class="table">
@@ -222,8 +238,8 @@
                                         <th scope="col" style="font-size:80%;">Precio</th>
                                         <th scope="col" style="font-size:80%;">Sub Total</th>
                                     </thead>
-                                    <tbody>
-                                        <tr>
+                                    <tbody id="tabla-productos">
+                                        <!--<tr>
                                             <td style="font-size:80%;"> 1</td>
                                             <td style="font-size:80%;">Arena Gruesa</td>
                                             <td style="font-size:80%;">S/. 100.00</td>
@@ -232,7 +248,7 @@
                                         <tr>
                                             <td colspan="3" align="right" style="font-size: 90%;"><strong>Total:</strong></td>
                                             <td style="font-size:80%;"> <strong>S/. 100.00</strong></td>
-                                        </tr>
+                                        </tr>-->
                                     </tbody>
                                 </table>
                                 <p style="width: 100%; height: 25px; font-size: 80%; text-align: center; "><span style="color: #000000;"><strong> UNICO COMPROBRANTE PARA RECOGER SU MERCADERIA Y CAMBIARLA POR BOLETA O FACTURA</strong></span></p>
@@ -246,6 +262,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="imprimir-modal">Imprimir</button>
                 <button type="button" class="btn btn-secondary" id="btn-close-ver-nota" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
@@ -255,157 +272,411 @@
 {% endblock %}
 
 {% block scripts %}
-    <script >
-        // Obteniendo los datos del Formulario Fecha Form
-        document.getElementById('buscarFechaForm').addEventListener('submit', function(e){
-            e.preventDefault();
-            let fechaInicio = document.getElementById('buscar_fecha_inicio').value;
-            let fechaFin = new Date(document.getElementById('buscar_fecha_fin').value);
+<!-- Script para Filtrar la Tabla de Contenido -->
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
-            let url = new URL(window.location.href);
-            let params = new URLSearchParams(url.search);
-
-            if (fechaInicio){
-                //Agregabdo un día a la fecha final para que se incluya en la búsqueda
-                fechaFin.setDate(fechaFin.getDate() + 1);
-                params.set('fecha_inicio', fechaInicio);
-                params.set('fecha_final', fechaFin.toISOString().split('T')[0]); // Convertir la fecha a formato ISO y quitar la hora
-
-            } else {
-                params.delete('fecha_inicio');
-                params.delete('fecha_final');
+<!-- Inicializando Tabla de Resumen de Notas de Pedido con los Filtros de DataTables-->
+<script>
+    $(document).ready(function() {
+      new DataTable("#tabla-resumen-notas");
+    });
+    $('#tabla-resumen-notas').DataTable({
+        "autoWidth": false,
+        "processing": true,
+        "searching": false,
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando la página _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
             }
+        }
+    });
 
-            params.delete('dni')
-            params.delete('id') // Eliminar el parámetro id de la URL
 
-            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
-            window.location.href = url.toString();
-        });
+</script>
 
-        // Obteniendo los datos del Formulario CompradorNombre Form
-        document.getElementById('buscarCompradorForm').addEventListener('submit', function(e){
-            e.preventDefault();
-            let comprador = document.getElementById('buscar_comprador').value;
+<script >
+    // DoomLoaded
+    document.addEventListener('DOMContentLoaded', function(){ 
+        // Obteniendo los datos de la URL
+        let url = new URL(window.location.href);
+        let params = new URLSearchParams(url.search);
 
-            let url = new URL(window.location.href);
-            let params = new URLSearchParams(url.search);
+        // Obteniendo los valores de los parametros de la URL
+        let comprador = params.get('comprador');
+        let fechaInicio = params.get('fecha_inicio');
+        let fechaFin = params.get('fecha_final');
+        let id = params.get('id');
+        let dni = params.get('dni');
+        let estado = params.get('estado');
+        let estado2 = params.get('estado2');
 
-            if (comprador){
-                params.set('comprador', comprador);
-            } else {
-                params.delete('comprador');
-            }
-            params.delete('dni')
-            params.delete('id') // Eliminar el parámetro id de la URL
-            
-            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
-            window.location.href = url.toString();
-        });
+        // Seteando los valores de los parametros de la URL en los inputs
+        document.getElementById('buscar_comprador').value = comprador;
+        document.getElementById('buscar_fecha_inicio').value = fechaInicio;
+        document.getElementById('buscar_fecha_fin').value = fechaFin;
+        document.getElementById('inputID').value = id;
+        document.getElementById('inputDNI').value = dni;
+        document.getElementById('inputEstado1').value = estado;
+        document.getElementById('inputEstado2').value = estado2;
 
-        const checkID = document.getElementById('checkID');
-        const inputID = document.getElementById('inputID');
-        checkID.addEventListener('change', function(){
-            inputID.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
-        });
+        // Si el input ID tiene un valor, se activa el check
+        if (id){
+            document.getElementById('checkID').checked = true;
+            document.getElementById('inputID').disabled = false;
+        }
 
-        // Si el check esta activo, se manda el valor del inputID como argumento al URL, si esta desactivado se manda un string vacio
-        inputID.addEventListener('change', function(){
-            let url = new URL(window.location.href);
+        // Si el input DNI tiene un valor, se activa el check
+        if (dni){
+            document.getElementById('checkDNI').checked = true;
+            document.getElementById('inputDNI').disabled = false;
+        }
 
-            // Crear un nuevo objeto URLSearchParams vacío
-            let params = new URLSearchParams(url.search);
+    });
+    
+    // Funcion para limpiar los filtros
+    function limpiarFiltros(){
+        let url = new URL(window.location.href);
+        let params = new URLSearchParams(url.search);
 
-            params.set('id', checkID.checked ? this.value : '');
-            
+        params.delete('comprador');
+        params.delete('fecha_inicio');
+        params.delete('fecha_final');
+        params.delete('id');
+        params.delete('dni');
+        params.delete('estado');
+        params.delete('estado2');
+
+        url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+        window.location.href = url.toString();
+    }
+
+    
+    // Obteniendo los datos del Formulario CompradorNombre Form
+    document.getElementById('buscarCompradorForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        let comprador = document.getElementById('buscar_comprador').value;
+
+        // Verificar que el input no esté vacío
+        if (comprador === '') {
+            document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                El campo comprador no puede estar vacio
+                <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+                ></button>
+            </div>
+            `;
+            return;
+        }
+
+        // Verificar que el input solo pueda contener letras, espacios o ['.', '*', '-']
+        if (!/^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s\.\*\-]+$/.test(comprador)) {
+            document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                El campo comprador solo puede contener letras, espacios, '.', '*', '-'
+                <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+                ></button>
+            </div>
+            `;
+            return;
+        }
+
+        let url = new URL(window.location.href);
+        let params = new URLSearchParams(url.search);
+
+        if (comprador){
+            params.set('comprador', comprador);
+        } else {
+            params.delete('comprador');
+        }
+
+        // Eliminado parametros DNI e ID de la URL por que estos son busquedas independientes
+        params.delete('dni')
+        params.delete('id')
+    
+        url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+        window.location.href = url.toString();
+    });
+
+
+
+    // Funciones para Filtrar la Tabla de Contenido
+    document.getElementById('buscarFechaForm').addEventListener('submit', function(e){
+        e.preventDefault();
+        let fechaInicio = document.getElementById('buscar_fecha_inicio').value;
+        let fechaFin = document.getElementById('buscar_fecha_fin').value;
+        //let fechaFin = new Date(document.getElementById('buscar_fecha_fin').value);
+
+        let url = new URL(window.location.href);
+        let params = new URLSearchParams(url.search);
+
+        if (fechaInicio){
+            //Agregabdo un día a la fecha final para que se incluya en la búsqueda
+            //fechaFin.setDate(fechaFin.getDate() + 1);
+            params.set('fecha_inicio', fechaInicio);
+            params.set('fecha_final', fechaFin);
+            //params.set('fecha_final', fechaFin.toISOString().split('T')[0]); // Convertir la fecha a formato ISO y quitar la hora
+
+        } else {
             params.delete('fecha_inicio');
             params.delete('fecha_final');
-            params.delete('comprador');
-            params.delete('dni')
-            
-            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
-            window.location.href = url.toString();
-        });
+        }
+
+        //params.delete('dni')
+        params.delete('id') // Eliminar el parámetro id de la URL
         
-        const checkDNI = document.getElementById('checkDNI');
-        const inputDNI = document.getElementById('inputDNI');
-        checkDNI.addEventListener('change', function(){
-            inputDNI.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
-        });
+        url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+        window.location.href = url.toString();
+    });
 
-        // Si el check esta activo, se manda el valor del inputDNI como argumento al URL, si esta desactivado se manda un string vacio
-        inputDNI.addEventListener('change', function(){
-            let url = new URL(window.location.href);
+    const checkID = document.getElementById('checkID');
+    const inputID = document.getElementById('inputID');
+    checkID.addEventListener('change', function(){
+        inputID.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
+    });
 
-            // Crear un nuevo objeto URLSearchParams vacío
-            let params = new URLSearchParams(url.search);
+    // Si el check esta activo, se manda el valor del inputID como argumento al URL, si esta desactivado se manda un string vacio
+    inputID.addEventListener('change', function(){
+        let url = new URL(window.location.href);
 
-            params.set('dni', checkDNI.checked ? this.value : '');
-
+        // Crear un nuevo objeto URLSearchParams vacío
+        let params = new URLSearchParams(url.search);
+        if (checkID.checked){
+            // Validar que el inputID sea un número [0-9]
+            if (!/^[0-9]+$/.test(this.value)) {
+                document.getElementById("messagesLoader").innerHTML = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    El campo ID solo puede contener números
+                    <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"
+                    ></button>
+                </div>
+                `;
+                return;
+            }
+            params.set('id', this.value);
+        } else {
             params.delete('id');
-            params.delete('fecha_inicio');
-            params.delete('fecha_final');
-            params.delete('comprador');
+        }
+        
+        params.delete('fecha_inicio');
+        params.delete('fecha_final');
+        params.delete('comprador');
+        params.delete('dni')
+        params.delete('estado');
+        params.delete('estado2');
+        
+        url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+        window.location.href = url.toString();
+    });
+    
+    const checkDNI = document.getElementById('checkDNI');
+    const inputDNI = document.getElementById('inputDNI');
+    checkDNI.addEventListener('change', function(){
+        inputDNI.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
+    });
 
-            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
-            window.location.href = url.toString();
-        });
+    // Si el check esta activo, se manda el valor del inputDNI como argumento al URL, si esta desactivado se manda un string vacio
+    inputDNI.addEventListener('change', function(){
+        let url = new URL(window.location.href);
 
-        const inputEstado1 = document.getElementById('inputEstado1');
-        const inputEstado2 = document.getElementById('inputEstado2');
+        // Crear un nuevo objeto URLSearchParams vacío
+        let params = new URLSearchParams(url.search);
 
-        inputEstado1.addEventListener('change', function(){
-            let url = new URL(window.location.href);
-
-            // Crear un nuevo objeto URLSearchParams vacío
-            let params = new URLSearchParams(url.search);
-
-            params.set('estado', this.value);
-
-            params.delete('estado2');
-            params.delete('id');
-            params.delete('fecha_inicio');
-            params.delete('fecha_final');
-            params.delete('comprador');
+        if (checkDNI.checked){
+            // Validar que el inputDNI sea un número [0-9]
+            if (!/^[0-9]+$/.test(this.value)) {
+                document.getElementById("messagesLoader").innerHTML = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    El campo DNI solo puede contener números
+                    <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"
+                    ></button>
+                </div>
+                `;
+                return;
+            }
+            params.set('dni', this.value);
+        } else {
             params.delete('dni');
+        }
 
-            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
-            window.location.href = url.toString();
-        });
+        params.delete('id');
+        params.delete('fecha_inicio');
+        params.delete('fecha_final');
+        params.delete('comprador');
+        params.delete('estado');
+        params.delete('estado2');
 
-        inputEstado2.addEventListener('change', function(){
-            let url = new URL(window.location.href);
+        url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+        window.location.href = url.toString();
+    });
 
-            // Crear un nuevo objeto URLSearchParams vacío
-            let params = new URLSearchParams(url.search);
+    const inputEstado1 = document.getElementById('inputEstado1');
+    const inputEstado2 = document.getElementById('inputEstado2');
 
-            params.set('estado2', this.value);
+    inputEstado1.addEventListener('change', function(){
+        let url = new URL(window.location.href);
 
-            params.delete('id');
-            params.delete('fecha_inicio');
-            params.delete('fecha_final');
-            params.delete('comprador');
-            params.delete('dni');
+        // Crear un nuevo objeto URLSearchParams vacío
+        let params = new URLSearchParams(url.search);
 
-            url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
-            window.location.href = url.toString();
-        });
+        params.set('estado', this.value);
 
-    </script>
+        //params.delete('estado2');
+        params.delete('id');
+        //params.delete('fecha_inicio');
+        //params.delete('fecha_final');
+        //params.delete('comprador');
+        //params.delete('dni');
 
-    <script>
-        // Funcion para ver la nota de pedido
-        const btnVer = document.querySelectorAll('#btn-ver');
+        url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+        window.location.href = url.toString();
+    });
 
-        btnVer.forEach((btn)=>{
-            btn.addEventListener('click',(e)=>{
-                e.preventDefault();
-                let id = e.target.dataset.id; //The dataset property on an element provides access to all the custom 'data' attributes (data-*) set on the element.
-                const verModal = new bootstrap.Modal(document.getElementById('verNotaModal'));
-                console.log(id);
-                verModal.show();
-            })
+    inputEstado2.addEventListener('change', function(){
+        let url = new URL(window.location.href);
+
+        // Crear un nuevo objeto URLSearchParams vacío
+        let params = new URLSearchParams(url.search);
+
+        params.set('estado2', this.value);
+
+        params.delete('id');
+        //params.delete('fecha_inicio');
+        //params.delete('fecha_final');
+        //params.delete('comprador');
+        //params.delete('dni');
+
+        url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
+        window.location.href = url.toString();
+    });
+
+</script>
+
+<script>
+    // Funciones para Ver la Nota de Pedido y Imprimir la Nota de Pedido
+    const btnVer = document.querySelectorAll('#btn-ver');
+    const contenidoModal = document.getElementById('contenido-modal');
+    const btnImprimir = document.getElementById('imprimir-modal');  
+
+    btnVer.forEach((btn)=>{
+        btn.addEventListener('click',(e)=>{
+            let id = e.target.dataset.id; //The dataset property on an element provides access to all the custom 'data' attributes (data-*) set on the element.
+            const verModalElemento = document.getElementById('verNotaModal');
+            const verModal = new bootstrap.Modal(verModalElemento);
+            
+            // Obteniendo los datos de la nota de pedido modal, para actualizarlos con los valores extraidos de  BD
+            const modalComprador=verModalElemento.querySelector('#modal-comprador');
+            const modalTelefono=verModalElemento.querySelector('#modal-telefono');
+            const modalDireccion=verModalElemento.querySelector('#modal-direccion');
+            const modalDNI=verModalElemento.querySelector('#modal-dni');
+            const tablaProductos=verModalElemento.querySelector('#tabla-productos');
+
+            //Obteniendo datos desde llamada GET
+            fetch(`{{url_for('note.vernotapedido', id='')}}${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    modalComprador.innerHTML='<strong>Sr.(es):</strong>'+ ' ' + data[0].nombre_comprador;
+                    modalTelefono.innerHTML='<strong>Telefono:</strong>'+ ' ' + data[0].numero_comprador;
+                    modalDireccion.innerHTML='<strong>Direcci&oacute;n:</strong>'+ ' ' + data[0].direccion_comprador;
+                    modalDNI.innerHTML='<strong>DNI:</strong>'+ ' ' + data[0].dni_comprador;
+                    tablaProductos.innerHTML='';
+                    const productosNota = data[0].nombre_producto;
+                    let productosNotaArray = JSON.parse(productosNota);
+
+                    productosNotaArray.forEach((nota)=>{
+                        let tr = document.createElement('tr');
+                        tr.innerHTML=`
+                            <td style="font-size:80%; text-align:center;"> <strong>${nota.cantidad}</strong></td>
+                            <td style="font-size:80%;">${nota.nombre_producto}</td>
+                            <td style="font-size:80%;">${nota.precio_venta_producto}</td>
+                            <td style="font-size:80%;"><strong>${(nota.cantidad*nota.precio_venta_producto).toFixed(2)}</strong></td>
+                        `;
+                        tablaProductos.appendChild(tr);
+                    })
+                    let tr2 = document.createElement('tr');
+                        tr2.innerHTML=`
+                            <td colspan="3" align="right" style="font-size:80%;"> <strong>Total:</strong></td>
+                            <td style="font-size:80%;"> <strong>${data[0].total_venta}</strong></td>
+                        `;
+                    tablaProductos.appendChild(tr2);
+            
+                    })
+                .catch(error => console.error('Error:', error));
+
+
+            verModal.show();
         })
-    </script>
+    })
 
+    btnImprimir.addEventListener('click', (e)=>{
+        imprimirContenidoModal();
+    })
+
+    function imprimirContenidoModal(){
+        let contenido = contenidoModal.cloneNode(true);
+        let cuerpo = document.body.cloneNode(true);                
+
+        // Mover el contenido del modal al cuerpo
+        document.body.innerHTML = '';
+        document.body.appendChild(contenido);
+
+        // Imprimir el contenido
+        window.print();
+
+        // Volver el contenido al cuerpo
+        document.body.innerHTML = '';
+        document.body.appendChild(cuerpo);
+
+        location.reload();
+        
+    }
+
+
+    const btnImprimirTabla=document.querySelectorAll('#btn-imprimir');
+    btnImprimirTabla.forEach((btn)=>{
+        btn.addEventListener('click',(e)=>{
+            let id = e.target.dataset.id;
+            let url = `{{url_for('note.imprimire', id='')}}${id}`;
+            window.open(url, '_blank');
+
+        })
+    })
+</script>
+
+<script>
+    // Funciones para Editar la Nota de Pedido
+    const btnEditar = document.querySelectorAll('#btn-editar');
+    btnEditar.forEach((btn)=>{
+        btn.addEventListener('click',(e)=>{
+            let id = e.target.dataset.id;
+            let url = `{{url_for('note.editarnotaventa', id='')}}${id}`;
+            window.location.href = url;
+        })
+    })
+</script>
 {% endblock %}
