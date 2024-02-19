@@ -156,6 +156,7 @@ def editarnotaventa(id=None):
 		nota.deuda=total_venta-total_pagado
 		if acuenta:
 			nota.acuenta=total_pagado
+		nota.bool_acuenta=acuenta
 
 		#Data de los productos
 		# Validar como se realizaria el descuento de stock dado que se esta editando la nota de pedido y puede que no se repita la cantidad disminuida.
