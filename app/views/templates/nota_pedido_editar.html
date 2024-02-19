@@ -184,30 +184,24 @@
   <!--Cosas que verificar cuando todo el contenido se carga Doom Loaded-->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Items que se cargan una sola vez si no se ha ejecutado el codigo
-      if (!localStorage.getItem("isCodeExecuted")) {
-        var jsonProductosSession="{{session['productos']}}";
-        var correctedJsonString = jsonProductosSession.replace(/&#34;/g, '\"');
-        
-        //total_venta_session -> Es el total de todos los productos de la nota de Pedido
-        //localStorage.setItem("total_venta_session","{{session['total_venta']}}");
-        localStorage.setItem('subTotal',"{{session['total_venta']}}");
-        localStorage.setItem("productos",correctedJsonString);
-        localStorage.setItem("isCodeExecuted", true);
-      }
-
       // Actualiza el total de pago y vuelto
       updateTotalPagoText();
       updatePagoConforme();
-
-
-
     });
   </script>
 
 
   <!--Logica del Manejo de Inputs de Pago,Vuelto y Validacion de Formulario-->
   <script>
+    // Items que se cargan una sola vez si no se ha ejecutado el codigo
+    if (!localStorage.getItem("isCodeExecuted")) {
+        
+        //total_venta_session -> Es el total de todos los productos de la nota de Pedido
+        //localStorage.setItem("total_venta_session","{{session['total_venta']}}");
+        localStorage.setItem('subTotal',"{{session['total_venta']}}");
+        localStorage.setItem("productos",correctedJsonString);
+        localStorage.setItem("isCodeExecuted", true);
+    }
     
     //Variable LocalStorage modoEdicion
     localStorage.setItem("modoEdicion",true);
@@ -522,8 +516,8 @@
       localStorage.setItem('totalPagoText',0.00);
       localStorage.setItem('vueltoText',0.00);
       localStorage.setItem('pagoConforme',false);
-      localStorage.setItem('isCodeExecuted',false);
-      localStorage.setItem('modoEdicion',false);
+      localStorage.removeItem('isCodeExecuted');
+      localStorage.removeItem('modoEdicion');
       localStorage.setItem('subTotal',0.00);
       
       document.getElementById("hTotal").textContent = "Total: S/0.00";
@@ -848,8 +842,8 @@
       localStorage.setItem('totalPagoText',0.00);
       localStorage.setItem('vueltoText',0.00);
       localStorage.setItem('pagoConforme',false);
-      localStorage.setItem('isCodeExecuted',false);
-      localStorage.setItem('modoEdicion',false);
+      localStorage.removeItem('isCodeExecuted');
+      localStorage.removeItem('modoEdicion');
       localStorage.setItem('subTotal',0.00);
       window.location.href = "{{url_for('note.ver_notas_pedido')}}";
     });
