@@ -201,7 +201,7 @@
         localStorage.setItem('subTotal',"{{session['total_venta']}}");
         var jsonProductosSession="{{session['productos']}}";
         var correctedJsonString = jsonProductosSession.replace(/&#34;/g, '\"');
-        
+
         localStorage.setItem("productos",correctedJsonString);
         localStorage.setItem("isCodeExecuted", true);
     }
@@ -516,16 +516,16 @@
       localStorage.setItem('productos', JSON.stringify(products));
       //localStorage.setItem('total_venta_session',0.00);
       
-      localStorage.setItem('totalPagoText',0.00);
-      localStorage.setItem('vueltoText',0.00);
-      localStorage.setItem('pagoConforme',false);
+      //localStorage.setItem('totalPagoText',0.00);
+      //localStorage.setItem('vueltoText',0.00);
+      //localStorage.setItem('pagoConforme',false);
       localStorage.removeItem('isCodeExecuted');
       localStorage.removeItem('modoEdicion');
       localStorage.setItem('subTotal',0.00);
       
       document.getElementById("hTotal").textContent = "Total: S/0.00";
       document.getElementById("totalProductos").textContent = "0.00";
-      window.location.href = "{{url_for('note.ver_notas_pedido')}}";
+      //window.location.href = "{{url_for('note.ver_notas_pedido')}}";
       event.preventDefault();
     });
   </script> 
@@ -707,6 +707,7 @@
         localStorage.setItem("productos",JSON.stringify(productosActualizados));
         // Actualiza la variable total
         updateTotal();
+        updateTotalPagoText();
       });
 
       let td2 = document.createElement("td");
@@ -740,6 +741,7 @@
 
         // Actualiza la variable total
         updateTotal();
+        updateTotalPagoText();
       });
 
       let td4 = document.createElement("td");
@@ -764,6 +766,7 @@
 
         // Actualiza la variable total
         updateTotal();
+        updateTotalPagoText();
       });
 
       td5.appendChild(button);
