@@ -518,9 +518,17 @@
       // Guardar el array vacío de nuevo en localStorage
       localStorage.setItem('productos', JSON.stringify(products));
       //localStorage.setItem('total_venta_session',0.00);
+      
+      localStorage.setItem('totalPagoText',0.00);
+      localStorage.setItem('vueltoText',0.00);
+      localStorage.setItem('pagoConforme',false);
+      localStorage.setItem('isCodeExecuted',false);
+      localStorage.setItem('modoEdicion',false);
       localStorage.setItem('subTotal',0.00);
+      
       document.getElementById("hTotal").textContent = "Total: S/0.00";
       document.getElementById("totalProductos").textContent = "0.00";
+      window.location.href = "{{url_for('note.ver_notas_pedido')}}";
       event.preventDefault();
     });
   </script> 
@@ -837,8 +845,12 @@
       //localStorage.removeItem("productos");
       //localStorage.setItem("total_venta_session",0.00);
       localStorage.setItem('subTotal',0.00);
-      localStorage.removeItem("modoEdicion");
-      localStorage.removeItem("isCodeExecuted");
+      localStorage.setItem('totalPagoText',0.00);
+      localStorage.setItem('vueltoText',0.00);
+      localStorage.setItem('pagoConforme',false);
+      localStorage.setItem('isCodeExecuted',false);
+      localStorage.setItem('modoEdicion',false);
+      localStorage.setItem('subTotal',0.00);
       window.location.href = "{{url_for('note.ver_notas_pedido')}}";
     });
   </script>
