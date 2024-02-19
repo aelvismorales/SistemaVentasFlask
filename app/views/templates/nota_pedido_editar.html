@@ -199,10 +199,13 @@
         //total_venta_session -> Es el total de todos los productos de la nota de Pedido
         //localStorage.setItem("total_venta_session","{{session['total_venta']}}");
         localStorage.setItem('subTotal',"{{session['total_venta']}}");
+        var jsonProductosSession="{{session['productos']}}";
+        var correctedJsonString = jsonProductosSession.replace(/&#34;/g, '\"');
+        
         localStorage.setItem("productos",correctedJsonString);
         localStorage.setItem("isCodeExecuted", true);
     }
-    
+
     //Variable LocalStorage modoEdicion
     localStorage.setItem("modoEdicion",true);
 
