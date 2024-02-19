@@ -196,8 +196,6 @@
     // Items que se cargan una sola vez si no se ha ejecutado el codigo
     if (!localStorage.getItem("isCodeExecuted")) {
         
-        //total_venta_session -> Es el total de todos los productos de la nota de Pedido
-        //localStorage.setItem("total_venta_session","{{session['total_venta']}}");
         localStorage.setItem('subTotal',"{{session['total_venta']}}");
         var jsonProductosSession="{{session['productos']}}";
         var correctedJsonString = jsonProductosSession.replace(/&#34;/g, '\"');
@@ -264,17 +262,14 @@
         if (checkbox.checked && input.value) {
           totalPago += parseFloat(input.value);
         } else if(input.value){
-          //input.value = 0.00;
-          //totalPago -= parseFloat(input.value);
-          //if (totalPago < 0) {
-          //  totalPago = 0.00;
-          //}
+
           totalPago += parseFloat(input.value);
         }
       })
+
       //total_pago -> Es la cantidad que la persona cancela
       //subTotal -> Es el total de la venta
-      
+    
       localStorage.setItem('totalPagoText',parseFloat(totalPago).toFixed(2));
       // Quizas una funcion que me permita obtener el valor actual del subTotal sumando los datos de la Tabla de Productos.
       const subTotal = parseFloat(localStorage.getItem('subTotal'));
@@ -457,7 +452,6 @@
                 ></button>
               </div>
             `;
-            //localStorage.removeItem("productos");
             
             var JSONproductos = localStorage.getItem('productos');
             var products = JSONproductos ? JSON.parse(JSONproductos) : [];
@@ -471,9 +465,10 @@
             // Vaciar el array
             products.length = 0;
             localStorage.setItem('productos', JSON.stringify(products));
-            
-            //localStorage.setItem("total_venta_session",0.00);
             localStorage.setItem('subTotal',0.00);
+            localStorage.removeItem("totalPagoText");
+            localStorage.removeItem("vueltoText");
+            localStorage.removeItem("pagoConforme");
             localStorage.removeItem("modoEdicion");
             localStorage.removeItem("isCodeExecuted");
             
@@ -804,7 +799,6 @@
       });
       document.getElementById("totalProductos").textContent = total.toFixed(2);
       document.getElementById("hTotal").textContent = "Total: S/"+total.toFixed(2);
-      //localStorage.setItem("total_venta_session",total.toFixed(2));
       localStorage.setItem('subTotal',total.toFixed(2));     
     }
     
