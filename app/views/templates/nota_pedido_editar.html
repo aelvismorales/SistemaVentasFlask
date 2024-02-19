@@ -171,7 +171,7 @@
         <h4 id="hTotal"></h4>
       </div>
       <div class="botones">
-        <button class="btn btn-danger" id="cancelarNotaPedido">Vaciar Productos</button>
+        <button class="btn btn-danger" id="vaciarNotaPedido">Vaciar Productos</button>
         <button class="btn btn-warning" id="cancelarEdicionNotaPedido">Cancelar Edicion </button>
         <button class="btn btn-success" id="botonDatosComprador" type="submit">Guardar</button>
         
@@ -279,6 +279,7 @@
       //subTotal -> Es el total de la venta
       
       localStorage.setItem('totalPagoText',parseFloat(totalPago).toFixed(2));
+      // Quizas una funcion que me permita obtener el valor actual del subTotal sumando los datos de la Tabla de Productos.
       const subTotal = parseFloat(localStorage.getItem('subTotal'));
       const vuelto = totalPago - subTotal;
       localStorage.setItem('vueltoText',parseFloat(vuelto).toFixed(2));
@@ -296,10 +297,12 @@
     acuentaselect.addEventListener('change',updateTotalPagoText);
 
     document.getElementById("botonDatosComprador").addEventListener('click',function(event){
+      /* Al momento de dar click verificar los totales pagados y si el pago es conforme*/
       updateTotalPagoText();
       updatePagoConforme();
-       // Obteniendo datos del comprador del Formulario
-       const formulario_DatosComprador = document.getElementById("datosComprador");
+      
+      // Obteniendo datos del comprador del Formulario
+      const formulario_DatosComprador = document.getElementById("datosComprador");
       const formData = new FormData(formulario_DatosComprador);
       let data = {};
 
@@ -371,29 +374,29 @@
             </div>
           `;   
           return;
-      }
+        }
 
-      if (data["inputEstado1"] == "Seleccione" || data["inputEstado2"] == "Seleccione"){
-        document.getElementById("messagesLoader").innerHTML = `
-          <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            Los campos Estado no pueden estar vacios, seleccione un estado
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="alert"
-              aria-label="Close"
-            ></button>
-          </div>
-        `;   
-        return;
-      }	
+        if (data["inputEstado1"] == "Seleccione" || data["inputEstado2"] == "Seleccione"){
+          document.getElementById("messagesLoader").innerHTML = `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+              Los campos Estado no pueden estar vacios, seleccione un estado
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+          `;   
+          return;
+        }	
 
       // Obtener los productos de Local Storage
       let productos = JSON.parse(localStorage.getItem("productos"));
 
       // Agregando los productos al objeto data
       data["productos"] = productos;
-      data["total_venta"] = localStorage.getItem("subTotal");
+      data["total_venta"] = localStorage.getItem("subTotal"); // Este valor debe ser la suma de todos los productos.
       data["total_pagado"] = localStorage.getItem("totalPagoText");
       data["vuelto"]= localStorage.getItem("vueltoText");
       data["pagoEfectivo"] = document.getElementById("pagoEfectivoInput").value;
@@ -441,12 +444,8 @@
                 ></button>
               </div>
             `;
-            localStorage.removeItem("productos");
-            localStorage.setItem("total_venta_session",0.00);
-            localStorage.setItem('subTotal',0.00);
-            localStorage.removeItem("modoEdicion");
-            localStorage.removeItem("isCodeExecuted");
-
+            //localStorage.removeItem("productos");
+            
             var JSONproductos = localStorage.getItem('productos');
             var products = JSONproductos ? JSON.parse(JSONproductos) : [];
 
@@ -459,7 +458,14 @@
             // Vaciar el array
             products.length = 0;
             localStorage.setItem('productos', JSON.stringify(products));
+            
+            //localStorage.setItem("total_venta_session",0.00);
+            localStorage.setItem('subTotal',0.00);
+            localStorage.removeItem("modoEdicion");
+            localStorage.removeItem("isCodeExecuted");
+            
             document.getElementById("hTotal").textContent = "Total: S/0.00";
+            // El ID total_productos es de la tabla de productos
             document.getElementById("totalProductos").textContent = "0.00";
           },
           error:function(error){
@@ -495,12 +501,12 @@
     });
 
     // Capturar el clic en el botón "Vaciar Productos"
-    document.getElementById('cancelarNotaPedido').addEventListener('click', (event) => {
-      // Eliminar la lista de productos de localStorage
+    document.getElementById('vaciarNotaPedido').addEventListener('click', (event) => {
+      // Vaciar la lista de productos de localStorage
       var JSONproductos = localStorage.getItem('productos');
       var products = JSONproductos ? JSON.parse(JSONproductos) : [];
 
-      productos.forEach((element) => {
+      products.forEach((element) => {
         let id = element.id;
         let tr = document.getElementById(id);
         tr.parentNode.removeChild(tr);
@@ -511,7 +517,7 @@
 
       // Guardar el array vacío de nuevo en localStorage
       localStorage.setItem('productos', JSON.stringify(products));
-      localStorage.setItem('total_venta_session',0.00);
+      //localStorage.setItem('total_venta_session',0.00);
       localStorage.setItem('subTotal',0.00);
       document.getElementById("hTotal").textContent = "Total: S/0.00";
       document.getElementById("totalProductos").textContent = "0.00";
@@ -608,7 +614,8 @@
 
   <!--Script recuperar lista de productos-->
   <script>
-    var productos= JSON.parse(localStorage.getItem("productos"));
+    var JSONproductos = localStorage.getItem("productos");
+    var productos= JSONproductos ? JSON.parse(JSONproductos) : [];
 
     // Creamos la tabla
     let tabla=document.createElement("table");
@@ -778,9 +785,8 @@
       });
       document.getElementById("totalProductos").textContent = total.toFixed(2);
       document.getElementById("hTotal").textContent = "Total: S/"+total.toFixed(2);
-      localStorage.setItem("total_venta_session",total.toFixed(2));
-      localStorage.setItem('subTotal',total.toFixed(2));
-      
+      //localStorage.setItem("total_venta_session",total.toFixed(2));
+      localStorage.setItem('subTotal',total.toFixed(2));     
     }
     
     tabla.appendChild(tbody);
@@ -795,8 +801,8 @@
 
     let tdFooterTotal = document.createElement("td");
     tdFooterTotal.setAttribute("id","totalProductos");
-    tdFooterTotal.textContent = localStorage.getItem("total_venta_session");
-    document.getElementById("hTotal").textContent = "Total: S/"+localStorage.getItem("total_venta_session");
+    tdFooterTotal.textContent = localStorage.getItem("subTotal");
+    document.getElementById("hTotal").textContent = "Total: S/"+localStorage.getItem("subTotal");
     
     trFooter.appendChild(tdFooter);
     trFooter.appendChild(tdFooterTotal);
@@ -813,8 +819,23 @@
   <script>
     // Cancelar Edicion
     document.getElementById("cancelarEdicionNotaPedido").addEventListener("click",function(){
-      localStorage.removeItem("productos");
-      localStorage.setItem("total_venta_session",0.00);
+      var JSONproductos = localStorage.getItem('productos');
+      var products = JSONproductos ? JSON.parse(JSONproductos) : [];
+
+      products.forEach((element) => {
+        let id = element.id;
+        let tr = document.getElementById(id);
+        tr.parentNode.removeChild(tr);
+      });
+
+      // Vaciar el array
+      products.length = 0;
+
+      // Guardar el array vacío de nuevo en localStorage
+      localStorage.setItem('productos', JSON.stringify(products));
+
+      //localStorage.removeItem("productos");
+      //localStorage.setItem("total_venta_session",0.00);
       localStorage.setItem('subTotal',0.00);
       localStorage.removeItem("modoEdicion");
       localStorage.removeItem("isCodeExecuted");
