@@ -113,7 +113,7 @@
             <div class="input-group mb-2">
               <label class="input-group-text" for="acuenta">Acuenta</label>
               <select class="form-select" name="acuenta" id="acuentaselect">
-                <option value="False" >No</option>
+                <option value="False">No</option>
                 <option value="True" {{ 'selected' if nota.bool_acuenta else ''}}>Si</option>
               </select>
             </div>
@@ -412,6 +412,7 @@
       data["pagoBBVA"] = document.getElementById("pagoBBVAInput").value;
       data["pagoBCP"] = document.getElementById("pagoBCPInput").value;
       data["pagoYape"] = document.getElementById("pagoYAPEInput").value;
+      data["acuenta"] = document.getElementById("acuentaselect").value;
 
       // Validar que los Input Pago no tengan valores negativos
       if (data["pagoEfectivo"] < 0 || data["pagoVisa"] < 0 || data["pagoBBVA"] < 0 || data["pagoBCP"] < 0 || data["pagoYape"] < 0){
@@ -475,6 +476,22 @@
             document.getElementById("hTotal").textContent = "Total: S/0.00";
             // El ID total_productos es de la tabla de productos
             document.getElementById("totalProductos").textContent = "0.00";
+
+            // Limpiar los campos del formulario
+            document.getElementById("nombre_comprador").value = '';
+            document.getElementById("direccion_comprador").value = '';
+            document.getElementById("telefono_comprador").value = '';
+            document.getElementById("dni_comprador").value = '';
+            document.getElementById("acuentaselect").value = "False";
+            document.getElementById("pagoEfectivoInput").value = 0.00;
+            document.getElementById("pagoVisaInput").value = 0.00;
+            document.getElementById("pagoBBVAInput").value = 0.00;
+            document.getElementById("pagoBCPInput").value = 0.00;
+            document.getElementById("pagoYAPEInput").value = 0.00;
+            document.getElementById("inputEstado1").value = "Seleccione";
+            document.getElementById("inputEstado2").value = "Seleccione";
+            document.getElementById("cancela-dinero").textContent = "";
+            document.getElementById("vuelto-dinero").textContent = "";  
           },
           error:function(error){
             console.error(error);
