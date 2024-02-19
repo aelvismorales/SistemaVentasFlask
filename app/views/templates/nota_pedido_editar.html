@@ -173,7 +173,7 @@
       <div class="botones">
         <button class="btn btn-danger" id="vaciarNotaPedido">Vaciar Productos</button>
         <button class="btn btn-warning" id="cancelarEdicionNotaPedido">Cancelar Edicion </button>
-        <button class="btn btn-success" id="botonDatosComprador" type="submit">Guardar</button>
+        <button class="btn btn-success" id="botonGuardarDatosComprador" type="submit">Guardar</button>
         
       </div>
   </div>
@@ -293,7 +293,7 @@
     const acuentaselect = document.getElementById("acuentaselect");
     acuentaselect.addEventListener('change',updateTotalPagoText);
 
-    document.getElementById("botonDatosComprador").addEventListener('click',function(event){
+    document.getElementById("botonGuardarDatosComprador").addEventListener('click',function(event){
       /* Al momento de dar click verificar los totales pagados y si el pago es conforme*/
       updateTotalPagoText();
       updatePagoConforme();
@@ -514,18 +514,15 @@
 
       // Guardar el array vacío de nuevo en localStorage
       localStorage.setItem('productos', JSON.stringify(products));
-      //localStorage.setItem('total_venta_session',0.00);
-      
-      //localStorage.setItem('totalPagoText',0.00);
-      //localStorage.setItem('vueltoText',0.00);
-      //localStorage.setItem('pagoConforme',false);
-      localStorage.removeItem('isCodeExecuted');
-      localStorage.removeItem('modoEdicion');
       localStorage.setItem('subTotal',0.00);
+      localStorage.setItem('totalPagoText',0.00);
+      localStorage.setItem('vueltoText',0.00);
       
       document.getElementById("hTotal").textContent = "Total: S/0.00";
       document.getElementById("totalProductos").textContent = "0.00";
-      //window.location.href = "{{url_for('note.ver_notas_pedido')}}";
+      cancelaDinero.textContent = "Cancela con: S/0.00";
+      vueltoDinero.textContent = "Vuelto: S/0.00";
+
       event.preventDefault();
     });
   </script> 
@@ -842,16 +839,25 @@
       // Guardar el array vacío de nuevo en localStorage
       localStorage.setItem('productos', JSON.stringify(products));
 
-      //localStorage.removeItem("productos");
-      //localStorage.setItem("total_venta_session",0.00);
       localStorage.setItem('subTotal',0.00);
       localStorage.setItem('totalPagoText',0.00);
       localStorage.setItem('vueltoText',0.00);
       localStorage.setItem('pagoConforme',false);
       localStorage.removeItem('isCodeExecuted');
       localStorage.removeItem('modoEdicion');
-      localStorage.setItem('subTotal',0.00);
       window.location.href = "{{url_for('note.ver_notas_pedido')}}";
+      // Mostrar mensaje de cancelacion
+      document.getElementById("messagesLoader").innerHTML = `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          Se cancelo la edicion de la Nota de Pedido
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+      `;
     });
   </script>
 {% endblock %}
