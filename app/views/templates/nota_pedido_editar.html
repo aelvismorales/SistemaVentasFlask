@@ -119,7 +119,7 @@
             </div>
 
             <div class="form-check pagos mb-2">
-              <input class="form-check-input" type="checkbox" id="pagoEfectivo" aria-label="pagoEfectivo">
+              <input class="form-check-input" type="checkbox" id="pagoEfectivo" aria-label="pagoEfectivo" {% if nota.pagoEfectivo %}checked{% endif %}>
               <div class="input-group">
                 <span class="input-group-text" id="pagoEfectivoSpan">Efectivo</span>
                 <input class="form-control" type="number" name="pagoEfectivoInput" id="pagoEfectivoInput" placeholder="0.00" min="0.1" step="0.01"  value="{{ nota.pagoEfectivo if nota.pagoEfectivo else 0.00}}" disabled>
@@ -127,7 +127,7 @@
             </div>
 
             <div class="form-check pagos mb-2">
-              <input class="form-check-input" type="checkbox" id="pagoVisa" aria-label="pagoVisa">
+              <input class="form-check-input" type="checkbox" id="pagoVisa" aria-label="pagoVisa" {% if nota.pagoVisa %} checked {% endif %}>
               <div class="input-group">
                 <span class="input-group-text" id="pagoVisaSpan">Visa</span>
                 <input class="form-control" type="number" name="pagoVisaInput" id="pagoVisaInput" placeholder="0.00" min="0.1" step="0.01" value="{{ nota.pagoVisa if nota.pagoVisa else 0.00}}" disabled>
@@ -135,7 +135,7 @@
             </div>
 
             <div class="form-check pagos mb-2">
-              <input class="form-check-input" type="checkbox" id="pagoBBVA" aria-label="pagoBBVA">
+              <input class="form-check-input" type="checkbox" id="pagoBBVA" aria-label="pagoBBVA" {% if nota.pagoBBVA %} checked {% endif %}>
               <div class="input-group">
                 <span class="input-group-text" id="pagoBBVASpan">BBVA</span>
                 <input class="form-control" type="number" name="pagoBBVAInput" id="pagoBBVAInput" placeholder="0.00" min="0.1" step="0.01" value="{{nota.pagoBBVA if nota.pagoBBVA else 0.00}}" disabled>
@@ -143,7 +143,7 @@
             </div>
 
             <div class="form-check pagos mb-2">
-              <input class="form-check-input" type="checkbox" id="pagoBCP" aria-label="pagoBCP">
+              <input class="form-check-input" type="checkbox" id="pagoBCP" aria-label="pagoBCP" {% if nota.pagoBCP %} checked {% endif %}>
               <div class="input-group">
                 <span class="input-group-text" id="pagoBCPSpan">BCP</span>
                 <input class="form-control" type="number" name="pagoBCPInput" id="pagoBCPInput" placeholder="0.00" min="0.1" step="0.01" value="{{nota.pagoBCP if nota.pagoBCP else 0.00}}" disabled>
@@ -151,7 +151,7 @@
             </div>
 
             <div class="form-check pagos mb-2">
-              <input class="form-check-input" type="checkbox" value="" id="pagoYAPE" aria-label="pagoYAPE">
+              <input class="form-check-input" type="checkbox" value="" id="pagoYAPE" aria-label="pagoYAPE" {% if nota.pagoYAPE %} checked {% endif %}>
               <div class="input-group">
                 <span class="input-group-text" id="pagoYapeSpan">Yape</span>
                 <input class="form-control" type="number" name="pagoYAPEInput" id="pagoYAPEInput" placeholder="0.00" min="0.1" step="0.01" value="{{nota.pagoYape if nota.pagoYape else 0.00}}" disabled>
