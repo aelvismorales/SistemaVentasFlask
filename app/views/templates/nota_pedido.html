@@ -162,7 +162,7 @@
     </div>
 
     <div id="tabla-productos" class="container-tabla-productos">
-
+ 
     </div>
 
     <div class="container-botones-final">
@@ -276,7 +276,7 @@
           data[key] = value;
         });
 
-        // Validar que el nombre_comprador solo contenga letras, espacio o ['*','-','.]
+        // Validar que el nombre_comprador solo contenga letras, espacio o ['*','-','.']
         if (data["nombre_comprador"].match(/^[a-zA-Z\s*-.]+$/) == null){
           document.getElementById("messagesLoader").innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">

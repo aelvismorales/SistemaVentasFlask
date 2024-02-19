@@ -96,7 +96,7 @@ def crear_nota_venta():
 
 	return render_template('nota_pedido.html')
 
-# Va a existir una ruta para editar solamente la nota de pedido la cual va a ser la misma que la de crear nota de pedido en vista pero con un id de la nota de pedido
+# Va a existir una ruta para  editar solamente la nota de pedido la cual va a ser la misma que la de crear nota de pedido en vista pero con un id de la nota de pedido
 # Creo tendria que tener otra diferentes nombres en LocalStorage para cuando me encuentro en la pantalla de edicion de nota de pedido.
 
 @note.route('/editarnotaventa/<string:id>',methods=['GET','POST'])
@@ -119,14 +119,12 @@ def editarnotaventa(id=None):
 		telefono=data['telefono_comprador'] if data['telefono_comprador'] else nota.get_telefono_nota()
 		estado_nota=data['inputEstado1'] if data['inputEstado1'] else None
 		estado_nota_2=data['inputEstado2'] if data['inputEstado2'] else None
-
-		acuenta= True if data['acuenta'] =='True' else False
-
 		productos=data['productos']
 
 		total_venta= Decimal(data['total_venta']).quantize(Decimal("1e-{0}".format(2))) # Suma total de todos los productos
 		total_pagado= Decimal(data['total_pagado']).quantize(Decimal("1e-{0}".format(2))) # Valor total pagado por el cliente
 
+		acuenta= True if data['acuenta'] =='True' else False
 
 		vuelto = Decimal(data['vuelto']).quantize(Decimal("1e-{0}".format(2))) if data['vuelto'] else 0.00 # Vuelto que se le da al cliente
 
