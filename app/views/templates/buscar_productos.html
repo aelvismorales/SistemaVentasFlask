@@ -24,6 +24,12 @@
   </li>
 {% endblock %}
 
+{% block messages %} 
+  <div id="messagesLoader">
+
+  </div>
+{%endblock%}
+
 {% block content %}
   <div class="container-fluid mt-3">
     <div class="container-fluid">
@@ -345,7 +351,17 @@
         var JSONproductos = localStorage.getItem('productos');
         var products = JSONproductos ? JSON.parse(JSONproductos) : [];
         if (products.length==0){
-            alert('No hay productos en la lista');              
+            document.getElementById("messagesLoader").innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> No hay productos en la lista.
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"
+                ></button>
+                </div>
+            `;             
         }
         else{
             window.location.href = '/crearnotaventa';
@@ -355,14 +371,29 @@
     //Extrayendo de localStorage si es que se esta en modo edicion
     const modoEdicion=localStorage.getItem("modoEdicion",false);
     if (modoEdicion){
+        // Mostrar mensaje que se esta en modo edicion
+        document.getElementById("messagesLoader").innerHTML = `
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Modo Edicion!</strong> Esta en modo edicion, puede editar la nota de venta.
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+        `;
         const btnEditar=document.getElementById('boton-editar');
+        const btnGenerar=document.getElementById('boton-generar');
+        btnGenerar.disabled=true
         btnEditar.disabled=false
         btnEditar.addEventListener('click',()=>{
-            localStorage.setItem('total_venta_session',localStorage.getItem('subTotal'));
             window.location.href = '/editarnotaventa/'+"{{session['id_nota']}}";
         });
     }else{
         const btnEditar=document.getElementById('boton-editar');
+        const btnGenerar=document.getElementById('boton-generar');
+        btnGenerar.disabled=false
         btnEditar.disabled=true
     }
 
@@ -496,7 +527,17 @@
             } 
             else {
             // Si el producto ya existe, mostrar un mensaje de error
-            alert('El producto ya existe en la lista');
+            document.getElementById('messagesLoader').innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> El producto ya existe en la lista.
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"
+                ></button>
+                </div>
+            `;
             }
             // Actualizar cualquier otra lógica que necesites realizar después de agregar un producto
             actualizarSubTotal();

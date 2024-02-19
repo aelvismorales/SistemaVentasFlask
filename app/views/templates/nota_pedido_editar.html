@@ -237,13 +237,13 @@
       const vuelto = parseFloat(localStorage.getItem('vueltoText'));
 
       if (acuenta == "True"){
-          if (totalPago < subTotal && vuelto < 0) {
+          if (subTotal > 0 && totalPago < subTotal && vuelto < 0) {
             localStorage.setItem('pagoConforme',true)
           } else {
             localStorage.setItem('pagoConforme',false)
           }
       }else{
-        if (totalPago >= subTotal && vuelto >= 0) {
+        if (subTotal > 0 && totalPago >= subTotal && vuelto >= 0) {
           localStorage.setItem('pagoConforme',true)
         } else {
           localStorage.setItem('pagoConforme',false)
@@ -391,6 +391,22 @@
       // Obtener los productos de Local Storage
       let productos = JSON.parse(localStorage.getItem("productos"));
 
+      // Validar que la lista de productos no este vacia sino no se podra guardar la nota de pedido
+      if (productos.length == 0){
+        document.getElementById("messagesLoader").innerHTML = `
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            La lista de productos no puede estar vacia
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+        `;   
+        return;
+      }
+
       // Agregando los productos al objeto data
       data["productos"] = productos;
       data["total_venta"] = localStorage.getItem("subTotal"); // Este valor debe ser la suma de todos los productos.
@@ -515,13 +531,11 @@
       // Guardar el array vacío de nuevo en localStorage
       localStorage.setItem('productos', JSON.stringify(products));
       localStorage.setItem('subTotal',0.00);
-      localStorage.setItem('totalPagoText',0.00);
-      localStorage.setItem('vueltoText',0.00);
       
       document.getElementById("hTotal").textContent = "Total: S/0.00";
       document.getElementById("totalProductos").textContent = "0.00";
-      cancelaDinero.textContent = "Cancela con: S/0.00";
-      vueltoDinero.textContent = "Vuelto: S/0.00";
+      updateTotalPagoText();
+
 
       event.preventDefault();
     });
@@ -846,18 +860,6 @@
       localStorage.removeItem('isCodeExecuted');
       localStorage.removeItem('modoEdicion');
       window.location.href = "{{url_for('note.ver_notas_pedido')}}";
-      // Mostrar mensaje de cancelacion
-      document.getElementById("messagesLoader").innerHTML = `
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-          Se cancelo la edicion de la Nota de Pedido
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="alert"
-            aria-label="Close"
-          ></button>
-        </div>
-      `;
     });
   </script>
 {% endblock %}
