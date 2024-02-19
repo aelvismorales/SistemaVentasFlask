@@ -11,22 +11,24 @@ from .routes.product import product
 import os
 
 csrf=CSRFProtect()
-migrate=Migrate()
+migraciones=Migrate()
 
 login_manager.login_view="auth.login"
 
 def create_app(config_name):
+    print(Config.STATIC_FOLDER)
+    print(Config.TEMPLATE_FOLDER)
     app=Flask(__name__,static_folder=Config.STATIC_FOLDER,template_folder=Config.TEMPLATE_FOLDER)
-    #app.config.from_object(config.get(config_name,"default")) 
-    app.config.from_object(DevelopmentConfig)
+    app.config.from_object(config.get(config_name,"default")) 
+    #app.config.from_object(DevelopmentConfig)
     db.init_app(app)
-    migrate.init_app(app,db)
+    migraciones.init_app(app,db,directory="/var/www/html/SistemaVentasFlask/migrations")
     csrf.init_app(app)
 
     with app.app_context():
         db.create_all()
         Role.insertar_roles()
-        if os.path.exists("migrations"):
+        if os.path.exists("/var/www/html/SistemaVentasFlask/migrations"):
             upgrade()
         else:
             init()
