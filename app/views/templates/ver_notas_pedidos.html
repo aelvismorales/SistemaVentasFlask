@@ -291,14 +291,14 @@
                     <div class="mb-3 row">
                         <label for="inputFechaSalida" class="col-sm-2 col-form-label">Fecha</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" id="inputFechaSalida" value="" required>
+                            <input type="date" class="form-control" name="inputFechaSalida" id="inputFechaSalida" value="" required>
                         </div> 
                     </div>
                     <!-- Opcion Ingreso-Egreso -->
                     <div class="mb-3 row">
                         <label for="inputTipoSalida" class="col-sm-2 col-form-label">Tipo</label>
                         <div class="col-sm-10">
-                            <select class="form-select" id="inputTipoSalida" required>
+                            <select class="form-select" name="inputTipoSalida" id="inputTipoSalida" required>
                                 <!-- Agregar Validacion  de que no la seleccion no puede ser vacia-->
                                 <option selected disabled value="">Seleccione</option>
                                 <option value="INGRESO">Ingreso</option>
@@ -312,7 +312,7 @@
                         <div class="input-group-text">
                             <input type="checkbox" class="form-check-input" value="" aria-label="Check para habilitar input Nota ID" id="checkNotaID">
                         </div>
-                        <input type="text" class="form-control" placeholder="Ingresar Nota ID" aria-label="Buscar Nota ID" aria-describedby="buscar_nota_id" id="inputNotaID" disabled>
+                        <input type="text" class="form-control" placeholder="Ingresar Nota ID" aria-label="Buscar Nota ID" aria-describedby="buscar_nota_id" name="inputNotaID" id="inputNotaID" disabled>
                     </div>
 
                     <!-- Input Dinero Devolver Opcion Egreso-->
@@ -320,7 +320,7 @@
                     <div class="mb-3 row">
                         <label for="inputDineroDevolver" class="col-sm-2 col-form-label">Dinero Egreso:</label>
                         <div class="col-sm-10">
-                            <input type="number" class="form-control" id="inputDineroDevolver" placeholder="S/0.00">
+                            <input type="number" class="form-control" name="inputDineroDevolver" id="inputDineroDevolver" placeholder="S/0.00">
                         </div>
                     </div>
 
@@ -330,7 +330,7 @@
                     <div class="mb-3 row">
                         <label for="inputDineroIngreso" class="col-sm-2 col-form-label">Deuda :</label> <!-- Al lado de la deuda debe ir el valor de deuda obtenido-->
                         <div class="col-sm-10">
-                            <input type="number" class="form-control" id="inputDineroIngreso" placeholder="S/0.00">
+                            <input type="number" class="form-control" name="inputDineroIngreso" id="inputDineroIngreso" placeholder="S/0.00">
                         </div>
                     </div>
 
@@ -339,7 +339,7 @@
                     <div class="mb-3 row">
                         <label for="inputDinero" class="col-sm-2 col-form-label">Cantidad Dinero:</label>
                         <div class="col-sm-10">
-                            <input type="number" class="form-control" id="inputDinero" placeholder="S/0.00">
+                            <input type="number" class="form-control" name="inputDinero" id="inputDinero" placeholder="S/0.00">
                         </div>
                     </div>
 
@@ -348,7 +348,7 @@
                     <div class="mb-3 row">
                         <label for="inputComentario" class="col-sm-2 col-form-label">Comentario:</label>
                         <div class="col-sm-10">
-                            <textarea class="form-control" id="inputComentario" rows="3"></textarea>
+                            <textarea class="form-control" name="inputComentario" id="inputComentario" rows="3"></textarea>
                         </div>
                     </div>
                 </form>
@@ -844,7 +844,7 @@
         e.preventDefault();
 
         // Obteniendo los datos del Formulario Nuevo IngresoSalida
-        const nuevo_ingreso_form = document.getElementById('nuevoIngresoSalidaForm')
+        const nuevo_ingreso_form = document.getElementById('nuevoIngresoSalidaForm');
         
         // Obteniendo datos del formulario
         const formData = new FormData(nuevo_ingreso_form);
