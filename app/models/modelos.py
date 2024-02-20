@@ -27,6 +27,7 @@ class Usuario(UserMixin,db.Model):
     contrasena_usuario=db.Column(db.String(128))
     fecha_creacion=db.Column(db.DateTime,default=datetime.now)
     rol_id=db.Column(db.Integer,db.ForeignKey('roles.id',name="fk_rol_usuario"),nullable=False)
+    detalles_caja = db.relationship('Detalle_Caja',backref='usuario',lazy='dynamic')
 
     def __init__(self,nombre_usuario,contrasena_usuario,nickname,rol_id=None):
         self.nombre_usuario=nombre_usuario
@@ -324,3 +325,52 @@ class Nota_de_Pedido(db.Model):
         self.bool_acuenta=bool_acuenta
         
 
+class Detalle_Caja(db.Model):
+    __tablename__="detalle_caja"
+    id=db.Column(db.Integer,primary_key=True)
+    fecha_creacion=db.Column(db.DateTime)
+    nota_id = db.Column(db.Integer,nullable=True)
+    nota_dinero = db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    comentario=db.Column(db.String(250))
+    monto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    tipo=db.Column(db.String(20))
+    usuario_id=db.Column(db.Integer,db.ForeignKey('usuario.id'))
+    anulado=db.Column(db.Boolean,default=False)
+
+    #nota_id -> id de la nota de pedido si es que es una nota
+    #nota_dinero -> monto que se paga en efectivo si es que es una nota
+    #monto -> cantidad que ingresa o sale de la caja si no es una nota
+    #tipo -> tipo de movimiento que se hace en la caja
+    #comentario -> comentario que se hace en el movimiento
+    #usuario_id -> id del usuario que hace el movimiento
+
+    def __init__(self,fecha_creacion,nota_dinero,comentario,monto,tipo,usuario_id,nota_id=None):
+        self.fecha_creacion=fecha_creacion
+        self.nota_dinero=nota_dinero
+        self.comentario=comentario
+        self.monto=monto
+        self.tipo=tipo
+        self.nota_id=nota_id
+        self.usuario_id=usuario_id
+
+    def get_id(self):
+        return self.id
+    def get_fecha(self):
+        return self.fecha_creacion.strftime('%d/%m/%Y')
+    def get_monto(self):
+        return self.monto
+    def get_tipo(self):
+        return self.tipo
+    def get_comentario(self):
+        return self.comentario
+    def get_usuario_id(self):
+        return self.usuario_id
+    def get_nota_id(self):
+        return self.nota_id
+    def get_nota_dinero(self):
+        return self.nota_dinero
+    def get_json(self):
+        json={"id":self.id,"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'),"nota_id":self.nota_id,"nota_dinero":self.nota_dinero,"monto":self.monto,"tipo":self.tipo,"comentario":self.comentario,"usuario_id":self.usuario_id,"anulado":self.anulado}
+        return json if json is not None else {}
+    def get_anulado(self):
+        return self.anulado

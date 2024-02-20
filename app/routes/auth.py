@@ -1,4 +1,4 @@
-from flask import Blueprint,request,flash,render_template,redirect,url_for,session,current_app
+from flask import Blueprint,request,flash,render_template,redirect,url_for,session
 from ..models.modelos import db,Usuario,Role
 from ..forms.formularios import CrearCuenta,Login
 from flask_login import login_user,logout_user,login_required,current_user

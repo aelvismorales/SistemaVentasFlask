@@ -1,6 +1,7 @@
 from decimal import Decimal
 from flask import Blueprint,request,render_template,redirect,url_for,session,flash,jsonify
-from ..models.modelos import Comprador,Nota_de_Pedido,Producto
+from flask_login import current_user
+from ..models.modelos import Comprador,Nota_de_Pedido,Producto,Detalle_Caja
 from sqlalchemy import asc, desc
 from datetime import datetime, timedelta
 import json
@@ -99,6 +100,7 @@ def crear_nota_venta():
 # Va a existir una ruta para  editar solamente la nota de pedido la cual va a ser la misma que la de crear nota de pedido en vista pero con un id de la nota de pedido
 # Creo tendria que tener otra diferentes nombres en LocalStorage para cuando me encuentro en la pantalla de edicion de nota de pedido.
 
+#Utilizando actualmente
 @note.route('/editarnotaventa/<string:id>',methods=['GET','POST'])
 def editarnotaventa(id=None):
 	nota=Nota_de_Pedido.query.get(id)
@@ -758,7 +760,111 @@ def validar_deuda(id):
 #Utilizando actualmente
 @note.route('/nuevoingresosalida',methods=['POST'])
 def nuevoingresosalida():
-	return jsonify({'message':'Llego el post','status':'success'},200)
+	#Obtener los datos del formulario
+	data = request.get_json()
+	#Verificar si se recibio la data
+	if data:
+		fecha_creacion = data['inputFechaSalida'] if data['inputFechaSalida'] else datetime.today()
+		tipo = data['inputTipoSalida'] if data['inputTipoSalida'] else None
+		notaID = data['inputNotaID'] if data['inputNotaID'] else None
+		comentario = data['inputComentario'] if data['inputComentario'] else None
+		monto = data['inputDinero'] if data['inputDinero'] else 0.00
+		usuario_id = current_user.get_id()
+		print("Este es el usuario id : {}",usuario_id)
+
+		if tipo == "INGRESO":
+			notaDinero = data['inputDineroIngreso'] if data['inputDineroIngreso'] else 0.00
+		elif tipo == "EGRESO":
+			notaDinero = data['inputDineroDevolver'] if data['inputDineroDevolver'] else 0.00
+		else:
+			return jsonify({'message':'No se ha seleccionado Ingreso o Egreso','status':'error'},400)
+
+		#Crear el nuevo ingreso o egreso
+		# Verificar que existe la nota de pedido
+		notapedido = Nota_de_Pedido.query.get(notaID)
+
+		if notapedido:
+			# Si el tipo es INGRESO y tiene una deuda
+			if tipo == "INGRESO" and notapedido.bool_deuda:
+				if notapedido.deuda <= notaDinero:
+					try:
+						notapedido.deuda = 0
+						notapedido.bool_deuda = False
+						notapedido.acuenta = notapedido.total_venta
+						notapedido.bool_acuenta = False
+						# Agregar comentario del ingreso
+						notapedido.comentario = comentario
+
+						db.session.add(notapedido)
+						# Creado el detalle
+						detalle = Detalle_Caja(fecha_creacion, notaDinero, comentario, monto, tipo, usuario_id, notaID)
+						db.session.add(detalle)
+						db.session.commit()
+
+						return jsonify({'message': 'Se ha cancelado la deuda de la nota de pedido', 'status': 'success'}, 200)
+					except Exception as e:
+						db.session.rollback()
+						return jsonify({'message': 'Error al cancelar la deuda de la nota de pedido', 'status': 'error'}, 400)
+
+				else:
+					try:
+						notapedido.deuda -= notaDinero
+						notapedido.acuenta += notaDinero
+						# Agregar comentario del ingreso
+						notapedido.comentario = comentario
+
+						db.session.add(notapedido)
+						# Creado el detalle
+						detalle = Detalle_Caja(fecha_creacion, notaDinero, comentario, monto, tipo, usuario_id, notaID)
+						db.session.add(detalle)
+						db.session.commit()
+
+						return jsonify({'message': 'Se ha realizado un ingreso a la nota de pedido', 'status': 'success'}, 200)
+					except Exception as e:
+						db.session.rollback()
+						return jsonify({'message': 'Error al realizar el ingreso', 'status': 'error'}, 400)
+
+			# Si el tipo es EGRESO y tiene una deuda
+			elif tipo == "EGRESO" and notapedido.bool_deuda:
+				return jsonify({'message':'No se puede realizar un egreso por que la nota de pedido tiene una deuda pendiente','status':'error'},400)
+			# Si el tipo es INGRESO y no tiene una deuda
+			elif tipo == "INGRESO" and notapedido.bool_deuda == False:
+				return jsonify({'message':'No se puede realizar un ingreso por que la nota de pedido no tiene una deuda pendiente','status':'error'},400)
+			# Si el tipo es EGRESO y no tiene una deuda
+			elif tipo == "EGRESO" and notapedido.bool_deuda == False:
+				try:
+					# Egreso significa que le estoy devolviendo dinero, entonces el total de la venta disminuye
+					notapedido.total_venta -= notaDinero
+					notapedido.acuenta -= notaDinero
+					# Agregar comentario del egreso
+					notapedido.comentario = comentario
+
+					db.session.add(notapedido)
+					# Creado el detalle
+					detalle = Detalle_Caja(fecha_creacion, notaDinero, comentario, monto, tipo, usuario_id, notaID)
+					db.session.add(detalle)
+					db.session.commit()
+					return jsonify({'message': 'Se ha realizado un egreso a la nota de pedido', 'status': 'success'}, 200)
+				except Exception as e:
+					db.session.rollback()
+					return jsonify({'message': 'Error al realizar el egreso', 'status': 'error'}, 400)
+			else:
+				return jsonify({'message':'No se pudo realizar el ingreso o egreso','status':'error'},400)
+		else:
+			# Si no existe la nota de pedido, creo un detalle de caja normal
+			# Se espera notaDinero sea 0 , se espera que la notaID sea nulla
+			try:
+				detalle = Detalle_Caja(fecha_creacion,notaDinero,comentario,monto,tipo,usuario_id,notaID)
+				db.session.add(detalle)
+				db.session.commit()
+				return jsonify({'message':'Se ha creado el detalle correctamente','status':'success'},200)
+			except Exception as e:
+				db.session.rollback()
+				return jsonify({'message':'Error al crear el detalle','status':'error'},400)
+	else:
+		return jsonify({'message':'No se recibio ningun dato','status':'error'},400)
+
+
 
 
 #Utilizando actualmente
