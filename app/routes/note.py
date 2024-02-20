@@ -764,21 +764,21 @@ def nuevoingresosalida():
 	data = request.get_json()
 	#Verificar si se recibio la data
 	if data:
-		fecha_creacion = data['inputFechaSalida'] if data['inputFechaSalida'] else datetime.today()
-		tipo = data['inputTipoSalida'] if data['inputTipoSalida'] else None
-		notaID = data['inputNotaID'] if data['inputNotaID'] else None
-		comentario = data['inputComentario'] if data['inputComentario'] else None
-		monto = data['inputDinero'] if data['inputDinero'] else 0.00
+		fecha_creacion = data.get('inputFechaSalida',datetime.today()) 
+		tipo =  data.get('inputTipoSalida',None)
+		notaID = data.get('inputNotaID',None)
+		comentario = data.get('inputComentario',None)
+		monto = Decimal(data.get('inputDinero',0.00)).quantize(Decimal("1e-{0}".format(2))) 
 		usuario_id = current_user.get_id()
 		print("Este es el usuario id : {}",usuario_id)
 
 		if tipo == "INGRESO":
-			notaDinero = data['inputDineroIngreso'] if data['inputDineroIngreso'] else 0.00
+			notaDinero = 0.00 if data.get('inputDineroIngreso',0.00) == '' else data.get('inputDineroIngreso',0.00)
 		elif tipo == "EGRESO":
-			notaDinero = data['inputDineroDevolver'] if data['inputDineroDevolver'] else 0.00
+			notaDinero = 0.00 if data.get('inputDineroDevolver',0.00) == '' else data.get('inputDineroDevolver',0.00)
 		else:
 			return jsonify({'message':'No se ha seleccionado Ingreso o Egreso','status':'error'},400)
-
+		notaDinero = Decimal(notaDinero).quantize(Decimal("1e-{0}".format(2)))
 		#Crear el nuevo ingreso o egreso
 		# Verificar que existe la nota de pedido
 		notapedido = Nota_de_Pedido.query.get(notaID)
