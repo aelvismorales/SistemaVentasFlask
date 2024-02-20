@@ -848,7 +848,9 @@
         // Obteniendo datos del formulario
         const formData = new FormData(nuevo_ingreso_form);
         let data = {};
-        formData.forEach((value, key) => data[key] = value);
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
 
         // Validacion seleccion inputTipoSalida no esta vacio
         if (data['inputTipoSalida'] === ''){
