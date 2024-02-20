@@ -873,7 +873,7 @@
 
         // Validar que  el inputTipoSalida sea Egreso, el chekbox esta activado y el inputNotaID no puede estar vacio 
         //si es Egreso el inputDineroDevolver no puede estar vacio   
-        if (data['inputTipoSalida'] === 'EGRESO' && document.getElementById('checkNotaID').checked && (data['inputNotaID'] === '' || data['inputNotaID'] ===  undefined) && data['inputDineroDevolver'] === '' ){
+        if (data['inputTipoSalida'] === 'EGRESO' && document.getElementById('checkNotaID').checked && data['inputDineroDevolver'] === '' ){
             mostarMensaje('El campo Dinero Egreso no puede estar vacio, si el Tipo es Egreso');
             return;
         }
@@ -883,7 +883,7 @@
         // Validar que  el inputTipoSalida sea Ingreso, el chebox esta activado y el inputNotaID no puede estar vacio
         //si es Ingreso el inputDineroIngreso no puede estar vacio 
 
-        if (data['inputTipoSalida'] === 'INGRESO' && document.getElementById('checkNotaID').checked && (data['inputNotaID'] === '' || data['inputNotaID'] === undefined) && data['inputDineroIngreso'] === ''){
+        if (data['inputTipoSalida'] === 'INGRESO' && document.getElementById('checkNotaID').checked && data['inputDineroIngreso'] === ''){
             mostarMensaje('El campo Deuda no puede estar vacio, si el Tipo es Ingreso');
             return;
         }
