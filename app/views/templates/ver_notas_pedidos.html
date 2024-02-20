@@ -872,6 +872,7 @@
             `;
             return;
         }
+        console.log("pase validacion tipo salida es:" + data['inputTipoSalida']);
         //Validacion Checkbox Nota ID, si esta activado el inputNotaID no puede estar vacio
         if (document.getElementById('checkNotaID').checked && data['inputNotaID'] === ''){
             document.getElementById("messagesLoaderModal").innerHTML = `
@@ -887,9 +888,7 @@
             `;
             return;
         }
-
-
-
+        console.log("pase validacion nota id es:" + data['inputNotaID']);
 
         // Validar que  el inputTipoSalida sea Egreso, si es Egreso el inputDineroDevolver no puede estar vacio
         if (data['inputTipoSalida'] === 'EGRESO' && data['inputDineroDevolver'] === ''){
@@ -906,6 +905,8 @@
             `;
             return;
         }
+        console.log("pase validacion dinero devolver es:" + data['inputDineroDevolver']);
+
 
         // Validar que  el inputTipoSalida sea Ingreso, si es Ingreso el inputDineroIngreso no puede estar vacio
         if (data['inputTipoSalida'] === 'INGRESO' && data['inputDineroIngreso'] === ''){
@@ -923,6 +924,8 @@
             return;
         }
 
+        console.log("pase validacion dinero ingreso es:" + data['inputDineroIngreso']);
+
         // Validar que el checkbox Nota ID no este activado, si esta desactivado el inputDinero no puede estar vacio
         if (!document.getElementById('checkNotaID').checked && data['inputDinero'] === ''){
             document.getElementById("messagesLoaderModal").innerHTML = `
@@ -938,6 +941,7 @@
             `;
             return;
         }
+        console.log("pase validacion dinero es:" + data['inputDinero']);
 
         // Validar que el inputComentario no este vacio
         if (data['inputComentario'] === ''){
@@ -954,8 +958,9 @@
             `;
             return;
         }
+        console.log("pase validacion comentario es:" + data['inputComentario']);
         
-        console.log(data);
+        console.log(JSON.stringify(data));
         // Enviar los datos al servidor
         $.ajax({
             url: "{{url_for('note.nuevoingresosalida')}}",
