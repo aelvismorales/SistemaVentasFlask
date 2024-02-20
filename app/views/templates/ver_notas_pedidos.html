@@ -865,7 +865,7 @@
             success:function(data){
                 if (data[0]['status']='success'){
                     inputTipoSalida.value = 'INGRESO';
-                    document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda: S/ '+data[0]['deuda'];
+                    document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda:S/ '+ `data[0]['deuda'] if (data[0]['deuda'] > 0) else ''`;
                     validarSeleccion();
                     document.getElementById("messagesLoaderModal").innerHTML = `
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -891,6 +891,9 @@
                     </div>
                     `;
                 }
+            },
+            error:function(error){
+                console.error('Error:', error);
             }
 
 
