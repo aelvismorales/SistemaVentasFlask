@@ -849,6 +849,7 @@
         const formData = new FormData(nuevo_ingreso_form);
         let data = {};
         formData.forEach((value, key) => {
+            console.log(key, value);
             data[key] = value;
         });
 
@@ -950,49 +951,52 @@
             return;
         }
         
+        console.log(data);
         console.log(JSON.stringify(data));
         // Enviar los datos al servidor
-        fetch("{{url_for('note.nuevoingresosalida')}}", {
-            method: 'POST',
+        $.ajax({
+            url: "{{url_for('note.nuevoingresosalida')}}",
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            dataType: 'json',
             headers: {
-                'Content-Type': 'application/json',
                 "X-CSRFToken": "{{ csrf_token() }}"
             },
-            dataType: 'json',
-            body: JSON.stringify(data)
-        }).then(response => response.json()).then(data => {
-            if (data[0]['status'] === 'success'){
-                document.getElementById("messagesLoader").innerHTML = `
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    ${data['message']}
-                    <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close"
-                    ></button>
-                </div>
-                `;
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            } else {
-                document.getElementById("messagesLoader").innerHTML = `
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    ${data[0]['message']}
-                    <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close"
-                    ></button>
-                </div>
-                `;
+            success: function(data){
+                if (data[0]['status'] === 'success'){
+                    document.getElementById("messagesLoader").innerHTML = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        ${data['message']}
+                        <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                        ></button>
+                    </div>
+                    `;
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    document.getElementById("messagesLoader").innerHTML = `
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        ${data[0]['message']}
+                        <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                        ></button>
+                    </div>
+                    `;
+                }
+            },
+            error: function(error){
+                console.error('Error:', error);
             }
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-        
+        })
     });
 
 
