@@ -322,7 +322,7 @@
 
                     <!-- Input Dinero Devolver Opcion Egreso-->
                     <!-- Para hacerlo visible o invisible agregar el estilo display :none o no-->
-                    <div class="mb-3 row">
+                    <div class="mb-3 row" id="contenedorDineroDevolver" style="display: none;">
                         <label for="inputDineroDevolver" class="col-sm-2 col-form-label">Dinero Egreso:</label>
                         <div class="col-sm-10">
                             <input type="number" class="form-control" name="inputDineroDevolver" id="inputDineroDevolver" placeholder="S/0.00">
@@ -332,7 +332,7 @@
                     <!-- Input Dinero Ingreso Opcion Ingreso-->
                     <!-- Para hacerlo visible o invisible agregar el estilo display :none o no-->
                     <!-- Validar si la Nota Ingresada tiene una deuda,en caso no tuviera deuda mostrar mensaje la nota no tiene deuda y no se muestra el siguiente bloque-->
-                    <div class="mb-3 row">
+                    <div class="mb-3 row" id="contenedorDineroIngreso" style="display: none;">
                         <label for="inputDineroIngreso" class="col-sm-2 col-form-label">Deuda :</label> <!-- Al lado de la deuda debe ir el valor de deuda obtenido-->
                         <div class="col-sm-10">
                             <input type="number" class="form-control" name="inputDineroIngreso" id="inputDineroIngreso" placeholder="S/0.00">
@@ -843,24 +843,35 @@
         inputNotaID.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
     });
 
-    // Validar si el tipo de salida es Egreso, habilitar el campo dinero devolver
+    
+    // Validar si el tipo de salida es Egreso e Checkbox NotaId esta activado , mostrar o cambiar el display del inputDineroDevolver
     const inputTipoSalida = document.getElementById('inputTipoSalida');
+    const contenedorDineroDevolver = document.getElementById('contenedorDineroDevolver');
     const inputDineroDevolver = document.getElementById('inputDineroDevolver');
+    const inputDineroCantidad = document.getElementById('inputDinero');
+    const checkBoxNotaID = document.getElementById('checkNotaID');
+
+
     inputTipoSalida.addEventListener('change', function(){
-        if (this.value === 'EGRESO'){
-            inputDineroDevolver.disabled = false;
+        if (this.value === 'EGRESO' && checkBoxNotaID.checked){
+            contenedorDineroDevolver.style.display = 'block';
+            inputDineroCantidad.disabled = true;
         } else {
-            inputDineroDevolver.disabled = true;
+            contenedorDineroDevolver.style.display = 'none';
+            inputDineroCantidad.disabled = false;
         }
     });
-
-    // Validar si el tipo de salida es Ingreso, habilitar el campo dinero devolver
+    
+    // Validar si el tipo de salida es Ingreso e checkbox NotaID esta activado, mostrar o cambiar el display del inputDineroIngreso
     const inputDineroIngreso = document.getElementById('inputDineroIngreso');
+    const contenedorDineroIngreso = document.getElementById('contenedorDineroIngreso');
     inputTipoSalida.addEventListener('change', function(){
-        if (this.value === 'INGRESO'){
-            inputDineroIngreso.disabled = false;
+        if (this.value === 'INGRESO' && checkBoxNotaID.checked){
+            contenedorDineroIngreso.style.display = 'block';
+            inputDineroCantidad.disabled = true;
         } else {
-            inputDineroIngreso.disabled = true;
+            contenedorDineroIngreso.style.display = 'none';
+            inputDineroCantidad.disabled = false;
         }
     });
 
