@@ -283,6 +283,9 @@
                 <h5 class="modal-title" id="nuevoIngresoSalidaModalLabel">Nuevo Ingreso-Egreso</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close-nuevo-ingreso-salida"></button>
             </div>
+            <div id="messagesLoaderModal">
+
+            </div>
         
             <div class="modal-body" id="contenido-modal-nuevo-ingreso">
                 <!-- Formulario para crear IngresoSalida -->
@@ -843,8 +846,6 @@
 
     const btn_nuevo_ingreso = document.getElementById('btn-guardar-nuevo-ingreso-salida');
     btn_nuevo_ingreso.addEventListener('click',(e)=>{
-        e.preventDefault();
-
         // Obteniendo los datos del Formulario Nuevo IngresoSalida
         const nuevo_ingreso_form = document.getElementById('nuevoIngresoSalidaForm');
         
@@ -858,7 +859,7 @@
 
         // Validacion seleccion inputTipoSalida no esta vacio
         if (data['inputTipoSalida'] === ''){
-            document.getElementById("messagesLoader").innerHTML = `
+            document.getElementById("messagesLoaderModal").innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 El campo Tipo no puede estar vacio
                 <button
@@ -873,7 +874,7 @@
         }
         //Validacion Checkbox Nota ID, si esta activado el inputNotaID no puede estar vacio
         if (document.getElementById('checkNotaID').checked && data['inputNotaID'] === ''){
-            document.getElementById("messagesLoader").innerHTML = `
+            document.getElementById("messagesLoaderModal").innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 El campo Nota ID no puede estar vacio,si esta activado el campo
                 <button
@@ -892,7 +893,7 @@
 
         // Validar que  el inputTipoSalida sea Egreso, si es Egreso el inputDineroDevolver no puede estar vacio
         if (data['inputTipoSalida'] === 'EGRESO' && data['inputDineroDevolver'] === ''){
-            document.getElementById("messagesLoader").innerHTML = `
+            document.getElementById("messagesLoaderModal").innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 El campo Dinero Egreso no puede estar vacio, si el Tipo es Egreso
                 <button
@@ -908,7 +909,7 @@
 
         // Validar que  el inputTipoSalida sea Ingreso, si es Ingreso el inputDineroIngreso no puede estar vacio
         if (data['inputTipoSalida'] === 'INGRESO' && data['inputDineroIngreso'] === ''){
-            document.getElementById("messagesLoader").innerHTML = `
+            document.getElementById("messagesLoaderModal").innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 El campo Dinero Ingreso no puede estar vacio, si el Tipo es Ingreso
                 <button
@@ -924,7 +925,7 @@
 
         // Validar que el checkbox Nota ID no este activado, si esta desactivado el inputDinero no puede estar vacio
         if (!document.getElementById('checkNotaID').checked && data['inputDinero'] === ''){
-            document.getElementById("messagesLoader").innerHTML = `
+            document.getElementById("messagesLoaderModal").innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 El campo Cantidad Dinero no puede estar vacio, si el Tipo es Ingreso
                 <button
@@ -940,7 +941,7 @@
 
         // Validar que el inputComentario no este vacio
         if (data['inputComentario'] === ''){
-            document.getElementById("messagesLoader").innerHTML = `
+            document.getElementById("messagesLoaderModal").innerHTML = `
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
                 El campo Comentario no puede estar vacio
                 <button
@@ -955,7 +956,6 @@
         }
         
         console.log(data);
-        console.log(JSON.stringify(data));
         // Enviar los datos al servidor
         $.ajax({
             url: "{{url_for('note.nuevoingresosalida')}}",
@@ -968,7 +968,7 @@
             },
             success: function(data){
                 if (data[0]['status'] === 'success'){
-                    document.getElementById("messagesLoader").innerHTML = `
+                    document.getElementById("messagesLoaderModal").innerHTML = `
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         ${data['message']}
                         <button
@@ -983,7 +983,7 @@
                         location.reload();
                     }, 2000);
                 } else {
-                    document.getElementById("messagesLoader").innerHTML = `
+                    document.getElementById("messagesLoaderModal").innerHTML = `
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         ${data[0]['message']}
                         <button
@@ -1000,6 +1000,7 @@
                 console.error('Error:', error);
             }
         })
+        e.preventDefault();
     });
 
 
