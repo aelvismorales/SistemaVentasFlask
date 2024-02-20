@@ -1025,12 +1025,12 @@
                 inputDineroCantidad.disabled = true;
             } else {
 
-                if (contenedorDineroDevolver.style.display === 'inline-block'){
-                    contenedorDineroDevolver.style.display = 'none';
-                    inputDineroDevolver.value = '';
-                }
-                if (contenedorDineroIngreso.style.display === 'inline-block'){
+                if (contenedorDineroIngreso.style.display === 'flex'){
                     contenedorDineroIngreso.style.display = 'none';
+                    inputDineroIngreso.value = '';
+                }
+                if (contenedorDineroDevolver.style.display === 'flex'){
+                    contenedorDineroDevolver.style.display = 'none';
                     inputDineroDevolver.value = '';
                 }
                 inputDineroCantidad.value = '';
