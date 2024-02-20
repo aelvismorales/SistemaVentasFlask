@@ -313,7 +313,7 @@
                     <!-- Seleccion Checkbox Nota ID-->
                     <!-- Verificar si esta activado el checkbox debe el valor debe ser un numero, sino puede ser vacio-->
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" value="" id="checkNotaID">
+                        <input class="form-check-input" type="checkbox" id="checkNotaID">
                         <div class="input-group">
                             <span class="input-group-text" id="notaIDSpan">Nota ID</span>
                             <input type="number" class="form-control" placeholder="0.00" min="0" step="1" aria-label="Buscar Nota ID" aria-describedby="buscar_nota_id" name="inputNotaID" id="inputNotaID" disabled>
@@ -857,52 +857,25 @@
             data[key] = value;
         });
 
-        // Validacion seleccion inputTipoSalida no esta vacio
-        if (data['inputTipoSalida'] === ''){
-            document.getElementById("messagesLoaderModal").innerHTML = `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                El campo Tipo no puede estar vacio
-                <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                ></button>
-            </div>
-            `;
+        // Validacion seleccion inputTipoSalida no esta vacio o es undefined
+        if (data['inputTipoSalida'] === '' || data['inputTipoSalida'] === undefined){
+            mostarMensaje('El campo Tipo no puede estar vacio');
             return;
+            e.preventDefault();
+            e.stopPropagation();
         }
+
         console.log("pase validacion tipo salida es:" + data['inputTipoSalida']);
-        //Validacion Checkbox Nota ID, si esta activado el inputNotaID no puede estar vacio
-        if (document.getElementById('checkNotaID').checked && data['inputNotaID'] === ''){
-            document.getElementById("messagesLoaderModal").innerHTML = `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                El campo Nota ID no puede estar vacio,si esta activado el campo
-                <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                ></button>
-            </div>
-            `;
+        //Validacion Checkbox Nota ID, si esta activado el inputNotaID no puede estar vacio o ser undefined
+        if (document.getElementById('checkNotaID').checked && (data['inputNotaID'] === '' || data['inputNotaID'] === undefined)){
+            mostarMensaje('El campo Nota ID no puede estar vacio,si esta activado el campo');
             return;
         }
         console.log("pase validacion nota id es:" + data['inputNotaID']);
 
         // Validar que  el inputTipoSalida sea Egreso, si es Egreso el inputDineroDevolver no puede estar vacio
         if (data['inputTipoSalida'] === 'EGRESO' && data['inputDineroDevolver'] === ''){
-            document.getElementById("messagesLoaderModal").innerHTML = `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                El campo Dinero Egreso no puede estar vacio, si el Tipo es Egreso
-                <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                ></button>
-            </div>
-            `;
+            mostarMensaje('El campo Dinero Egreso no puede estar vacio, si el Tipo es Egreso');
             return;
         }
         console.log("pase validacion dinero devolver es:" + data['inputDineroDevolver']);
@@ -910,17 +883,7 @@
 
         // Validar que  el inputTipoSalida sea Ingreso, si es Ingreso el inputDineroIngreso no puede estar vacio
         if (data['inputTipoSalida'] === 'INGRESO' && data['inputDineroIngreso'] === ''){
-            document.getElementById("messagesLoaderModal").innerHTML = `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                El campo Dinero Ingreso no puede estar vacio, si el Tipo es Ingreso
-                <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                ></button>
-            </div>
-            `;
+            mostarMensaje('El campo Dinero Ingreso no puede estar vacio, si el Tipo es Ingreso');
             return;
         }
 
@@ -928,34 +891,14 @@
 
         // Validar que el checkbox Nota ID no este activado, si esta desactivado el inputDinero no puede estar vacio
         if (!document.getElementById('checkNotaID').checked && data['inputDinero'] === ''){
-            document.getElementById("messagesLoaderModal").innerHTML = `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                El campo Cantidad Dinero no puede estar vacio, si el Tipo es Ingreso
-                <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                ></button>
-            </div>
-            `;
+            mostarMensaje('El campo Cantidad Dinero no puede estar vacio, si el Tipo es Ingreso');
             return;
         }
         console.log("pase validacion dinero es:" + data['inputDinero']);
 
         // Validar que el inputComentario no este vacio
         if (data['inputComentario'] === ''){
-            document.getElementById("messagesLoaderModal").innerHTML = `
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                El campo Comentario no puede estar vacio
-                <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Close"
-                ></button>
-            </div>
-            `;
+            mostarMensaje('El campo Comentario no puede estar vacio');
             return;
         }
         console.log("pase validacion comentario es:" + data['inputComentario']);
@@ -1008,6 +951,19 @@
         e.preventDefault();
     });
 
+    function mostarMensaje(mensaje){
+        document.getElementById("messagesLoaderModal").innerHTML = `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            ></button>
+        </div>
+        `;
+    }
 
 
 
