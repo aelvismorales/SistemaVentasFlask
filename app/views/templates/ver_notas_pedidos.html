@@ -865,7 +865,12 @@
             success:function(data){
                 if (data[0]['status']='success'){
                     inputTipoSalida.value = 'INGRESO';
-                    document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda:S/ '+ `data[0]['deuda'] if (data[0]['deuda'] > 0) else ''`;
+                    const valor_deuda = data[0]['deuda']
+                    if (valor_deuda > 0) {
+                        document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda:S/ '+ valor_deuda;
+                    } else {
+                        document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda:S/ 0.00';
+                    }
                     validarSeleccion();
                     document.getElementById("messagesLoaderModal").innerHTML = `
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
