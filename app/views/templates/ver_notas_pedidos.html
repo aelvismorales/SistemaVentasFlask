@@ -306,13 +306,15 @@
                             </select>
                         </div>
                     </div>
+
                     <!-- Seleccion Checkbox Nota ID-->
                     <!-- Verificar si esta activado el checkbox debe el valor debe ser un numero, sino puede ser vacio-->
-                    <div class="input-group mb-3">
-                        <div class="input-group-text">
-                            <input type="checkbox" class="form-check-input" value="" aria-label="Check para habilitar input Nota ID" id="checkNotaID">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" value="" id="checkNotaID">
+                        <div class="input-group">
+                            <span class="input-group-text" id="notaIDSpan">Nota ID</span>
+                            <input type="number" class="form-control" placeholder="0.00" min="0" step="1" aria-label="Buscar Nota ID" aria-describedby="buscar_nota_id" name="inputNotaID" id="inputNotaID" disabled>
                         </div>
-                        <input type="text" class="form-control" placeholder="Ingresar Nota ID" aria-label="Buscar Nota ID" aria-describedby="buscar_nota_id" name="inputNotaID" id="inputNotaID" disabled>
                     </div>
 
                     <!-- Input Dinero Devolver Opcion Egreso-->
