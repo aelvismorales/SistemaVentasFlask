@@ -860,7 +860,7 @@
     // Si respuesta es valida y tiene una deuda, se debe mostrar un mensaje que tiene una deuda pendiente y ademas debe cambiar el valor de inputTipoSalida a Ingreso
     inputNotaID.addEventListener('change',(e)=>{
         $.ajax({
-            url:"{{url_for('note.validar_deuda')}}/"+e.target.value,
+            url:"/validar-deuda/"+e.target.value,
             type: 'GET',
             success:function(data){
                 if (data[0]['status']='success'){
