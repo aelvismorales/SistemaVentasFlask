@@ -846,34 +846,16 @@
     
     // Validar si el tipo de salida es Egreso e Checkbox NotaId esta activado , mostrar o cambiar el display del inputDineroDevolver
     const inputTipoSalida = document.getElementById('inputTipoSalida');
-    const contenedorDineroDevolver = document.getElementById('contenedorDineroDevolver');
-    const inputDineroDevolver = document.getElementById('inputDineroDevolver');
-    const inputDineroCantidad = document.getElementById('inputDinero');
     const checkBoxNotaID = document.getElementById('checkNotaID');
 
+    inputTipoSalida.addEventListener('change', ()=>{
+        validarSeleccion();
+    })
 
-    inputTipoSalida.addEventListener('change', function(){
-        if (this.value === 'EGRESO' && checkBoxNotaID.checked){
-            contenedorDineroDevolver.style.display = 'block';
-            inputDineroCantidad.disabled = true;
-        } else {
-            contenedorDineroDevolver.style.display = 'none';
-            inputDineroCantidad.disabled = false;
-        }
-    });
-    
-    // Validar si el tipo de salida es Ingreso e checkbox NotaID esta activado, mostrar o cambiar el display del inputDineroIngreso
-    const inputDineroIngreso = document.getElementById('inputDineroIngreso');
-    const contenedorDineroIngreso = document.getElementById('contenedorDineroIngreso');
-    inputTipoSalida.addEventListener('change', function(){
-        if (this.value === 'INGRESO' && checkBoxNotaID.checked){
-            contenedorDineroIngreso.style.display = 'block';
-            inputDineroCantidad.disabled = true;
-        } else {
-            contenedorDineroIngreso.style.display = 'none';
-            inputDineroCantidad.disabled = false;
-        }
-    });
+    checkBoxNotaID.addEventListener('change', ()=>{
+        validarSeleccion();
+    })
+
 
     const btn_nuevo_ingreso = document.getElementById('btn-guardar-nuevo-ingreso-salida');
     btn_nuevo_ingreso.addEventListener('click',(e)=>{
@@ -988,7 +970,36 @@
         `;
     }
 
+    function validarSeleccion(){
+        const inputTipoSalida = document.getElementById('inputTipoSalida');
+        const checkBoxNotaID = document.getElementById('checkNotaID');
 
+        const contenedorDineroIngreso = document.getElementById('contenedorDineroIngreso');
+        const inputDineroIngreso = document.getElementById('inputDineroIngreso');
+
+        const contenedorDineroDevolver = document.getElementById('contenedorDineroDevolver');
+        const inputDineroDevolver = document.getElementById('inputDineroDevolver');
+
+        const inputDineroCantidad = document.getElementById('inputDinero');
+
+        if (inputTipoSalida.value =='INGRESO'){
+            if (checkBoxNotaID.checked){
+                contenedorDineroIngreso.style.display = 'block';
+                inputDineroCantidad.disabled = true;
+            } else {
+                contenedorDineroIngreso.style.display = 'none';
+                inputDineroCantidad.disabled = false;
+            }
+        } else {
+            if (checkBoxNotaID.checked){
+                contenedorDineroDevolver.style.display = 'block';
+                inputDineroCantidad.disabled = true;
+            } else {
+                contenedorDineroDevolver.style.display = 'none';
+                inputDineroCantidad.disabled = false;
+            }
+        }
+    }
 
 </script>
 
