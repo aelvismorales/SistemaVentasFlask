@@ -839,12 +839,13 @@
     });
 
 
-    // Obteniendo los datos del Formulario Nuevo IngresoSalida
-    const nuevo_ingreso_form = document.getElementById('nuevoIngresoSalidaForm')
     const btn_nuevo_ingreso = document.getElementById('btn-guardar-nuevo-ingreso-salida');
     btn_nuevo_ingreso.addEventListener('click',(e)=>{
         e.preventDefault();
 
+        // Obteniendo los datos del Formulario Nuevo IngresoSalida
+        const nuevo_ingreso_form = document.getElementById('nuevoIngresoSalidaForm')
+        
         // Obteniendo datos del formulario
         const formData = new FormData(nuevo_ingreso_form);
         let data = {};
