@@ -950,7 +950,7 @@
             return;
         }
         
-        console.log(data);
+        console.log(JSON.stringify(data));
         // Enviar los datos al servidor
         fetch("{{url_for('note.nuevoingresosalida')}}", {
             method: 'POST',
@@ -961,7 +961,7 @@
             dataType: 'json',
             body: JSON.stringify(data)
         }).then(response => response.json()).then(data => {
-            if (data['status'] === 'success'){
+            if (data[0]['status'] === 'success'){
                 document.getElementById("messagesLoader").innerHTML = `
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     ${data['message']}
@@ -979,7 +979,7 @@
             } else {
                 document.getElementById("messagesLoader").innerHTML = `
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    ${data['message']}
+                    ${data[0]['message']}
                     <button
                     type="button"
                     class="btn-close"

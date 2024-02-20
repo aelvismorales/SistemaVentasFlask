@@ -747,7 +747,6 @@ def nuevoingresosalida():
 	return jsonify({'message':'Llego el post','status':'success'},200)
 
 
-
 #Utilizando actualmente
 @note.route('/imprimire/<string:id>',methods=['GET','POST'])
 def imprimire(id):
