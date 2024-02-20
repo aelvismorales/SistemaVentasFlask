@@ -104,7 +104,7 @@
                 </div>
                 <div class="col-md-2">
                     <div class="input-group mb-3">
-                        <button class="btn btn-primary" type="button" id="boton-nuevo-ingreso-salida" data-bs-toggle="modal" data-bs-target="nuevoIngresoSalidaModal" >Crear Ingreso/Salida</button>
+                        <button class="btn btn-primary" type="button" id="boton-nuevo-ingreso-salida" >Crear Ingreso/Salida</button>
                     </div>
                 </div>
             </div>
@@ -821,6 +821,15 @@
 <!-- Funciones para Crear nuevo SalidaIngreso-->
 <script>
     document.getElementById("inputFechaSalida").value = new Date().toISOString().split('T')[0];
+
+    // Activacion de modal
+    const btnModalIngreso = document.getElementById('boton-nuevo-ingreso-salida');
+    const nuevoIngresoSalidaModalElemento = document.getElementById('nuevoIngresoSalidaModal');
+    btnModalIngreso.addEventListener('click',()=>{
+        const nuevoIngresoSalidaModal = new bootstrap.Modal(nuevoIngresoSalidaModalElemento);
+        nuevoIngresoSalidaModal.show();
+    });
+
 </script>
 
 {% endblock %}
