@@ -333,7 +333,7 @@
                     <!-- Para hacerlo visible o invisible agregar el estilo display :none o no-->
                     <!-- Validar si la Nota Ingresada tiene una deuda,en caso no tuviera deuda mostrar mensaje la nota no tiene deuda y no se muestra el siguiente bloque-->
                     <div class="mb-3 row" id="contenedorDineroIngreso" style="display: none;">
-                        <label for="inputDineroIngreso" class="col-sm-2 col-form-label">Deuda :</label> <!-- Al lado de la deuda debe ir el valor de deuda obtenido-->
+                        <label for="inputDineroIngreso" class="col-sm-2 col-form-label" id="labelinputDineroIngreso">Deuda :</label> <!-- Al lado de la deuda debe ir el valor de deuda obtenido-->
                         <div class="col-sm-10">
                             <input type="number" class="form-control" name="inputDineroIngreso" id="inputDineroIngreso" placeholder="S/0.00">
                         </div>
@@ -855,6 +855,47 @@
     checkBoxNotaID.addEventListener('change', ()=>{
         validarSeleccion();
     });
+
+    // Validar si tiene una deuda pendiente haciendo uso de ajax
+    // Si respuesta es valida y tiene una deuda, se debe mostrar un mensaje que tiene una deuda pendiente y ademas debe cambiar el valor de inputTipoSalida a Ingreso
+    inputNotaID.addEventListener('change',(e)=>{
+        $.ajax({
+            url:"{{url_for('note.validar_deuda')}}/"+e.target.value,
+            type: 'GET',
+            success:function(data){
+                if (data[0]['status']='success'){
+                    inputTipoSalida.value = 'INGRESO';
+                    document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda: S/ '+data[0]['deuda'];
+                    validarSeleccion();
+                    document.getElementById("messagesLoaderModal").innerHTML = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        ${data[0]['message']}
+                        <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                        ></button>
+                    </div>
+                    `;
+                }else{
+                    document.getElementById("messagesLoaderModal").innerHTML = `
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        ${data[0]['message']}
+                        <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                        ></button>
+                    </div>
+                    `;
+                }
+            }
+
+
+        })
+    })
 
 
     const btn_nuevo_ingreso = document.getElementById('btn-guardar-nuevo-ingreso-salida');

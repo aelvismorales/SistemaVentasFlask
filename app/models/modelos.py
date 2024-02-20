@@ -291,7 +291,11 @@ class Nota_de_Pedido(db.Model):
                 "bool_acuenta":self.bool_acuenta,"bool_deuda":self.bool_deuda,"vuelto":self.vuelto, "pagoVisa":self.pagoVisa, "pagoEfectivo":self.pagoEfectivo, "pagoBBVA":self.pagoBBVA, "pagoBCP":self.pagoBCP, "pagoYape":self.pagoYape}
 
         return json if json is not None else {}
-    
+    def get_deuda(self):
+        return self.deuda
+    def get_bool_deuda(self):
+        return self.bool_deuda
+
     def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_cancelacion=None,comentario="",comprador_id=None,vuelto=0.00,pagoVisa=0.00,pagoEfectivo=0.00,pagoBBVA=0.00,pagoBCP=0.00,pagoYape=0.00,bool_acuenta=False,bool_deuda=False):
 
         self.nombre_comprador=nombre_comprador

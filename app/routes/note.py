@@ -740,6 +740,20 @@ def imprimir():
 
 
 
+#Utilizado actualmente
+@note.route('/validar-deuda/<string:id>',methods=['GET'])
+def validar_deuda(id):
+	nota=Nota_de_Pedido.query.get(id)
+	#Validar si la nota existe
+	if nota:
+		deuda= nota.get_deuda()
+		bool_deuda=nota.get_bool_deuda()
+		if bool_deuda:
+			return jsonify({'message':'La nota de pedido tiene una deuda pendiente','status':'success','deuda':deuda,'bool_deuda':bool_deuda},200)
+		else:
+			return jsonify({'message':'No se puede obtener la deuda por que ya esta cancelada','status':'error'},400)
+	else:
+		return jsonify({'message':'No se pudo encontrar la nota de pedido','status':'error'},400)
 
 #Utilizando actualmente
 @note.route('/nuevoingresosalida',methods=['POST'])
