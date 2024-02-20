@@ -984,19 +984,55 @@
 
         if (inputTipoSalida.value =='INGRESO'){
             if (checkBoxNotaID.checked){
-                contenedorDineroIngreso.style.display = 'block';
+                // Verificar si los contenedores estan visibles o no
+                if (contenedorDineroDevolver.style.display === 'inline-block'){
+                    contenedorDineroDevolver.style.display = 'none';
+                    inputDineroDevolver.value = '';
+                }
+
+                if (contenedorDineroIngreso.style.display === 'none'){
+                    contenedorDineroIngreso.style.display = 'inline-block';
+                }
+
                 inputDineroCantidad.disabled = true;
             } else {
-                contenedorDineroIngreso.style.display = 'none';
+
+                if (contenedorDineroIngreso.style.display === 'inline-block'){
+                    contenedorDineroIngreso.style.display = 'none';
+                    inputDineroCantidad.value = '';
+                }
+                if (contenedorDineroDevolver.style.display === 'inline-block'){
+                    contenedorDineroDevolver.style.display = 'none';
+                    inputDineroDevolver.value = '';
+                }
                 inputDineroCantidad.disabled = false;
+
             }
         } else {
             if (checkBoxNotaID.checked){
-                contenedorDineroDevolver.style.display = 'block';
+                // Verificar si los contenedores estan visibles o no
+                if (contenedorDineroDevolver.style.display === 'inline-block'){
+                    contenedorDineroDevolver.style.display = 'none';
+                    inputDineroDevolver.value = '';
+                }
+
+                if (contenedorDineroIngreso.style.display === 'none'){
+                    contenedorDineroIngreso.style.display = 'inline-block';
+                }
+                
                 inputDineroCantidad.disabled = true;
             } else {
-                contenedorDineroDevolver.style.display = 'none';
+
+                if (contenedorDineroIngreso.style.display === 'inline-block'){
+                    contenedorDineroIngreso.style.display = 'none';
+                    inputDineroCantidad.value = '';
+                }
+                if (contenedorDineroDevolver.style.display === 'inline-block'){
+                    contenedorDineroDevolver.style.display = 'none';
+                    inputDineroDevolver.value = '';
+                }
                 inputDineroCantidad.disabled = false;
+
             }
         }
     }
