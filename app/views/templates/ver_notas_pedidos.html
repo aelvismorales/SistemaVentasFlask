@@ -955,8 +955,10 @@
         fetch("{{url_for('note.nuevoingresosalida')}}", {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "X-CSRFToken": "{{ csrf_token() }}"
             },
+            dataType: 'json',
             body: JSON.stringify(data)
         }).then(response => response.json()).then(data => {
             if (data['status'] === 'success'){
