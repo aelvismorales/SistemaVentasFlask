@@ -857,39 +857,40 @@
             data[key] = value;
         });
 
-        // Validacion seleccion inputTipoSalida no esta vacio o es undefined
+        // Validacion seleccion inputTipoSalida no esta vacio o es undefined (PASS)
         if (data['inputTipoSalida'] === '' || data['inputTipoSalida'] === undefined){
             mostarMensaje('El campo Tipo no puede estar vacio');
             return;
-            e.preventDefault();
-            e.stopPropagation();
         }
 
-        console.log("pase validacion tipo salida es:" + data['inputTipoSalida']);
-        //Validacion Checkbox Nota ID, si esta activado el inputNotaID no puede estar vacio o ser undefined
+        console.log("pase validacion tipo salida es:" + data['inputTipoSalida']); 
+        //Validacion Checkbox Nota ID, si esta activado el inputNotaID no puede estar vacio o ser undefined (PASS)
         if (document.getElementById('checkNotaID').checked && (data['inputNotaID'] === '' || data['inputNotaID'] === undefined)){
             mostarMensaje('El campo Nota ID no puede estar vacio,si esta activado el campo');
             return;
         }
         console.log("pase validacion nota id es:" + data['inputNotaID']);
 
-        // Validar que  el inputTipoSalida sea Egreso, si es Egreso el inputDineroDevolver no puede estar vacio
-        if (data['inputTipoSalida'] === 'EGRESO' && data['inputDineroDevolver'] === ''){
+        // Validar que  el inputTipoSalida sea Egreso, el chekbox esta activado y el inputNotaID no puede estar vacio 
+        //si es Egreso el inputDineroDevolver no puede estar vacio   
+        if (data['inputTipoSalida'] === 'EGRESO' && document.getElementById('checkNotaID').checked && (data['inputNotaID'] === '' || data['inputNotaID'] ===  undefined) && data['inputDineroDevolver'] === '' ){
             mostarMensaje('El campo Dinero Egreso no puede estar vacio, si el Tipo es Egreso');
             return;
         }
         console.log("pase validacion dinero devolver es:" + data['inputDineroDevolver']);
 
 
-        // Validar que  el inputTipoSalida sea Ingreso, si es Ingreso el inputDineroIngreso no puede estar vacio
-        if (data['inputTipoSalida'] === 'INGRESO' && data['inputDineroIngreso'] === ''){
-            mostarMensaje('El campo Dinero Ingreso no puede estar vacio, si el Tipo es Ingreso');
+        // Validar que  el inputTipoSalida sea Ingreso, el chebox esta activado y el inputNotaID no puede estar vacio
+        //si es Ingreso el inputDineroIngreso no puede estar vacio 
+
+        if (data['inputTipoSalida'] === 'INGRESO' && document.getElementById('checkNotaID').checked && (data['inputNotaID'] === '' || data['inputNotaID'] === undefined) && data['inputDineroIngreso'] === ''){
+            mostarMensaje('El campo Deuda no puede estar vacio, si el Tipo es Ingreso');
             return;
         }
 
         console.log("pase validacion dinero ingreso es:" + data['inputDineroIngreso']);
 
-        // Validar que el checkbox Nota ID no este activado, si esta desactivado el inputDinero no puede estar vacio
+        // Validar que el checkbox Nota ID no este activado, si esta desactivado el inputDinero no puede estar vacio (PASS)
         if (!document.getElementById('checkNotaID').checked && data['inputDinero'] === ''){
             mostarMensaje('El campo Cantidad Dinero no puede estar vacio, si el Tipo es Ingreso');
             return;
@@ -918,7 +919,7 @@
                 if (data[0]['status'] === 'success'){
                     document.getElementById("messagesLoaderModal").innerHTML = `
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ${data['message']}
+                        ${data[0]['message']}
                         <button
                         type="button"
                         class="btn-close"
