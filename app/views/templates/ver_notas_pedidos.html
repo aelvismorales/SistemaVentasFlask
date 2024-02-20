@@ -831,6 +831,14 @@
         nuevoIngresoSalidaModal.show();
     });
 
+    // Validar si check esta activo, habilitar el campo nota id
+    const checkNotaID = document.getElementById('checkNotaID');
+    const inputNotaID = document.getElementById('inputNotaID');
+    checkNotaID.addEventListener('change', function(){
+        inputNotaID.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
+    });
+
+
     // Obteniendo los datos del Formulario Nuevo IngresoSalida
     const nuevo_ingreso_form = document.getElementById('nuevoIngresoSalidaForm')
     const btn_nuevo_ingreso = document.getElementById('btn-guardar-nuevo-ingreso-salida');
