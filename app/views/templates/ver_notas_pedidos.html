@@ -148,7 +148,7 @@
                                         <button type="button" class="btn btn-outline-primary btn-sm" id="btn-ver" data-id="{{nota.id}}">Ver</button>
                                         <button type="button" class="btn btn-outline-info btn-sm" id="btn-editar" data-id="{{nota.id}}">Editar</button>
                                         <button type="button" class="btn btn-outline-warning btn-sm" id="btn-anular" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" data-estado="{{nota.estado}}">Anular</button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" >Eliminar</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal" >Eliminar</button>
                                     </div>
                                 </td>
                             </tr>
@@ -927,9 +927,6 @@
             const comprador = e.target.dataset.comprador;
             document.getElementById('idNotaEliminar').innerHTML = id;
             document.getElementById('compradorNotaEliminar').innerHTML = ' - ' + comprador;
-
-            const modalEliminar = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
-            modalEliminar.show();
             }
         );
     });
