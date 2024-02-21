@@ -329,12 +329,18 @@ class Detalle_Caja(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     fecha_creacion=db.Column(db.DateTime)
     nota_id = db.Column(db.Integer,nullable=True)
-    nota_dinero = db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    #nota_dinero = db.Column(db.Numeric(precision=10,scale=2),nullable=False)
     comentario=db.Column(db.String(250))
-    monto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    #monto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
     tipo=db.Column(db.String(20))
     usuario_id=db.Column(db.Integer,db.ForeignKey('usuario.id'))
-    anulado=db.Column(db.Boolean,default=False)
+    anulado=db.Column(db.Boolean,default=False) # Si es que anulan la salida de dinero
+    pagoEfectivo=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoVisa=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoBBVA=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoBCP=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    pagoYape=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+
 
     #nota_id -> id de la nota de pedido si es que es una nota
     #nota_dinero -> monto que se paga en efectivo si es que es una nota
@@ -342,22 +348,28 @@ class Detalle_Caja(db.Model):
     #tipo -> tipo de movimiento que se hace en la caja
     #comentario -> comentario que se hace en el movimiento
     #usuario_id -> id del usuario que hace el movimiento
+    # Restriccion solo se le considera como una resta a los valores de nota de pedido si es != Null
 
-    def __init__(self,fecha_creacion,nota_dinero,comentario,monto,tipo,usuario_id,nota_id=None):
+    def __init__(self,fecha_creacion,comentario,tipo,usuario_id,pagoEfectivo,pagoVisa,pagoBBVA,pagoBCP,pagoYape,nota_id=None):
         self.fecha_creacion=fecha_creacion
-        self.nota_dinero=nota_dinero
+        #self.nota_dinero=nota_dinero
         self.comentario=comentario
-        self.monto=monto
+        #self.monto=monto
         self.tipo=tipo
         self.nota_id=nota_id
         self.usuario_id=usuario_id
+        self.pagoEfectivo=pagoEfectivo
+        self.pagoVisa=pagoVisa
+        self.pagoBBVA=pagoBBVA
+        self.pagoBCP=pagoBCP
+        self.pagoYape=pagoYape
 
     def get_id(self):
         return self.id
     def get_fecha(self):
         return self.fecha_creacion.strftime('%d/%m/%Y')
-    def get_monto(self):
-        return self.monto
+    #def get_monto(self):
+    #    return self.monto
     def get_tipo(self):
         return self.tipo
     def get_comentario(self):
@@ -366,10 +378,11 @@ class Detalle_Caja(db.Model):
         return self.usuario_id
     def get_nota_id(self):
         return self.nota_id
-    def get_nota_dinero(self):
-        return self.nota_dinero
+    #def get_nota_dinero(self):
+    #    return self.nota_dinero
     def get_json(self):
-        json={"id":self.id,"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'),"nota_id":self.nota_id,"nota_dinero":self.nota_dinero,"monto":self.monto,"tipo":self.tipo,"comentario":self.comentario,"usuario_id":self.usuario_id,"anulado":self.anulado}
+        json={"id":self.id,"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'),"nota_id":self.nota_id,"pagoEfectivo":self.pagoEfectivo,"pagoVisa":self.pagoVisa,"pagoBBVA":self.pagoBBVA,"pagoBCP":self.pagoBCP,"pagoYape":self.pagoYape,"tipo":self.tipo,"comentario":self.comentario,"usuario_id":self.usuario_id,"anulado":self.anulado}
         return json if json is not None else {}
+        
     def get_anulado(self):
         return self.anulado

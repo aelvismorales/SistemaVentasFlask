@@ -581,24 +581,36 @@ def nuevoingresosalida():
 		tipo =  data.get('inputTipoSalida',None)
 		notaID = data.get('inputNotaID',None)
 		comentario = data.get('inputComentario',None)
-		monto = Decimal(data.get('inputDinero',0.00)).quantize(Decimal("1e-{0}".format(2))) 
+		#monto = Decimal(data.get('inputDinero',0.00)).quantize(Decimal("1e-{0}".format(2))) 
 		usuario_id = current_user.get_id()
 
-		if tipo == "INGRESO":
-			notaDinero = 0.00 if data.get('inputDineroIngreso',0.00) == '' else data.get('inputDineroIngreso',0.00)
-		elif tipo == "EGRESO":
-			notaDinero = 0.00 if data.get('inputDineroDevolver',0.00) == '' else data.get('inputDineroDevolver',0.00)
-		else:
-			return jsonify({'message':'No se ha seleccionado Ingreso o Egreso','status':'error'},400)
-		notaDinero = Decimal(notaDinero).quantize(Decimal("1e-{0}".format(2)))
+		pagoEfectivo = Decimal(data.get('pagoEfectivo',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoVisa = Decimal(data.get('pagoVisa',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoBCP = Decimal(data.get('pagoBCP',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoBBVA = Decimal(data.get('pagoBBVA',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoYAPE = Decimal(data.get('pagoYAPE',0.00)).quantize(Decimal("1e-{0}".format(2)))
+
+		#if tipo == "INGRESO":
+		#	notaDinero = 0.00 if data.get('inputDineroIngreso',0.00) == '' else data.get('inputDineroIngreso',0.00)
+		#elif tipo == "EGRESO":
+		#	notaDinero = 0.00 if data.get('inputDineroDevolver',0.00) == '' else data.get('inputDineroDevolver',0.00)
+		#else:
+		#	return jsonify({'message':'No se ha seleccionado Ingreso o Egreso','status':'error'},400)
+		#notaDinero = Decimal(notaDinero).quantize(Decimal("1e-{0}".format(2)))
+		
 		#Crear el nuevo ingreso o egreso
 		# Verificar que existe la nota de pedido
-		notapedido = Nota_de_Pedido.query.get(notaID)
+		
+		notapedido = None
+		if notaID:
+			notapedido = Nota_de_Pedido.query.get(notaID)
 
 		if notapedido:
 			# Si el tipo es INGRESO y tiene una deuda
+			montoT = pagoEfectivo + pagoVisa + pagoBCP + pagoBBVA + pagoYAPE
 			if tipo == "INGRESO" and notapedido.bool_deuda:
-				if notapedido.deuda <= notaDinero:
+				# Sumar todos los pagos
+				if notapedido.deuda <= montoT:
 					try:
 						notapedido.deuda = 0
 						notapedido.bool_deuda = False
@@ -609,7 +621,7 @@ def nuevoingresosalida():
 
 						db.session.add(notapedido)
 						# Creado el detalle
-						detalle = Detalle_Caja(fecha_creacion, notaDinero, comentario, monto, tipo, usuario_id, notaID)
+						detalle = Detalle_Caja(fecha_creacion,comentario, tipo, usuario_id,pagoEfectivo,pagoVisa,pagoBBVA,pagoBCP,pagoYAPE,notaID)
 						db.session.add(detalle)
 						db.session.commit()
 
@@ -620,17 +632,21 @@ def nuevoingresosalida():
 
 				else:
 					try:
-						notapedido.deuda -= notaDinero
-						notapedido.acuenta += notaDinero
+						notapedido.deuda -= montoT
+						notapedido.acuenta += montoT
+						#Actualizando los montos de pago de la nota de pedido
+						notapedido.pagoEfectivo += pagoEfectivo
+						notapedido.pagoVisa += pagoVisa
+						notapedido.pagoBCP += pagoBCP
+						notapedido.pagoBBVA += pagoBBVA
+						notapedido.pagoYape += pagoYAPE
 						# Agregar comentario del ingreso
 						notapedido.comentario = comentario
-
 						db.session.add(notapedido)
 						# Creado el detalle
-						detalle = Detalle_Caja(fecha_creacion, notaDinero, comentario, monto, tipo, usuario_id, notaID)
+						detalle = Detalle_Caja(fecha_creacion, comentario, tipo, usuario_id,pagoEfectivo,pagoVisa,pagoBBVA,pagoBCP,pagoYAPE,notaID)
 						db.session.add(detalle)
 						db.session.commit()
-
 						return jsonify({'message': 'Se ha realizado un ingreso a la nota de pedido', 'status': 'success'}, 200)
 					except Exception as e:
 						db.session.rollback()
@@ -646,14 +662,20 @@ def nuevoingresosalida():
 			elif tipo == "EGRESO" and notapedido.bool_deuda == False:
 				try:
 					# Egreso significa que le estoy devolviendo dinero, entonces el total de la venta disminuye
-					notapedido.total_venta -= notaDinero
-					notapedido.acuenta -= notaDinero
+					notapedido.total_venta -= montoT
+					notapedido.acuenta -= montoT
+
+					#Actualizando los montos de pago de la nota de pedido
+					notapedido.pagoEfectivo -= pagoEfectivo
+					notapedido.pagoVisa -= pagoVisa
+					notapedido.pagoBCP -= pagoBCP
+					notapedido.pagoBBVA -= pagoBBVA
+					notapedido.pagoYape -= pagoYAPE
 					# Agregar comentario del egreso
 					notapedido.comentario = comentario
-
 					db.session.add(notapedido)
 					# Creado el detalle
-					detalle = Detalle_Caja(fecha_creacion, notaDinero, comentario, monto, tipo, usuario_id, notaID)
+					detalle = Detalle_Caja(fecha_creacion, comentario, tipo, usuario_id,pagoEfectivo,pagoVisa,pagoBBVA,pagoBCP,pagoYAPE,notaID)
 					db.session.add(detalle)
 					db.session.commit()
 					return jsonify({'message': 'Se ha realizado un egreso a la nota de pedido', 'status': 'success'}, 200)
@@ -666,7 +688,7 @@ def nuevoingresosalida():
 			# Si no existe la nota de pedido, creo un detalle de caja normal
 			# Se espera notaDinero sea 0 , se espera que la notaID sea nulla
 			try:
-				detalle = Detalle_Caja(fecha_creacion,notaDinero,comentario,monto,tipo,usuario_id,notaID)
+				detalle = Detalle_Caja(fecha_creacion,comentario,tipo,usuario_id,pagoEfectivo,pagoVisa,pagoBBVA,pagoBCP,pagoYAPE,notaID)
 				db.session.add(detalle)
 				db.session.commit()
 				return jsonify({'message':'Se ha creado el detalle correctamente','status':'success'},200)

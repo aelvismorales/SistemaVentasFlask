@@ -1073,6 +1073,10 @@
     const inputNotaID = document.getElementById('inputNotaID');
     checkNotaID.addEventListener('change', function(){
         inputNotaID.disabled = !this.checked; // Si el check está activado, el input se desactiva y viceversa
+        // Si el check esta desactivado el valor de inputNotaID debe ser vacio
+        if (!this.checked){
+            inputNotaID.value = '';
+        }
     });
 
     
@@ -1281,10 +1285,10 @@
                     contenedorDineroIngreso.style.display = 'none';
                     //inputDineroIngreso.value = '';
                 }
-                if (contenedorDineroDevolver.style.display === 'flex'){
-                    contenedorDineroDevolver.style.display = 'none';
+                //if (contenedorDineroDevolver.style.display === 'flex'){
+                //    contenedorDineroDevolver.style.display = 'none';
                     //inputDineroDevolver.value = '';
-                }
+                //}
                 //inputDineroCantidad.value = '';
                 //inputDineroCantidad.disabled = false;
 
