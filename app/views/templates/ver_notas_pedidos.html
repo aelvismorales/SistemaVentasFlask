@@ -850,26 +850,21 @@
     const btnAnular = document.querySelectorAll('#btn-anular');
     btnAnular.forEach((btn)=>{
         btn.addEventListener('click',(e)=>{
+            e.preventDefault();
             // Validar si la nota ya ha sido anulada
             if (e.target.dataset.estado == 'ANULADO-'){
-                document.getElementById("messagesLoader").innerHTML = `
-                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    La nota ya ha sido anulada
-                    <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert"
-                    aria-label="Close"
-                    ></button>
-                </div>
-                `;
+                mostarMensajeLoader('La nota ya ha sido anulada','warning');
                 return;
+            } else{
+                const id = e.target.dataset.id;
+                const comprador = e.target.dataset.comprador;
+                document.getElementById('idNotaAnular').innerHTML = id;
+                document.getElementById('compradorNotaAnular').innerHTML = ' - ' + comprador;
+
+                var modalAnular = new bootstrap.Modal(document.getElementById('confirmarAnularModal'));
+                modalAnular.show();
             }
 
-            const id = e.target.dataset.id;
-            const comprador = e.target.dataset.comprador;
-            document.getElementById('idNotaAnular').innerHTML = id;
-            document.getElementById('compradorNotaAnular').innerHTML = ' - ' + comprador;
         });
     });
 
@@ -883,32 +878,12 @@
             type: 'GET',
             success:function(data){
                 if (data[0]['status'] == 'success'){
-                    document.getElementById("messagesLoaderModalAnular").innerHTML = `
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ${data[0]['message']}
-                        <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Close"
-                        ></button>
-                    </div>
-                    `;
+                    mostarMensajeLoaderModalAnular(data[0]['message'],'success');
                     setTimeout(() => {
                         location.reload();
                     }, 2000);
                 } else {
-                    document.getElementById("messagesLoaderModalAnular").innerHTML = `
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        ${data[0]['message']}
-                        <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Close"
-                        ></button>
-                    </div>
-                    `;
+                    mostarMensajeLoaderModalAnular(data[0]['message'],'danger');
                 }
             },
             error:function(error){
@@ -917,6 +892,35 @@
         })
     });
 
+    // Funcion mensajeLoader
+    function mostarMensajeLoader(mensaje,tipo){
+        document.getElementById("messagesLoader").innerHTML = `
+        <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            ></button>
+        </div>
+        `;
+    }
+
+    // Funcion mensajeLodarModalAnular
+    function mostarMensajeLoaderModalAnular(mensaje,tipo){
+        document.getElementById("messagesLoaderModalAnular").innerHTML = `
+        <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            ></button>
+        </div>
+        `;
+    }
 </script>
 
 
