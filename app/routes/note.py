@@ -190,6 +190,10 @@ def anularnota(id):
 	nota=Nota_de_Pedido.query.get(id)
 	if nota:
 		nota.estado='ANULADO-'
+		nota.comentario="Nota de pedido anulada por el usuario {}".format(current_user.get_nombre())
+		nota.bool_acuenta=False
+		nota.bool_deuda=False
+		nota.deuda=0		
 		db.session.add(nota)
 		succes_message='Se ANULO la nota de pedido {}'.format(nota.id)
 		db.session.commit()

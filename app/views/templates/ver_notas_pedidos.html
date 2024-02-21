@@ -147,7 +147,7 @@
                                         <button type="button" class="btn btn-outline-dark btn-sm" id="btn-imprimir" data-id="{{nota.id}}">Imprimir</button>
                                         <button type="button" class="btn btn-outline-primary btn-sm" id="btn-ver" data-id="{{nota.id}}">Ver</button>
                                         <button type="button" class="btn btn-outline-info btn-sm" id="btn-editar" data-id="{{nota.id}}">Editar</button>
-                                        <button type="button" class="btn btn-outline-warning btn-sm" id="btn-anular" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" data-bs-toggle="modal" data-bs-target="#confirmarAnularModal">Anular</button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm" id="btn-anular" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" data-estado="{{nota.estado}}" data-bs-toggle="modal" data-bs-target="#confirmarAnularModal">Anular</button>
                                         <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" >Eliminar</button>
                                     </div>
                                 </td>
@@ -373,6 +373,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="anularModalTitle">Confirmacion Anular Nota</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close-anular-nota"></button>
+            </div>
+            <div id="messagesLoaderModalAnular">
+
             </div>
             <div class="modal-body">
                 ¿Estás seguro de ANULAR la nota <span id="idNotaAnular"></span><span id="compradorNotaAnular"></span>?
@@ -847,6 +850,22 @@
     const btnAnular = document.querySelectorAll('#btn-anular');
     btnAnular.forEach((btn)=>{
         btn.addEventListener('click',(e)=>{
+            // Validar si la nota ya ha sido anulada
+            if (e.target.dataset.estado == 'ANULADO-'){
+                document.getElementById("messagesLoader").innerHTML = `
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    La nota ya ha sido anulada
+                    <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="Close"
+                    ></button>
+                </div>
+                `;
+                return;
+            }
+
             const id = e.target.dataset.id;
             const comprador = e.target.dataset.comprador;
             document.getElementById('idNotaAnular').innerHTML = id;
@@ -864,7 +883,7 @@
             type: 'GET',
             success:function(data){
                 if (data[0]['status'] == 'success'){
-                    document.getElementById("messagesLoader").innerHTML = `
+                    document.getElementById("messagesLoaderModalAnular").innerHTML = `
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         ${data[0]['message']}
                         <button
@@ -877,9 +896,9 @@
                     `;
                     setTimeout(() => {
                         location.reload();
-                    }, 1000);
+                    }, 2000);
                 } else {
-                    document.getElementById("messagesLoader").innerHTML = `
+                    document.getElementById("messagesLoaderModalAnular").innerHTML = `
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         ${data[0]['message']}
                         <button
