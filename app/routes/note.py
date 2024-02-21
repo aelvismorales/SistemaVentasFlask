@@ -184,113 +184,7 @@ def vernotapedido(id):
 	else:
 		return jsonify({'message':'No se pudo encontrar la nota de pedido'},400)
 
-
-@note.route('/editarnotaventa/',methods=['GET','POST'])
-def editarNotaVentaNoId():
-	#Check for requirements, if they want to generate a new one or only edit.
-	# nota=Nota_de_Pedido.query.get(session['id_nota'])
-	nombre_comprador=request.form.get('comprador_name')
-	direccion_comprador=request.form.get('direccion_comprador')
-	dni_comprador=request.form.get('dni_comprador')
-	telefono_comprador=request.form.get('telefono_comprador')
-	estado_nota=request.form.get('estado')
-	estado_nota_2=request.form.get('estado2')
-	total_venta=0
-
-	if 'producto' in session:
-		session.modified=True
-		for key,product in session['producto'].items():
-			total_venta=total_venta+session['producto'][key]['precio_individual']
-
-		session['total_venta']=total_venta.__round__(2)
-		if estado_nota and request.method == 'POST':
-			estado_nota=estado_nota+estado_nota_2
-			datos_producto_json= json.dumps(session['producto'])
-			existe_comprador=Comprador.query.filter_by(dni=dni_comprador).first()
-			if existe_comprador:
-				nota =Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador,comprador_id=existe_comprador)
-			else:
-				nota =Nota_de_Pedido(datos_producto_json,total_venta,nombre_comprador,direccion_comprador,estado_nota,telefono_comprador,dni_comprador)
-			# nota.nombre_comprador=nombre_comprador
-			# nota.total_venta=total_venta
-			# nota.direccion_comprador=direccion_comprador
-			# nota.dni_comprador=dni_comprador
-			# nota.telefono_comprador=telefono_comprador
-			# nota.nombre_producto=datos_producto_json
-			# nota.fecha_creacion=datetime.today()
-			# nota.estado=estado_nota
-			
-			# for key,product in session['producto'].items():
-			# 	producto=Producto.query.filter_by(nombre_producto=session['producto'][key]['name']).first()
-			# 	print(producto.stock)
-			# 	producto.stock-=session['producto'][key]['cantidad']
-			if nota is not None:
-				db.session.add(nota)
-				db.session.commit()
-				session.modified = True
-				session['nombre_comprador']=nombre_comprador
-				session['direccion_comprador']=direccion_comprador
-				session['dni_comprador']=dni_comprador
-				session['telefono_comprador']=telefono_comprador
-				session['numero_nota']=nota.get_id()
-				session['fecha_nota']=nota.get_fecha()
-				session['estado_nota']=estado_nota
-				succes_message='Se creo la nota de pedido para {} y se registro como nuevo comprador, ID:{}'.format(nota.get_nombre_comprador(),nota.get_id())
-				flash(succes_message,category='message')
-	return redirect(url_for('product.buscar_producto'))
-	
-@note.route('/convertirNota/<string:id>',methods=['GET','POST'])
-def convertirNota(id):
-	#Check for requirements if they want to create a new one.
-	nota_pedido=Nota_de_Pedido.query.get(id)
-	if nota_pedido is not None:
-		# existe_comprador=Comprador.query.filter_by(dni=nota_pedido.get_dni_nota()).first()
-		if nota_pedido.get_comprador_id():
-			nota =Nota_de_Pedido(nota_pedido.get_nombre_producto(),nota_pedido.get_total_venta(),nota_pedido.get_nombre_comprador(),nota_pedido.get_direccion(),nota_pedido.get_estado(),nota_pedido.get_telefono_nota(),nota_pedido.get_dni_nota(),comprador_id=nota_pedido.get_comprador_id())
-		else:
-			nota =Nota_de_Pedido(nota_pedido.get_nombre_producto(),nota_pedido.get_total_venta(),nota_pedido.get_nombre_comprador(),nota_pedido.get_direccion(),nota_pedido.get_estado(),nota_pedido.get_telefono_nota(),nota_pedido.get_dni_nota())
-		nota.estado='cancelado-'
-		db.session.add(nota)
-		db.session.commit()
-		# db.session.delete(nota_pedido)
-		succes_message='Se convirtio la Proforma a una Nota de Pedido con ID: {}'.format(nota.id)
-		flash(succes_message,'message')
-	else:
-		flash('No se pudo convertir la Proforma en una Nota','error')
-	return redirect(url_for('note.vernotapedido'))
-
-@note.route('/editarnota/<string:id>',methods=['GET','POST'])
-def editarnota(id):
-	nota=Nota_de_Pedido.query.get(id)
-	nombre_comprador=request.form.get('comprador_name')
-	direccion_comprador=request.form.get('direccion_comprador')
-	estado_nota=request.form.get('estado')
-	estado_nota_2=request.form.get('estado2')
-	fecha_adicional=request.form.get('fecha_adicional')
-	deuda_actual=request.form.get('deuda')
-	comentario=request.form.get('comentario')
-
-	if nota and nombre_comprador and direccion_comprador and estado_nota and request.method=='POST':
-		nota.nombre_comprador=nombre_comprador
-		nota.direccion_comprador=direccion_comprador
-		nota.estado=estado_nota+estado_nota_2
-		if deuda_actual is not None:
-			if float(deuda_actual)>0.0:
-				nota.acuenta=float(deuda_actual)
-				nota.deuda=float(deuda_actual)
-			else:
-				nota.acuenta=nota.get_deuda()
-				nota.deuda=float(deuda_actual)
-		nota.fecha_creacion=fecha_adicional
-		nota.fecha_cancelacion=fecha_adicional
-		nota.comentario=comentario	
-		db.session.add(nota)
-		succes_message='Se actualizo la nota de pedido de {}'.format(nota.nombre_comprador)
-		flash(succes_message,category='message')
-		return redirect(url_for("note.editarnota",id=id))
-	return render_template('editar_nota_id.html',nota=nota,log=loge)
-
-
+#Utilizando actualmente
 @note.route('/anularnota/<string:id>',methods=["GET"])
 def anularnota(id):
 	nota=Nota_de_Pedido.query.get(id)
@@ -298,12 +192,16 @@ def anularnota(id):
 		nota.estado='ANULADO-'
 		db.session.add(nota)
 		succes_message='Se ANULO la nota de pedido {}'.format(nota.id)
-		flash(succes_message,category='message')
-	return redirect(url_for('note.vernotapedido'))
+		db.session.commit()
+
+		return jsonify({'message':succes_message,'status':'success'},200)
+	else:
+		return jsonify({'message':'No se pudo encontrar la nota de pedido','status':'error'},400)
 
 #Utilizando actualmente
 @note.route('/ver_notas_pedido',methods=['GET','POST'])
 def ver_notas_pedido():
+
 	# request.args.get('page', 1, type=int) , de esta manera obtenemos args desde url
 
 	if request.method=='GET':
@@ -622,85 +520,6 @@ def ver_notas_pedido():
 	else:
 		return jsonify({'message':'No se pudo cargar las notas de pedido'},400)
 
-@note.route('/vernotaID',methods=['GET','POST'])
-def vernotaID():
-	id=request.form.get('id_notas')
-	total_dia=0
-	total_dia_visa=0
-	total_dia_por_cancelar=0
-	if id and request.method=='POST':
-		nota_pedido=Nota_de_Pedido.query.filter_by(id=id).all()
-		if nota_pedido is not None:
-			return render_template('ver_nota_pedido.html',log=loge,nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar)
-		else :
-			error_message='No se pudo encontrar la nota de pedido intente nuevamente'
-			flash(error_message,category='error')
-	return redirect(url_for('note.vernotapedido'))
-
-@note.route('/vernotapedidobyID',methods=['GET','POST'])
-def vernotapedido_id():
-
-	id=request.form['notaid']
-	nota=Nota_de_Pedido.query.get(id)
-	notas=json.loads(nota.get_nombre_producto())
-	if nota.notasdepedidos is None:
-		telefono_comprador=nota.get_telefono_nota()
-		dni_comprador=nota.get_dni_nota()
-	else:
-		telefono_comprador=nota.notasdepedidos.get_telefono()
-		dni_comprador=nota.notasdepedidos.get_dni()
-	return jsonify({'htmlresponse':render_template('ver_nota_id.html',nota=nota,notas=notas,telefono=telefono_comprador,dni=dni_comprador)})
-
-@note.route('/imprimirresumen/<string:fecha>/<string:fecha_final>',methods=['GET','POST'])
-def imprimirresumen(fecha,fecha_final):
-	fecha=datetime.strptime(fecha, '%Y-%m-%d').date()
-	fecha_final=datetime.strptime(fecha_final, '%Y-%m-%d').date()
-	total_dia=0
-	total_dia_visa=0
-	total_dia_bcp=0
-	total_dia_bbva=0
-	total_dia_yape=0
-	total_dia_por_cancelar=0
-	nota_pedido=Nota_de_Pedido.query.order_by(asc(Nota_de_Pedido.id)).filter(Nota_de_Pedido.fecha_creacion.between(fecha,fecha_final)).all()
-	if nota_pedido is not None:
-		for note in nota_pedido:
-			if note.get_estado() in ['cancelado-','cancelado-por-recoger','cancelado-entregado']:
-				if note.get_acuenta()>0:
-					total_dia+=note.get_acuenta()
-				else:
-					total_dia+=note.get_total_venta()
-			elif note.get_estado() in ['cancelado-VISA-','cancelado-VISA-entregado','cancelado-VISA-por-recoger']:
-				if note.get_acuenta()>0:
-					total_dia_visa+=note.get_acuenta()
-				else:
-					total_dia_visa+=note.get_total_venta()
-
-			elif note.get_estado() in ['por-cancelar-','por-cancelar-entregado','por-cancelar-por-recoger']:
-				if note.get_acuenta()>0:
-					total_dia_por_cancelar+=note.get_acuenta()
-				else:
-					total_dia_por_cancelar+=note.get_total_venta()
-			elif note.get_estado() in ['cancelado-BCP-','cancelado-BCP-por-recoger','cancelado-BCP-entregado']:
-				if note.get_acuenta()>0:
-					total_dia_bcp+=note.get_acuenta()
-				else:
-					total_dia_bcp+=note.get_total_venta()
-			elif note.get_estado() in ['cancelado-BBVA-','cancelado-BBVA-por-recoger','cancelado-BBVA-entregado']:
-				if note.get_acuenta()>0:
-					total_dia_bbva+=note.get_acuenta()
-				else:
-					total_dia_bbva+=note.get_total_venta()
-			elif note.get_estado() in ['cancelado-YAPE-','cancelado-YAPE-por-recoger','cancelado-YAPE-entregado']:
-				if note.get_acuenta()>0:
-					total_dia_yape+=note.get_acuenta()
-				else:
-					total_dia_yape+=note.get_total_venta()
-
-		return render_template('resumen_por_imprimir.html',nota_pedido=nota_pedido,td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha)
-	else:
-		error_message='No se pudo crear un resumen por que no existen notas de pedido'
-		flash(error_message,category='error')
-	return render_template('resumen_por_imprimir.html',td=total_dia,tdv=total_dia_visa,tdpc=total_dia_por_cancelar,tdbcp=total_dia_bcp,tdbbva=total_dia_bbva,tdy=total_dia_yape,fechita=fecha)
 
 
 
@@ -715,31 +534,6 @@ def imprimirresumen(fecha,fecha_final):
 		return redirect(url_for('product.buscar_producto'))
 
 	return redirect(url_for('product.buscar_producto'))
-#Eliminar un producto de la nota de pedido
-@note.route('/delete',methods=['POST'])
-def deleteproduct():
-	key_code=str(request.form['code'])
-	total_venta=0
-	if key_code and request.method=='POST':
-		session.modified=True
-		for key in session['producto'].items():
-			if key[0]==key_code:
-				session['producto'].pop(key[0],None)
-				if 'producto' in session:
-					for key, value in session['producto'].items():
-						total_venta=total_venta+session['producto'][key]['precio_individual']
-				else:
-					session['total_venta']=0
-				session['total_venta']=total_venta.__round__(2)
-				break
-		return redirect(url_for('product.buscar_producto'))
-
-	return redirect(url_for('product.buscar_producto'))
-
-@note.route('/imprimir')
-def imprimir():
-	return render_template('imprimir.html',acuenta=session['acuenta'],deuda=session['deuda'])
-
 
 
 #Utilizado actualmente
@@ -863,8 +657,6 @@ def nuevoingresosalida():
 				return jsonify({'message':'Error al crear el detalle','status':'error'},400)
 	else:
 		return jsonify({'message':'No se recibio ningun dato','status':'error'},400)
-
-
 
 
 #Utilizando actualmente

@@ -198,7 +198,6 @@ class Comprador(db.Model):
 class Nota_de_Pedido(db.Model):
     __tablename__="notapedido"
     id=db.Column(db.Integer,primary_key=True)
-    #fecha_creacion=db.Column(db.DateTime)
     fecha_creacion=db.Column(db.DateTime,default=datetime.now(timezone.utc)-timedelta(hours=5))
     nombre_comprador=db.Column(db.String(60))
     nombre_producto=db.Column(db.String(15000))
