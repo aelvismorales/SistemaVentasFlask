@@ -609,17 +609,23 @@ def nuevoingresosalida():
 			# Si el tipo es INGRESO y tiene una deuda
 			montoT = pagoEfectivo + pagoVisa + pagoBCP + pagoBBVA + pagoYAPE
 			if tipo == "INGRESO" and notapedido.bool_deuda:
-				# Sumar todos los pagos
-				if notapedido.deuda <= montoT:
-					try:
-						notapedido.deuda = 0
-						notapedido.bool_deuda = False
-						notapedido.acuenta = notapedido.total_venta
-						notapedido.bool_acuenta = False
+				if notapedido.deuda == montoT:
+				    print("ingreso monto y deuda iguales")
+				    try:
+				        notapedido.deuda = Decimal(0).quantize(Decimal("1e-{0}".format(2)))
+				        notapedido.bool_deuda = False
+				        notapedido.acuenta += montoT
+				        notapedido.bool_acuenta = False
 						# Agregar comentario del ingreso
 						notapedido.comentario = comentario
+						nota.pagoEfectivo += pagoEfectivo
+						nota.pagoVisa += pagoVisa
+						nota.pagoBCP += pagoBCP
+						nota.pagoBBVA += pagoBBVA
+						nota.pagoYape += pagoYAPE
 
 						db.session.add(notapedido)
+						print("Llegue a pasar la validacion")
 						# Creado el detalle
 						detalle = Detalle_Caja(fecha_creacion,comentario, tipo, usuario_id,pagoEfectivo,pagoVisa,pagoBBVA,pagoBCP,pagoYAPE,notaID)
 						db.session.add(detalle)
@@ -627,6 +633,8 @@ def nuevoingresosalida():
 
 						return jsonify({'message': 'Se ha cancelado la deuda de la nota de pedido', 'status': 'success'}, 200)
 					except Exception as e:
+					    print("error monto y deyuda iguales")
+					    print(e)
 						db.session.rollback()
 						return jsonify({'message': 'Error al cancelar la deuda de la nota de pedido', 'status': 'error'}, 400)
 
@@ -640,6 +648,7 @@ def nuevoingresosalida():
 						notapedido.pagoBCP += pagoBCP
 						notapedido.pagoBBVA += pagoBBVA
 						notapedido.pagoYape += pagoYAPE
+						
 						# Agregar comentario del ingreso
 						notapedido.comentario = comentario
 						db.session.add(notapedido)
