@@ -210,7 +210,7 @@
                                     <td style="width: 100%; text-align: justify; height: 18px; text-align: center;"><strong>ESTADO:</strong></td>
                                     </tr>
                                     <tr >
-                                        <td style="width: 100%; text-align: justify; height: 29px; text-align: center;">CANCELADO</td>
+                                        <td style="width: 100%; text-align: justify; height: 29px; text-align: center;" id="modal-estado">CANCELADO</td>
                                     </tr>
                                     <tr >
                                         <td style="width: 100%; text-align: justify; height: 18px; text-align: center;"><strong>FECHA:</strong></td>
@@ -760,11 +760,13 @@
             const modalDireccion=verModalElemento.querySelector('#modal-direccion');
             const modalDNI=verModalElemento.querySelector('#modal-dni');
             const tablaProductos=verModalElemento.querySelector('#tabla-productos');
+            const modalEstado=verModalElemento.querySelector('#modal-estado');
 
             //Obteniendo datos desde llamada GET
             fetch(`{{url_for('note.vernotapedido', id='')}}${id}`)
                 .then(response => response.json())
                 .then(data => {
+                    modalEstado.textContent = data[0].estado;
                     modalComprador.innerHTML='<strong>Sr.(es):</strong>'+ ' ' + data[0].nombre_comprador;
                     modalTelefono.innerHTML='<strong>Telefono:</strong>'+ ' ' + data[0].numero_comprador;
                     modalDireccion.innerHTML='<strong>Direcci&oacute;n:</strong>'+ ' ' + data[0].direccion_comprador;
