@@ -584,11 +584,11 @@ def nuevoingresosalida():
 		#monto = Decimal(data.get('inputDinero',0.00)).quantize(Decimal("1e-{0}".format(2))) 
 		usuario_id = current_user.get_id()
 
-		pagoEfectivo = Decimal(data.get('pagoEfectivo',0.00)).quantize(Decimal("1e-{0}".format(2)))
-		pagoVisa = Decimal(data.get('pagoVisa',0.00)).quantize(Decimal("1e-{0}".format(2)))
-		pagoBCP = Decimal(data.get('pagoBCP',0.00)).quantize(Decimal("1e-{0}".format(2)))
-		pagoBBVA = Decimal(data.get('pagoBBVA',0.00)).quantize(Decimal("1e-{0}".format(2)))
-		pagoYAPE = Decimal(data.get('pagoYAPE',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoEfectivo = Decimal(data.get('pagoEfectivoInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoVisa = Decimal(data.get('pagoVisaInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoBCP = Decimal(data.get('pagoBCPInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoBBVA = Decimal(data.get('pagoBBVAInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
+		pagoYAPE = Decimal(data.get('pagoYAPEInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
 
 		#if tipo == "INGRESO":
 		#	notaDinero = 0.00 if data.get('inputDineroIngreso',0.00) == '' else data.get('inputDineroIngreso',0.00)
