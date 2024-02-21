@@ -385,12 +385,12 @@
 
                     <!-- Input Dinero si no se usa Nota ID-->
                     <!-- No mostrar esta seccion si checkbox ID esta activado-->
-                    <div class="mb-3 row">
+                    <!--<div class="mb-3 row">
                         <label for="inputDinero" class="col-sm-2 col-form-label">Cantidad Dinero:</label>
                         <div class="col-sm-10">
                             <input type="number" class="form-control" name="inputDinero" id="inputDinero" placeholder="S/0.00">
                         </div>
-                    </div>
+                    </div>-->
 
                     <!-- Input Comentario detalle-->
                     <!-- Este comentario siempre estara habilitado-->
@@ -1056,8 +1056,6 @@
 </script>
 
 
-
-
 <!-- Funciones para Crear nuevo SalidaIngreso-->
 <script>
     document.getElementById("inputFechaSalida").value = new Date().toISOString().split('T')[0];
@@ -1101,9 +1099,9 @@
                     inputTipoSalida.value = 'INGRESO';
                     const valor_deuda = data[0]['deuda']
                     if (valor_deuda > 0) {
-                        document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda:S/ '+ valor_deuda;
+                        document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda: <strong> S/ ' + valor_deuda + '</strong>';
                     } else {
-                        document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda:S/ 0.00';
+                        document.getElementById('labelinputDineroIngreso').innerHTML = 'Deuda: <strong>S/ 0.00 </strong>';
                     }
                     validarSeleccion();
                     document.getElementById("messagesLoaderModal").innerHTML = `
@@ -1134,11 +1132,24 @@
             error:function(error){
                 console.error('Error:', error);
             }
-
-
         })
     })
 
+
+    // Activacion de checkbox
+    const inputsPagoSelected = [
+      { checkbox: document.getElementById("pagoEfectivo"), input: document.getElementById("pagoEfectivoInput") },
+      { checkbox: document.getElementById("pagoVisa"), input: document.getElementById("pagoVisaInput") },
+      { checkbox: document.getElementById("pagoBBVA"), input: document.getElementById("pagoBBVAInput") },
+      { checkbox: document.getElementById("pagoBCP"), input: document.getElementById("pagoBCPInput") },
+      { checkbox: document.getElementById("pagoYAPE"), input: document.getElementById("pagoYAPEInput") }
+    ];
+
+    inputsPagoSelected.forEach(({ checkbox, input }) => {
+      checkbox.addEventListener("change", function() {
+        input.disabled = !this.checked;
+      });
+    });
 
     const btn_nuevo_ingreso = document.getElementById('btn-guardar-nuevo-ingreso-salida');
     btn_nuevo_ingreso.addEventListener('click',(e)=>{
@@ -1149,7 +1160,6 @@
         const formData = new FormData(nuevo_ingreso_form);
         let data = {};
         formData.forEach((value, key) => {
-            console.log(key, value);
             data[key] = value;
         });
 
@@ -1165,24 +1175,9 @@
             return;
         }
 
-        // Validar que  el inputTipoSalida sea Egreso, el chekbox esta activado y el inputNotaID no puede estar vacio 
-        //si es Egreso el inputDineroDevolver no puede estar vacio   
-        if (data['inputTipoSalida'] === 'EGRESO' && document.getElementById('checkNotaID').checked && data['inputDineroDevolver'] === '' ){
-            mostarMensaje('El campo Dinero Egreso no puede estar vacio, si el Tipo es Egreso');
-            return;
-        }
-
-        // Validar que  el inputTipoSalida sea Ingreso, el chebox esta activado y el inputNotaID no puede estar vacio
-        //si es Ingreso el inputDineroIngreso no puede estar vacio 
-
-        if (data['inputTipoSalida'] === 'INGRESO' && document.getElementById('checkNotaID').checked && data['inputDineroIngreso'] === ''){
-            mostarMensaje('El campo Deuda no puede estar vacio, si el Tipo es Ingreso');
-            return;
-        }
-
-        // Validar que el checkbox Nota ID no este activado, si esta desactivado el inputDinero no puede estar vacio (PASS)
-        if (!document.getElementById('checkNotaID').checked && data['inputDinero'] === ''){
-            mostarMensaje('El campo Cantidad Dinero no puede estar vacio, si el Tipo es Ingreso');
+        // Validar que almenos exista un valor de metodos de pago con un valor mayor a 0
+        if (data['pagoEfectivoInput'] === '' && data['pagoVisaInput'] === '' && data['pagoBBVAInput']==='' && data['pagoYAPEInput'] === '' && data['pagoBCPInput'] === ''){
+            mostarMensaje('Almenos un metodo de pago debe tener un valor mayor a 0');
             return;
         }
 
@@ -1191,6 +1186,7 @@
             mostarMensaje('El campo Comentario no puede estar vacio');
             return;
         }
+
         console.log(JSON.stringify(data));
         // Enviar los datos al servidor
         $.ajax({
