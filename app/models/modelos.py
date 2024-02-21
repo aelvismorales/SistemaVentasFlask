@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash,check_password_hash
 from datetime import datetime,timezone,timedelta
 from flask_login import UserMixin,LoginManager,AnonymousUserMixin
-
+from sqlalchemy import func
 
 db=SQLAlchemy()
 
@@ -341,15 +341,6 @@ class Detalle_Caja(db.Model):
     pagoBCP=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
     pagoYape=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
 
-
-    #nota_id -> id de la nota de pedido si es que es una nota
-    #nota_dinero -> monto que se paga en efectivo si es que es una nota
-    #monto -> cantidad que ingresa o sale de la caja si no es una nota
-    #tipo -> tipo de movimiento que se hace en la caja
-    #comentario -> comentario que se hace en el movimiento
-    #usuario_id -> id del usuario que hace el movimiento
-    # Restriccion solo se le considera como una resta a los valores de nota de pedido si es != Null
-
     def __init__(self,fecha_creacion,comentario,tipo,usuario_id,pagoEfectivo,pagoVisa,pagoBBVA,pagoBCP,pagoYape,nota_id=None):
         self.fecha_creacion=fecha_creacion
         #self.nota_dinero=nota_dinero
@@ -386,3 +377,23 @@ class Detalle_Caja(db.Model):
         
     def get_anulado(self):
         return self.anulado
+    
+    @staticmethod
+    def get_json_filtrado_por_tipo(tipo,fecha_inicio,fecha_fin):
+        # Verificando si las fechas son None
+        if fecha_inicio is None or fecha_fin is None:
+            detalles = Detalle_Caja.query.filter_by(tipo=tipo).all()
+        else:
+            detalles = Detalle_Caja.query.filter_by(tipo=tipo).filter(Detalle_Caja.fecha_creacion.between(fecha_inicio,fecha_fin)).all()
+
+        if not detalles:
+            return {}
+        
+        sum_pago_efectivo = sum([detalle.pagoEfectivo for detalle in detalles])
+        sum_pago_visa = sum([detalle.pagoVisa for detalle in detalles])
+        sum_pago_bbva = sum([detalle.pagoBBVA for detalle in detalles])
+        sum_pago_bcp = sum([detalle.pagoBCP for detalle in detalles])
+        sum_pago_yape = sum([detalle.pagoYape for detalle in detalles])
+
+        filtered_json = {"tipo":tipo,"detalles": [detalle.get_json() for detalle in detalles],"sum_pago_efectivo":sum_pago_efectivo,"sum_pago_visa":sum_pago_visa,"sum_pago_bbva":sum_pago_bbva,"sum_pago_bcp":sum_pago_bcp,"sum_pago_yape":sum_pago_yape}
+        return filtered_json

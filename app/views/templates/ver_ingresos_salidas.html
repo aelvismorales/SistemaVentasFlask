@@ -1,0 +1,83 @@
+{%extends 'base.html' %}
+
+{% block csslink %}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/buscar_productos.css')}}" />
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+{%endblock%}
+
+{% block navbar %}
+ <li class="nav-item">
+    <a class="nav-link" href="{{url_for('product.buscar_producto')}}" aria-current="page"><strong>Productos</strong></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" href="{{url_for('note.ver_notas_pedido')}}" aria-current="page"><strong>Ver Notas de Pedido</strong></a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link active"aria-current="page"><strong>Ver Detalle Caja</strong></a>
+  </li>
+  
+  <li class="nav-item">
+    <a class="nav-link" href="{{ url_for('buyer.vercompradores') }}" aria-current="page"><strong>Ver Compradores</strong></a>
+  </li>
+  
+  <li class="nav-item">
+    <a class="nav-link" href="{{url_for('auth.logout')}}"><strong>Cerrar Sesion</strong></a>
+  </li>
+{% endblock %}
+
+{% block messages %} 
+  <div id="messagesLoader">
+
+  </div>
+{%endblock%}
+
+
+{% block content %}
+<div class="container-fluid">
+    <!--Contenedor de Filtro por Fecha-->
+    <div class="container-md">
+        <form action="#" id="form_buscar_detalles">
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="span_buscar_fecha_inicio">Fecha Inicio</span>
+                <input type="date" class="form-control" placeholder="Fecha Inicio" aria-label="Fecha Inicio" aria-describedby="buscar_fecha_inicio" id="buscar_fecha_inicio">
+
+                <span class="input-group-text" id="span_buscar_fecha_fin">Fecha Fin</span>
+                <input type="date" class="form-control" placeholder="Fecha Fin" aria-label="Fecha Fin" aria-describedby="buscar_fecha_fin" id="buscar_fecha_fin">
+
+                <button class="btn btn-outline-success" type="submit" id="boton-buscar-fecha">Buscar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Contenedor Tabla de Contenido e Resumen-->
+    <div class="container-fluid">
+        <div class="row row-cols-2">
+            <div class="col">columna1</div>
+            <div class="col">columna2</div>
+            <div class="col">columna3</div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}
+
+{% block scripts%}
+<!-- Script para Filtrar la Tabla de Contenido -->
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
+
+{%endblock%}

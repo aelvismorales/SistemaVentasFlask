@@ -708,7 +708,6 @@ def nuevoingresosalida():
 def imprimire(id):
 	nota=Nota_de_Pedido.query.get(id)
 	notas= json.loads(nota.get_nombre_producto())
-	print(notas)
 	if nota.notasdepedidos is None:
 		telefono_comprador=nota.get_telefono_nota()
 		dni_comprador=nota.get_dni_nota()
@@ -717,3 +716,11 @@ def imprimire(id):
 		dni_comprador=nota.notasdepedidos.get_dni()
 
 	return render_template('imprimirid.html',nota=nota,notas=notas,telefono=telefono_comprador,dni=dni_comprador)
+
+
+#Utilizando actualmente
+@note.route('/ver-ingresos-salidas',methods=['GET'])
+def ver_ingresos_salidas():
+	json_filtrado_ingresos = Detalle_Caja.get_json_filtrado_por_tipo('INGRESO')
+	json_filtrado_egresos = Detalle_Caja.get_json_filtrado_por_tipo('EGRESO')
+	return render_template('ver_ingresos_salidas.html', ingresos=json_filtrado_ingresos, egresos=json_filtrado_egresos)
