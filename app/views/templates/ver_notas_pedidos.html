@@ -322,12 +322,12 @@
 
                     <!-- Input Dinero Devolver Opcion Egreso-->
                     <!-- Para hacerlo visible o invisible agregar el estilo display :none o no-->
-                    <div class="mb-3 row" id="contenedorDineroDevolver" style="display: none;">
+                    <!--<div class="mb-3 row" id="contenedorDineroDevolver" style="display: none;">
                         <label for="inputDineroDevolver" class="col-sm-2 col-form-label">Dinero Egreso:</label>
                         <div class="col-sm-10">
                             <input type="number" class="form-control" name="inputDineroDevolver" id="inputDineroDevolver" placeholder="S/0.00">
                         </div>
-                    </div>
+                    </div>-->
 
                     <div class="mb-3">
                         <h5>Formas de pago:</h3>
@@ -1254,39 +1254,39 @@
         const checkBoxNotaID = document.getElementById('checkNotaID');
 
         const contenedorDineroIngreso = document.getElementById('contenedorDineroIngreso');
-        const inputDineroIngreso = document.getElementById('inputDineroIngreso');
+        //const inputDineroIngreso = document.getElementById('inputDineroIngreso');
 
-        const contenedorDineroDevolver = document.getElementById('contenedorDineroDevolver');
-        const inputDineroDevolver = document.getElementById('inputDineroDevolver');
+        //const contenedorDineroDevolver = document.getElementById('contenedorDineroDevolver');
+        //const inputDineroDevolver = document.getElementById('inputDineroDevolver');
 
-        const inputDineroCantidad = document.getElementById('inputDinero');
+        //const inputDineroCantidad = document.getElementById('inputDinero');
 
         console.log(inputTipoSalida.value);
         if (inputTipoSalida.value =='INGRESO'){
             if (checkBoxNotaID.checked){
                 // Verificar si los contenedores estan visibles o no
-                if (contenedorDineroDevolver.style.display === 'flex'){
-                    contenedorDineroDevolver.style.display = 'none';
-                    inputDineroDevolver.value = '';
-                }
+                //if (contenedorDineroDevolver.style.display === 'flex'){
+                //    contenedorDineroDevolver.style.display = 'none';
+                    //inputDineroDevolver.value = '';
+                //}
 
                 if (contenedorDineroIngreso.style.display === 'none'){
                     contenedorDineroIngreso.style.display = 'flex';
                 }
 
-                inputDineroCantidad.disabled = true;
+                //inputDineroCantidad.disabled = true;
             } else {
 
                 if (contenedorDineroIngreso.style.display === 'flex'){
                     contenedorDineroIngreso.style.display = 'none';
-                    inputDineroIngreso.value = '';
+                    //inputDineroIngreso.value = '';
                 }
                 if (contenedorDineroDevolver.style.display === 'flex'){
                     contenedorDineroDevolver.style.display = 'none';
-                    inputDineroDevolver.value = '';
+                    //inputDineroDevolver.value = '';
                 }
-                inputDineroCantidad.value = '';
-                inputDineroCantidad.disabled = false;
+                //inputDineroCantidad.value = '';
+                //inputDineroCantidad.disabled = false;
 
             }
         } else {
@@ -1294,26 +1294,26 @@
                 // Verificar si los contenedores estan visibles o no
                 if (contenedorDineroIngreso.style.display === 'flex'){
                     contenedorDineroIngreso.style.display = 'none';
-                    inputDineroDevolver.value = '';
+                    //inputDineroDevolver.value = '';
                 }
 
-                if (contenedorDineroDevolver.style.display === 'none'){
-                    contenedorDineroDevolver.style.display = 'flex';
-                }
+                //if (contenedorDineroDevolver.style.display === 'none'){
+                //    contenedorDineroDevolver.style.display = 'flex';
+                //}
                 
-                inputDineroCantidad.disabled = true;
+                //inputDineroCantidad.disabled = true;
             } else {
 
                 if (contenedorDineroIngreso.style.display === 'flex'){
                     contenedorDineroIngreso.style.display = 'none';
-                    inputDineroIngreso.value = '';
+                    //inputDineroIngreso.value = '';
                 }
-                if (contenedorDineroDevolver.style.display === 'flex'){
-                    contenedorDineroDevolver.style.display = 'none';
-                    inputDineroDevolver.value = '';
-                }
-                inputDineroCantidad.value = '';
-                inputDineroCantidad.disabled = false;
+                //if (contenedorDineroDevolver.style.display === 'flex'){
+                //    contenedorDineroDevolver.style.display = 'none';
+                    //inputDineroDevolver.value = '';
+                //}
+                //inputDineroCantidad.value = '';
+                //inputDineroCantidad.disabled = false;
 
             }
         }
