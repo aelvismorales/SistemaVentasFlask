@@ -583,7 +583,6 @@ def nuevoingresosalida():
 		comentario = data.get('inputComentario',None)
 		monto = Decimal(data.get('inputDinero',0.00)).quantize(Decimal("1e-{0}".format(2))) 
 		usuario_id = current_user.get_id()
-		print("Este es el usuario id : {}",usuario_id)
 
 		if tipo == "INGRESO":
 			notaDinero = 0.00 if data.get('inputDineroIngreso',0.00) == '' else data.get('inputDineroIngreso',0.00)
