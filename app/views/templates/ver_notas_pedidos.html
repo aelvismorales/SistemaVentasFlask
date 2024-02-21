@@ -148,7 +148,7 @@
                                         <button type="button" class="btn btn-outline-primary btn-sm" id="btn-ver" data-id="{{nota.id}}">Ver</button>
                                         <button type="button" class="btn btn-outline-info btn-sm" id="btn-editar" data-id="{{nota.id}}">Editar</button>
                                         <button type="button" class="btn btn-outline-warning btn-sm" id="btn-anular" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" data-estado="{{nota.estado}}">Anular</button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal" >Eliminar</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" >Eliminar</button>
                                     </div>
                                 </td>
                             </tr>
@@ -366,27 +366,6 @@
     </div>
 </div>
 
-<!-- Modal para Anular Nota de Pedido-->
-<div class="modal fade" id="confirmarAnularModal" tabindex="-1" aria-labelledby="anularModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="anularModalTitle">Confirmacion Anular Nota</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close-anular-nota"></button>
-            </div>
-            <div id="messagesLoaderModalAnular">
-
-            </div>
-            <div class="modal-body">
-                ¿Estás seguro de ANULAR la nota <span id="idNotaAnular"></span><span id="compradorNotaAnular"></span>?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btn-close-anular-nota" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-warning" id="btn-anular-nota">Anular</button>
-        </div>
-    </div>
-</div>
-
 <!--Modal para Eliminar Nota de Pedido-->
 <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -408,6 +387,26 @@
     </div>
 </div>
 
+<!-- Modal para Anular Nota de Pedido-->
+<div class="modal fade" id="confirmarAnularModal" tabindex="-1" aria-labelledby="anularModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="anularModalTitle">Confirmacion Anular Nota</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close-anular-nota"></button>
+            </div>
+            <div id="messagesLoaderModalAnular">
+
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de ANULAR la nota <span id="idNotaAnular"></span><span id="compradorNotaAnular"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-close-anular-nota" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning" id="btn-anular-nota">Anular</button>
+        </div>
+    </div>
+</div>
 
 
 {% endblock %}
@@ -927,6 +926,9 @@
             const comprador = e.target.dataset.comprador;
             document.getElementById('idNotaEliminar').innerHTML = id;
             document.getElementById('compradorNotaEliminar').innerHTML = ' - ' + comprador;
+
+            const modalEliminar = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
+            modalEliminar.show();
             }
         );
     });
