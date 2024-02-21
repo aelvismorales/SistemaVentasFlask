@@ -226,7 +226,7 @@
                             <div style="text-align: left;"><span style="text-align: center;">Telefono: (01)-758 9381 &nbsp;Celular: 981193256</span></div>
                             <br>
                             <div style="text-align: left;"> <em>VENTA DE AGREGADOS Y MATERIALES DE CONSTRUCCION</em></div>
-                            <div style="text-align: left;"> Vendedora: @Milagros</div>
+                            <div style="text-align: left;" id="modal-vendedor"></div>
                         </div>
                         
                         <div class="container comprador-info" style="margin-top: 16px; padding: 0px;">
@@ -257,6 +257,8 @@
                                         </tr>-->
                                     </tbody>
                                 </table>
+                                <p style="width: 100%; height: 25px; font-size: 80%; text-align: center; "><span style="color: #000000;">DEJO A CUENTA <span style="color: #000000;" id="modal-acuenta"> </span></p>
+                                <p style="width: 100%; height: 25px; font-size: 80%; text-align: center; "><span style="color: #000000;">TIENE UN SALDO DE <span style="color: #000000;" id="modal-deuda"> </span></p>
                                 <p style="width: 100%; height: 25px; font-size: 80%; text-align: center; "><span style="color: #000000;"><strong> UNICO COMPROBRANTE PARA RECOGER SU MERCADERIA Y CAMBIARLA POR BOLETA O FACTURA</strong></span></p>
                                     <div style="font-size: 70%; text-align: center;">
                                       RECUERDE POR FAVOR REVISAR SU VUELTO Y LA MERCADERIA ANTES DE RETIRARSE DEL LOCAL
@@ -829,12 +831,18 @@
             const modalDNI=verModalElemento.querySelector('#modal-dni');
             const tablaProductos=verModalElemento.querySelector('#tabla-productos');
             const modalEstado=verModalElemento.querySelector('#modal-estado');
+            const modalVendedor=verModalElemento.querySelector('#modal-vendedor');
+            const modalACuenta=verModalElemento.querySelector('#modal-acuenta');
+            const modalDeuda=verModalElemento.querySelector('#modal-deuda');
 
             //Obteniendo datos desde llamada GET
             fetch(`{{url_for('note.vernotapedido', id='')}}${id}`)
                 .then(response => response.json())
                 .then(data => {
                     modalEstado.textContent = data[0].estado;
+                    modalVendedor.innerHTML = '<strong>Vendedor(a):</strong>'+' '+ data[0].nombre_vendedor;
+                    modalACuenta.innerHTML = `<strong>S/ ${data[0].acuenta}</strong>`;
+                    modalDeuda.innerHTML = `<strong>S/ ${data[0].deuda}</strong>`;
                     modalComprador.innerHTML='<strong>Sr.(es):</strong>'+ ' ' + data[0].nombre_comprador;
                     modalTelefono.innerHTML='<strong>Telefono:</strong>'+ ' ' + data[0].numero_comprador;
                     modalDireccion.innerHTML='<strong>Direcci&oacute;n:</strong>'+ ' ' + data[0].direccion_comprador;
