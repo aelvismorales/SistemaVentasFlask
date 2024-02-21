@@ -388,7 +388,7 @@
 </div>
 
 <!--Modal para Eliminar Nota de Pedido-->
-<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="anularModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="eliminarModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -402,7 +402,7 @@
                 ¿Estás seguro de Eliminar la nota <span id="idNotaEliminar"></span><span id="compradorNotaEliminar"></span>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btn-close-anular-nota" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" id="btn-close-eliminar-nota" data-bs-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-warning" id="btn-eliminar-nota">Anular</button>
         </div>
     </div>
@@ -922,6 +922,7 @@
     const btnEliminar = document.querySelectorAll('#btn-eliminar');
     btnEliminar.forEach((btn)=>{
         btn.addEventListener('click',(e)=>{
+            e.preventDefault();
             const id = e.target.dataset.id;
             const comprador = e.target.dataset.comprador;
             document.getElementById('idNotaEliminar').innerHTML = id;
