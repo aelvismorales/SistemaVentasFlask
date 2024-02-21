@@ -203,6 +203,21 @@ def anularnota(id):
 		return jsonify({'message':'No se pudo encontrar la nota de pedido','status':'error'},400)
 
 #Utilizando actualmente
+@note.route('/eliminar-nota-pedido/<string:id>',methods=['GET'])
+def eliminar_nota_pedido(id):
+	nota=Nota_de_Pedido.query.get(id)
+	if nota:
+		try:
+			db.session.delete(nota)
+			db.session.commit()
+			return jsonify({'message':'Se elimino la nota de pedido {}'.format(id)},200)
+		except Exception as e:
+			db.session.rollback()
+			return jsonify({'message':'Error al eliminar la nota de pedido', 'error': str(e)}, 500)
+	else:
+		return jsonify({'message':'No se pudo encontrar la nota de pedido'},400)
+
+#Utilizando actualmente
 @note.route('/ver_notas_pedido',methods=['GET','POST'])
 def ver_notas_pedido():
 

@@ -387,6 +387,29 @@
     </div>
 </div>
 
+<!--Modal para Eliminar Nota de Pedido-->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="anularModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarModalTitle">Confirmacion Eliminar Nota de Pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="btn-close-eliminar-nota"></button>
+            </div>
+            <div id="messagesLoaderModalEliminar">
+
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de Eliminar la nota <span id="idNotaEliminar"></span><span id="compradorNotaEliminar"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-close-anular-nota" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning" id="btn-eliminar-nota">Anular</button>
+        </div>
+    </div>
+</div>
+
+
+
 {% endblock %}
 
 {% block scripts %}
@@ -894,6 +917,49 @@
         })
     });
 
+
+    // Eliminar Nota de Pedido
+    const btnEliminar = document.querySelectorAll('#btn-eliminar');
+    btnEliminar.forEach((btn)=>{
+        btn.addEventListener('click',(e)=>{
+            const id = e.target.dataset.id;
+            const comprador = e.target.dataset.comprador;
+            document.getElementById('idNotaEliminar').innerHTML = id;
+            document.getElementById('compradorNotaEliminar').innerHTML = ' - ' + comprador;
+
+            const modalEliminar = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
+            modalEliminar.show();
+            }
+        );
+    });
+
+    // Eliminar Nota despues de Confirmar Modal
+    document.getElementById('btn-eliminar-nota').addEventListener('click', function(){
+        let id = document.getElementById('idNotaEliminar').innerHTML;
+        let url_eliminar = `{{url_for('note.eliminar_nota_pedido', id='')}}${id}`;
+        
+        $.ajax({
+            url:url_eliminar,
+            type: 'GET',
+            success:function(data){
+                if (data[0]['status'] == 'success'){
+                    mostrarMensajeLoaderEliminar(data[0]['message'],'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    mostrarMensajeLoaderEliminar(data[0]['message'],'danger');
+                }
+            },
+            error:function(error){
+                console.error('Error:', error);
+            }
+        })
+    });
+
+
+
+
     // Funcion mensajeLoader
     function mostarMensajeLoader(mensaje,tipo){
         document.getElementById("messagesLoader").innerHTML = `
@@ -912,6 +978,21 @@
     // Funcion mensajeLodarModalAnular
     function mostarMensajeLoaderModalAnular(mensaje,tipo){
         document.getElementById("messagesLoaderModalAnular").innerHTML = `
+        <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            ${mensaje}
+            <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            ></button>
+        </div>
+        `;
+    }
+
+    // Funciones para Eliminar la Nota de Pedido
+    function mostrarMensajeLoaderEliminar(mensaje,tipo){
+        document.getElementById("messagesLoaderModalEliminar").innerHTML = `
         <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
             ${mensaje}
             <button
