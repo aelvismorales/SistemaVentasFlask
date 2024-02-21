@@ -907,7 +907,7 @@
                     mostarMensajeLoaderModalAnular(data[0]['message'],'success');
                     setTimeout(() => {
                         location.reload();
-                    }, 2000);
+                    }, 1500);
                 } else {
                     mostarMensajeLoaderModalAnular(data[0]['message'],'danger');
                 }
@@ -948,9 +948,12 @@
                     mostrarMensajeLoaderEliminar(data[0]['message'],'success');
                     setTimeout(() => {
                         location.reload();
-                    }, 2000);
+                    }, 1500);
                 } else {
                     mostrarMensajeLoaderEliminar(data[0]['message'],'danger');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 }
             },
             error:function(error){
