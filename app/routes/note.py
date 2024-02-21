@@ -721,6 +721,6 @@ def imprimire(id):
 #Utilizando actualmente
 @note.route('/ver-ingresos-salidas',methods=['GET'])
 def ver_ingresos_salidas():
-	json_filtrado_ingresos = Detalle_Caja.get_json_filtrado_por_tipo('INGRESO')
-	json_filtrado_egresos = Detalle_Caja.get_json_filtrado_por_tipo('EGRESO')
+	json_filtrado_ingresos = Detalle_Caja.get_json_filtrado_por_tipo('INGRESO',None,None)
+	json_filtrado_egresos = Detalle_Caja.get_json_filtrado_por_tipo('EGRESO',None,None)
 	return render_template('ver_ingresos_salidas.html', ingresos=json_filtrado_ingresos, egresos=json_filtrado_egresos)
