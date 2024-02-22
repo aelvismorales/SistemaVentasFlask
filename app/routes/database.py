@@ -7,12 +7,21 @@ database=Blueprint('database',__name__)
 
 @database.route('/llenarproductos')
 def llenarproductos():
-	prd=pd.read_csv('producto.csv')
-	for i in prd.index:
-		productos=Producto(prd['nombre_producto'][i],prd['precio_costo_producto'][i],prd['precio_venta_producto'][i],prd['stock'][i])
-		db.session.add(productos)
+	try:
+		prd=pd.read_csv('/var/www/html/SistemaVentasFlask/lista_productos.csv')
+		#Lista para almacenar las instancias de los productos
+		productos=[]
+		#Llenar la lista con las instancias de los productos
+		for i in prd.index:
+			productos.append(Producto(prd['nombre_producto'][i],prd['precio_costo_producto'][i],prd['precio_venta_producto'][i],prd['stock'][i]))
+		
+		#Agregar los productos a la base de datos
+		db.session.add_all(productos)
 		db.session.commit()
-	return redirect(url_for('product.buscar_producto'))
+		return redirect(url_for('product.buscar_producto'))
+	except Exception as e:
+		print(f"Error al llenar los productos : {str(e)}")
+		return redirect(url_for('product.buscar_producto'))
 
 @database.route('/llenarnotas')
 def llenarnotas():
