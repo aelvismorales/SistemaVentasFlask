@@ -78,26 +78,32 @@
                         </tr>
                         </thead>
                         <tbody id="tabla-body-ingresos">
+                            {% for ingreso in ingresos.detalles%}
                             <tr style="text-align: center;">
-                                <th scope="row">1</th>
-                                <td>2021-10-10</td>
-                                <td>1</td>
-                                <td>Nota</td>
-                                <td>Jose</td>
+                                <th scope="row">{{ingreso.id}}</th>
+                                <td>{{ingreso.fecha_creacion}}</td>
+                                <td>{{ingreso.nota_id}}</td>
+                                <td>{{ingreso.tipo}}</td>
+                                <td>{{ingreso.usuario_nombre}}</td>
                                 <td>
+                                    {$ if ingreso.anulado == False $}
+                                    <iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>
+                                    {% else %}
                                     <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                    {% endif %}>
                                 </td>
-                                <td>Comentario</td>
-                                <td>100</td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>0</td>
+                                <td>{{ingreso.comentario}}</td>
+                                <td>{{ingreso.pagoEfectivo}}</td>
+                                <td>{{ingreso.pagoVisa}}</td>
+                                <td>{{ingreso.pagoBBVA}}</td>
+                                <td>{{ingreso.pagoBCP}}</td>
+                                <td>{{ingreso.pagoYape}}</td>
                                 <td>
-                                    <button class="btn btn-outline-primary">Ver Detalle</button>
-                                    <button class="btn btn-outline-danger">Anular</button>
+                                    <button class="btn btn-outline-primary" data-id="{{ingreso.id}}">Ver Detalle</button>
+                                    <button class="btn btn-outline-danger" data-id="{{ingreso.id}}">Anular</button>
                                 </td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -140,26 +146,33 @@
                         </tr>
                         </thead>
                         <tbody id="tabla-body-egresos">
+                            {% for egreso in egresos.detalles%}
                             <tr style="text-align: center;">
-                                <th scope="row">1</th>
-                                <td>2021-10-10</td>
-                                <td>1</td>
-                                <td>Nota</td>
-                                <td>Jose</td>
+                                <th scope="row">{{egreso.id}}</th>
+                                <td>{{egreso.fecha_creacion}}</td>
+                                <td>{{egreso.nota_id}}</td>
+                                <td>{{egreso.tipo}}</td>
+                                <td>{{egreso.usuario_nombre}}</td>
                                 <td>
+                                    {$ if egreso.anulado == False $}
                                     <iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>
+                                    {% else %}
+                                    <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                    {% endif %}
+
                                 </td>
-                                <td>Comentario</td>
-                                <td>100</td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>0</td>
+                                <td>{{egreso.comentario}}</td>
+                                <td>{{egreso.pagoEfectivo}}</td>
+                                <td>{{egreso.pagoVisa}}</td>
+                                <td>{{egreso.pagoBBVA}}</td>
+                                <td>{{egreso.pagoBCP}}</td>
+                                <td>{{egreso.pagoYape}}</td>
                                 <td>
-                                    <button class="btn btn-outline-primary">Ver Detalle</button>
-                                    <button class="btn btn-outline-danger">Anular</button>
+                                    <button class="btn btn-outline-primary" data-id="{{egreso.id}}">Ver Detalle</button>
+                                    <button class="btn btn-outline-danger" data-id="{{egreso.id}}">Anular</button>
                                 </td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>

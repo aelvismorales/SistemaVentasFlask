@@ -372,7 +372,8 @@ class Detalle_Caja(db.Model):
     #def get_nota_dinero(self):
     #    return self.nota_dinero
     def get_json(self):
-        json={"id":self.id,"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'),"nota_id":self.nota_id,"pagoEfectivo":self.pagoEfectivo,"pagoVisa":self.pagoVisa,"pagoBBVA":self.pagoBBVA,"pagoBCP":self.pagoBCP,"pagoYape":self.pagoYape,"tipo":self.tipo,"comentario":self.comentario,"usuario_id":self.usuario_id,"anulado":self.anulado}
+        usuario_nombre = Usuario.query.filter_by(id=self.usuario_id).first().get_nombre()
+        json={"id":self.id,"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'),"nota_id":self.nota_id,"pagoEfectivo":self.pagoEfectivo,"pagoVisa":self.pagoVisa,"pagoBBVA":self.pagoBBVA,"pagoBCP":self.pagoBCP,"pagoYape":self.pagoYape,"tipo":self.tipo,"comentario":self.comentario,"usuario_nombre":self.usuario_nombre,"anulado":self.anulado}
         return json if json is not None else {}
         
     def get_anulado(self):
