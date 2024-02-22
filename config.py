@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SECRET_KEY=environ.get('SECRET_KEY')
+    SECRET_KEY=environ.get('SECRET_KEY') or '4kkAREdsre2/5'
     SQLALCHEMY_COMMIT_ON_TEARDOWN=True
     TEMPLATE_FOLDER="/var/www/html/SistemaVentasFlask/app/views/templates"
     STATIC_FOLDER="/var/www/html/SistemaVentasFlask/app/views/static"
@@ -23,7 +23,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
-    SECRET_KEY=environ.get('SECRET_KEY')
+    SECRET_KEY=environ.get('SECRET_KEY') or '4kkAREdsre2/5'
     SQLALCHEMY_DATABASE_URI=environ.get('DATABASE_PRODUCTION') or 'mysql+pymysql://root:admin@localhost/sistemaventas'
     #SQLALCHEMY_DATABASE_URI=environ.get('DATABASE_URL').replace('postgres','postgresql')
 
