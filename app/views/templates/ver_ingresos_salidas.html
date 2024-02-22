@@ -85,8 +85,9 @@
                                 <td>{{ingreso.nota_id}}</td>
                                 <td>{{ingreso.tipo}}</td>
                                 <td>{{ingreso.usuario_nombre}}</td>
-                                <td>
-                                    <iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>
+                                <td >
+                                    <!--<iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>-->
+                                    {{ingreso.anulado}}
                                 </td>
                                 <td>{{ingreso.comentario}}</td>
                                 <td>{{ingreso.pagoEfectivo}}</td>
@@ -149,8 +150,9 @@
                                 <td>{{egreso.nota_id}}</td>
                                 <td>{{egreso.tipo}}</td>
                                 <td>{{egreso.usuario_nombre}}</td>
-                                <td>
-                                    <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                <td >
+                                    <!--<iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>-->
+                                    {{egreso.anulado}}
                                 </td>
                                 <td>{{egreso.comentario}}</td>
                                 <td>{{egreso.pagoEfectivo}}</td>
@@ -234,11 +236,6 @@
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
                 },
                 customize: function(win){
-                    // Cargar Iconify JS durante la personalización de la impresión
-                    //var iconifyScript = document.createElement('script');
-                    //iconifyScript.src = 'https://cdn.jsdelivr.net/npm/iconify-icon@2.0.0/dist/iconify-icon.min.js';
-                    //$(win.document.body).append(iconifyScript);
-                    //$(win.document.body).append('<script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"><\/script>');
                     var contenidoClonado = $('#resumen-ingresos').clone()
                     $(win.document.body).append(contenidoClonado);
                 }
@@ -295,13 +292,6 @@
                 text:'Imprimir',
                 exportOptions: {
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
-                },
-                customize: function(win){
-                    // Cargar Iconify JS durante la personalización de la impresión
-                    //var iconifyScript = document.createElement('script');
-                    //iconifyScript.src = 'https://cdn.jsdelivr.net/npm/iconify-icon@2.0.0/dist/iconify-icon.min.js';
-                    //$(win.document.body).append(iconifyScript);
-                    //$(win.document.body).append('<script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"><\/script>');
                 }
             }
         ],
@@ -320,6 +310,8 @@
             }
         }	
     })
+
+    // Cargando Iconos
 
 </script>
 
