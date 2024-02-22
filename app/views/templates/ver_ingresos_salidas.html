@@ -87,9 +87,13 @@
                                 <td>{{ingreso.usuario_nombre}}</td>
                                 <td >
                                     {% if ingreso.anulado == False %}
-                                    <iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>
+                                    <div aria-label="No" role="img">
+                                        <iconify-icon icon="mdi:close-thick" width="26px" height="26px" style="color: #cc0000"></iconify-icon>
+                                    </div>
                                     {% else %}
-                                    <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                    <div aria-label="Si" role="img">
+                                        <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                    </div>
                                     {% endif %}
                                 </td>
                                 <td>{{ingreso.comentario}}</td>
@@ -155,9 +159,13 @@
                                 <td>{{egreso.usuario_nombre}}</td>
                                 <td >
                                     {% if egreso.anulado == False %}
-                                    <iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>
+                                    <div aria-label="No" role="img">
+                                        <iconify-icon icon="mdi:close-thick" width="26px" height="26px" style="color: #cc0000"></iconify-icon>
+                                    </div>
                                     {% else %}
-                                    <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                    <div aria-label="Si" role="img">
+                                        <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                    </div>
                                     {% endif %}
                                 </td>
                                 <td>{{egreso.comentario}}</td>
