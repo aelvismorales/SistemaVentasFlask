@@ -12,10 +12,11 @@ note=Blueprint("note",__name__)
 
 @note.before_request
 def beforerequest():
+	if request.endpoint == 'auth.crear':
+		return
 	if not current_user.is_authenticated:
 		flash('Debes iniciar sesión para acceder a esta página',category='error')
 		return redirect(url_for("auth.login"))
-
 #Utilizando actualmente
 @note.route('/crearnotaventa',methods=['GET','POST'])
 def crear_nota_venta():

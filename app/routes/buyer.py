@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify,request,render_template,redirect,url_for,session,flash
 from ..forms.formularios import CrearComprador
 from ..models.modelos import Comprador
+from flask_login import current_user
 
 from app import db
 
@@ -8,15 +9,11 @@ buyer=Blueprint("buyer",__name__)
 
 @buyer.before_request
 def beforerequest():
-    global loge
-    loge=False
-    global produ 
-    produ=False
-    
-    if 'username' in session:
-        loge=True
-    if 'producto' in session:
-        produ=True
+    if request.endpoint == 'auth.crear':
+        return
+    if not current_user.is_authenticated:
+        flash('Debes iniciar sesión para acceder a esta página',category='error')
+        return redirect(url_for("auth.login"))
 
 @buyer.route('/crearcomprador',methods=['GET','POST'])
 def crearcomprador():

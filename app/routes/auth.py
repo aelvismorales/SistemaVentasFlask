@@ -5,7 +5,7 @@ from flask_login import login_user,logout_user,login_required,current_user
 from datetime import timedelta
 auth=Blueprint("auth",__name__)
 
-@auth.before_request()
+@auth.before_request
 def before_request():
     if request.endpoint == 'auth.crear':
         return

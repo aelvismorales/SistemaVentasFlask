@@ -3,10 +3,19 @@ from ..forms.formularios import CrearProducto,BuscarProducto,EditarProducto
 from ..models.modelos import Producto
 from ..decorators import administrador_requerido
 from datetime import datetime, timedelta, timezone
+from flask_login import current_user
 from app import db
 
 
 product=Blueprint("product",__name__)
+
+@product.before_request
+def before_request():
+    if request.endpoint == 'auth.crear':
+        return
+    if not current_user.is_authenticated:
+        flash('Debes iniciar sesión para acceder a esta página',category='error')
+        return redirect(url_for("auth.login"))
 
 @product.route('/eliminarproducto/<id>',methods=['GET'])
 @administrador_requerido
