@@ -349,8 +349,19 @@
         }	
     })
 
-    // Cargando Iconos
-
 </script>
 
+<!-- Script para Filtrar la Tabla de Contenido -->
+<script>
+    $('#form_buscar_detalles').submit(function(event){
+        event.preventDefault()
+        var fecha_inicio = $('#buscar_fecha_inicio').val()
+        var fecha_fin = $('#buscar_fecha_fin').val()
+        var url = "{{url_for('note.ver_ingresos_salidas')}}"
+        if(fecha_inicio && fecha_fin){
+            url = url + `?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}`
+        }
+        window.location.href = url
+    })
+</script>
 {%endblock%}

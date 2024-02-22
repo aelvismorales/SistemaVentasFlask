@@ -721,6 +721,14 @@ def imprimire(id):
 #Utilizando actualmente
 @note.route('/ver-ingresos-salidas',methods=['GET'])
 def ver_ingresos_salidas():
-	json_filtrado_ingresos = Detalle_Caja.get_json_filtrado_por_tipo('INGRESO',None,None)
-	json_filtrado_egresos = Detalle_Caja.get_json_filtrado_por_tipo('EGRESO',None,None)
+
+	# Obteniendo argumentos
+	args=request.args
+
+	# Inicializando variables
+	fecha_inicio_actual = args.get('fecha_inicio', default=(datetime.today().date()).strftime('%Y/%m/%d'))
+	fecha_final_actual = args.get('fecha_final', default=(datetime.today().date() + timedelta(days=1)).strftime('%Y/%m/%d'))
+
+	json_filtrado_ingresos = Detalle_Caja.get_json_filtrado_por_tipo('INGRESO',fecha_inicio_actual,fecha_final_actual)
+	json_filtrado_egresos = Detalle_Caja.get_json_filtrado_por_tipo('EGRESO',fecha_inicio_actual,fecha_final_actual)
 	return render_template('ver_ingresos_salidas.html', ingresos=json_filtrado_ingresos, egresos=json_filtrado_egresos)
