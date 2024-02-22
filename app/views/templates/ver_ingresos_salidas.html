@@ -114,18 +114,18 @@
                     </table>
                 </div>
             </div>
-            <div class="col-12 col-xl-2 order-2  order-xl-1 d-flex justify-content-center" style="max-height: 350px;">
+            <div class="col-6 col-xl-2 order-2  order-xl-1 d-flex justify-content-center" style="max-height: 350px;">
                 <!-- Resumen Ingresos-->
                 <div class="card text-black  mb-3" style="max-width: 18rem;" id ="resumen-ingresos">
                     <div class="card-header">Resumen Ingresos</div>
                     <div class="body-resumen">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>General: S/.</strong> <span id="general_resumen">100</span></li>
-                            <li class="list-group-item"> <strong>Efectivo: S/</strong> <span id="efectivo_resumen">10</span></li>
-                            <li class="list-group-item"><strong>Visa: S/</strong> <span id="visa_resumen">25</span></li>
-                            <li class="list-group-item"><strong>BBVA: S/</strong> <span id="bbva_resumen">30</span> </li>
-                            <li class="list-group-item"><strong>BCP: S/</strong> <span id="bcp_resumen">50</span> </li>
-                            <li class="list-group-item"><strong>Yape: S/</strong> <span id="yape_resumen">75</span> </li>
+                            <li class="list-group-item"><strong>General: S/.</strong> <span id="general_resumen">{{ingresos.sum_general}}</span></li>
+                            <li class="list-group-item"> <strong>Efectivo: S/</strong> <span id="efectivo_resumen">{{ingresos.sum_pago_efectivo}}</span></li>
+                            <li class="list-group-item"><strong>Visa: S/</strong> <span id="visa_resumen">{{ingresos.sum_pago_visa}}</span></li>
+                            <li class="list-group-item"><strong>BBVA: S/</strong> <span id="bbva_resumen">{{ingresos.sum_pago_bbva}}</span> </li>
+                            <li class="list-group-item"><strong>BCP: S/</strong> <span id="bcp_resumen">{{ingresos.sum_pago_bcp}}</span> </li>
+                            <li class="list-group-item"><strong>Yape: S/</strong> <span id="yape_resumen">{{ingresos.sum_pago_yape}}</span> </li>
                         </ul>
                     </div>
                 </div>
@@ -188,18 +188,18 @@
                     </table>
                 </div>
             </div>
-            <div class="col-12 col-xl-2 order-3  order-xl-3 d-flex justify-content-center" style="max-height: 350px;">
+            <div class="col-6 col-xl-2 order-3  order-xl-3 d-flex justify-content-center" style="max-height: 350px;">
                 <!-- Resumen Egresos-->
-                <div class="card text-black  mb-3" style="max-width: 18rem;" id ="resumen-ingresos">
+                <div class="card text-black  mb-3" style="max-width: 18rem;" id ="resumen-egresos">
                     <div class="card-header">Resumen Egresos</div>
                     <div class="body-resumen">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item"><strong>General: S/.</strong> <span id="general_resumen">100</span></li>
-                            <li class="list-group-item"> <strong>Efectivo: S/</strong> <span id="efectivo_resumen">10</span></li>
-                            <li class="list-group-item"><strong>Visa: S/</strong> <span id="visa_resumen">25</span></li>
-                            <li class="list-group-item"><strong>BBVA: S/</strong> <span id="bbva_resumen">30</span> </li>
-                            <li class="list-group-item"><strong>BCP: S/</strong> <span id="bcp_resumen">50</span> </li>
-                            <li class="list-group-item"><strong>Yape: S/</strong> <span id="yape_resumen">75</span> </li>
+                            <li class="list-group-item"><strong>General: S/.</strong> <span id="general_resumen">{{egresos.sum_general}}</span></li>
+                            <li class="list-group-item"> <strong>Efectivo: S/</strong> <span id="efectivo_resumen">{{egresos.sum_pago_efectivo}}</span></li>
+                            <li class="list-group-item"><strong>Visa: S/</strong> <span id="visa_resumen">{{egresos.sum_pago_visa}}</span></li>
+                            <li class="list-group-item"><strong>BBVA: S/</strong> <span id="bbva_resumen">{{egresos.sum_pago_bbva}}</span> </li>
+                            <li class="list-group-item"><strong>BCP: S/</strong> <span id="bcp_resumen">{{egresos.sum_pago_bcp}}</span> </li>
+                            <li class="list-group-item"><strong>Yape: S/</strong> <span id="yape_resumen">{{egresos.sum_pago_yape}}</span> </li>
                         </ul>
                     </div>
                 </div>
@@ -326,6 +326,10 @@
                 text:'Imprimir',
                 exportOptions: {
                     columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                },
+                customize: function(win){
+                    var contenidoClonado = $('#resumen-egresos').clone()
+                    $(win.document.body).append(contenidoClonado);
                 }
             }
         ],

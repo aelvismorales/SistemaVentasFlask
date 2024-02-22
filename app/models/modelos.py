@@ -395,6 +395,7 @@ class Detalle_Caja(db.Model):
         sum_pago_bbva = sum([detalle.pagoBBVA for detalle in detalles])
         sum_pago_bcp = sum([detalle.pagoBCP for detalle in detalles])
         sum_pago_yape = sum([detalle.pagoYape for detalle in detalles])
+        sum_general = sum_pago_efectivo + sum_pago_visa + sum_pago_bbva + sum_pago_bcp + sum_pago_yape
 
-        filtered_json = {"tipo":tipo,"detalles": [detalle.get_json() for detalle in detalles],"sum_pago_efectivo":sum_pago_efectivo,"sum_pago_visa":sum_pago_visa,"sum_pago_bbva":sum_pago_bbva,"sum_pago_bcp":sum_pago_bcp,"sum_pago_yape":sum_pago_yape}
+        filtered_json = {"tipo":tipo,"detalles": [detalle.get_json() for detalle in detalles],"sum_general":sum_general,"sum_pago_efectivo":sum_pago_efectivo,"sum_pago_visa":sum_pago_visa,"sum_pago_bbva":sum_pago_bbva,"sum_pago_bcp":sum_pago_bcp,"sum_pago_yape":sum_pago_yape}
         return filtered_json
