@@ -1,7 +1,7 @@
-from decimal import Decimal
 from flask import Blueprint, jsonify,request,render_template,redirect,url_for,session,flash
 from ..forms.formularios import CrearProducto,BuscarProducto,EditarProducto
 from ..models.modelos import Producto
+from ..decorators import administrador_requerido
 from datetime import datetime, timedelta, timezone
 from app import db
 
@@ -9,6 +9,7 @@ from app import db
 product=Blueprint("product",__name__)
 
 @product.route('/eliminarproducto/<id>',methods=['GET'])
+@administrador_requerido
 def eliminarproducto(id):
     producto_eliminar=Producto.query.get(id)
     if producto_eliminar:

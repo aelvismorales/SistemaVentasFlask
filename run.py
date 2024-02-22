@@ -1,6 +1,7 @@
 from app import create_app
-import os
+from os import environ
 
-app = create_app("default")
+config_name=environ.get('APP_SETTINGS_MODULE') or "default"
+app = create_app(config_name)
 if __name__=="__main__":
-    app.run()
+    app.run(host="0.0.0.0",port=5000)

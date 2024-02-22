@@ -2,7 +2,8 @@ from decimal import Decimal
 from flask import Blueprint,request,render_template,redirect,url_for,session,flash,jsonify
 from flask_login import current_user
 from ..models.modelos import Comprador,Nota_de_Pedido,Producto,Detalle_Caja
-from sqlalchemy import asc, desc
+from ..decorators import administrador_requerido
+from sqlalchemy import asc
 from datetime import datetime, timedelta
 import json
 from app import db
@@ -11,15 +12,10 @@ note=Blueprint("note",__name__)
 
 @note.before_request
 def beforerequest():
-    global loge
-    loge=False
-    global produ 
-    produ=False
-    
-    if 'username' in session:
-        loge=True
-    if 'producto' in session:
-        produ=True
+	if not current_user.is_authenticated:
+		flash('Debes iniciar sesión para acceder a esta página',category='error')
+		return redirect(url_for("auth.login"))
+
 #Utilizando actualmente
 @note.route('/crearnotaventa',methods=['GET','POST'])
 def crear_nota_venta():
@@ -94,11 +90,7 @@ def crear_nota_venta():
 				return jsonify({'message':'Se creo la nota de pedido para {} y se registro como nuevo comprador'.format(nombre),'id':nota.get_id()},201)
 			else:
 				return jsonify({'message':'No se pudo crear la nota de pedido, intentelo nuevamente'},400)			
-
 	return render_template('nota_pedido.html')
-
-# Va a existir una ruta para  editar solamente la nota de pedido la cual va a ser la misma que la de crear nota de pedido en vista pero con un id de la nota de pedido
-# Creo tendria que tener otra diferentes nombres en LocalStorage para cuando me encuentro en la pantalla de edicion de nota de pedido.
 
 #Utilizando actualmente
 @note.route('/editarnotaventa/<string:id>',methods=['GET','POST'])
@@ -112,12 +104,10 @@ def editarnotaventa(id=None):
 		return render_template('nota_pedido_editar.html',nota=nota.get_json())
 
 	elif nota and request.method=='POST':
-		print("Entro al POST de editar nota de pedido")
 		data= request.get_json()
 
 		nombre= data['nombre_comprador'] if data['nombre_comprador'] else nota.get_nombre_comprador()
 		direccion=data['direccion_comprador'] if data['direccion_comprador'] else nota.get_direccion()
-		#dni=data['dni_comprador'] if data['dni_comprador'] else nota.get_dni_nota()
 		telefono=data['telefono_comprador'] if data['telefono_comprador'] else nota.get_telefono_nota()
 		estado_nota=data['inputEstado1'] if data['inputEstado1'] else None
 		estado_nota_2=data['inputEstado2'] if data['inputEstado2'] else None
@@ -204,6 +194,7 @@ def anularnota(id):
 
 #Utilizando actualmente
 @note.route('/eliminar-nota-pedido/<string:id>',methods=['GET'])
+@administrador_requerido
 def eliminar_nota_pedido(id):
 	nota=Nota_de_Pedido.query.get(id)
 	if nota:
@@ -220,9 +211,6 @@ def eliminar_nota_pedido(id):
 #Utilizando actualmente
 @note.route('/ver_notas_pedido',methods=['GET','POST'])
 def ver_notas_pedido():
-
-	# request.args.get('page', 1, type=int) , de esta manera obtenemos args desde url
-
 	if request.method=='GET':
 		#Verificar la cantidad de argumentos que estoy recibiendo
 		args=request.args
@@ -540,21 +528,6 @@ def ver_notas_pedido():
 		return jsonify({'message':'No se pudo cargar las notas de pedido'},400)
 
 
-
-
-	debt=float(request.form['debt'])
-	session['deuda']=0
-	if request.method=='POST':
-		session.modified=True
-		if debt>=0 and debt<session['total_venta']:
-			session['acuenta']=debt
-		else:
-			flash("No se puede actualizar el acuenta por que es mayor que el monto total.","error")
-		return redirect(url_for('product.buscar_producto'))
-
-	return redirect(url_for('product.buscar_producto'))
-
-
 #Utilizado actualmente
 @note.route('/validar-deuda/<string:id>',methods=['GET'])
 def validar_deuda(id):
@@ -581,7 +554,6 @@ def nuevoingresosalida():
 		tipo =  data.get('inputTipoSalida',None)
 		notaID = data.get('inputNotaID',None)
 		comentario = data.get('inputComentario',None)
-		#monto = Decimal(data.get('inputDinero',0.00)).quantize(Decimal("1e-{0}".format(2))) 
 		usuario_id = current_user.get_id()
 
 		pagoEfectivo = Decimal(data.get('pagoEfectivoInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
@@ -589,17 +561,6 @@ def nuevoingresosalida():
 		pagoBCP = Decimal(data.get('pagoBCPInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
 		pagoBBVA = Decimal(data.get('pagoBBVAInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
 		pagoYAPE = Decimal(data.get('pagoYAPEInput',0.00)).quantize(Decimal("1e-{0}".format(2)))
-
-		#if tipo == "INGRESO":
-		#	notaDinero = 0.00 if data.get('inputDineroIngreso',0.00) == '' else data.get('inputDineroIngreso',0.00)
-		#elif tipo == "EGRESO":
-		#	notaDinero = 0.00 if data.get('inputDineroDevolver',0.00) == '' else data.get('inputDineroDevolver',0.00)
-		#else:
-		#	return jsonify({'message':'No se ha seleccionado Ingreso o Egreso','status':'error'},400)
-		#notaDinero = Decimal(notaDinero).quantize(Decimal("1e-{0}".format(2)))
-		
-		#Crear el nuevo ingreso o egreso
-		# Verificar que existe la nota de pedido
 		
 		notapedido = None
 		if notaID:

@@ -4,8 +4,6 @@ from ..models.modelos import Comprador
 
 from app import db
 
-
-
 buyer=Blueprint("buyer",__name__)
 
 @buyer.before_request
@@ -19,7 +17,6 @@ def beforerequest():
         loge=True
     if 'producto' in session:
         produ=True
-
 
 @buyer.route('/crearcomprador',methods=['GET','POST'])
 def crearcomprador():
