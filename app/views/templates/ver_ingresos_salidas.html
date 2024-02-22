@@ -37,7 +37,7 @@
 
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid mt-3">
     <!--Contenedor de Filtro por Fecha-->
     <div class="container-md">
         <form action="#" id="form_buscar_detalles">
@@ -56,9 +56,110 @@
     <!-- Contenedor Tabla de Contenido e Resumen-->
     <div class="container-fluid">
         <div class="row row-cols-2">
-            <div class="col">columna1</div>
-            <div class="col">columna2</div>
-            <div class="col">columna3</div>
+            <div class="col-8">
+                <!-- Tabla Contenido Resumen Ingresos-->
+                <div class="table-responsive" id="tabla-contenido-ingresos">
+                    <table class="table table-success table-striped">
+                        <thead class="table-dark" id="tabla-head-ingresos">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Nota_ID</th>
+                            <th class="col">Tipo</th>
+                            <th class="col">Vendedor</th>
+                            <th class="col">Anulado</th>
+                            <th class="col">Comentario</th>
+                            <th scope="col">Pago_Efectivo</th>
+                            <th scope="col">Pago_Visa</th>
+                            <th scope="col">Pago_BBVA</th>
+                            <th class="col">Pago_BCP</th>
+                            <th scope="col">Pago_Yape</th>
+                            <th class="col">Opciones</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabla-body-ingresos">
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>2021-10-10</td>
+                                <td>1</td>
+                                <td>Nota</td>
+                                <td>Jose</td>
+                                <td>False</td>
+                                <td>Comentario</td>
+                                <td>100</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>
+                                    <button class="btn btn-outline-primary">Ver Detalle</button>
+                                    <button class="btn btn-outline-danger">Anular</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-4 d-flex justify-content-center" style="max-height: 300px;">
+                <!-- Resumen Ingresos-->
+                <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+                    <div class="card-header">Resumen Ingresos</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>General: S/.</strong> <span id="general_resumen">100</span></li>
+                            <li class="list-group-item"> <strong>Efectivo: S/</strong> <span id="efectivo_resumen">10</span></li>
+                            <li class="list-group-item"><strong>Visa: S/</strong> <span id="visa_resumen">25</span></li>
+                            <li class="list-group-item"><strong>BBVA: S/</strong> <span id="bbva_resumen">30</span> </li>
+                            <li class="list-group-item"><strong>BCP: S/</strong> <span id="bcp_resumen">50</span> </li>
+                            <li class="list-group-item"><strong>Yape: S/</strong> <span id="yape_resumen">75</span> </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <!-- Tabla Contenido Resumen Egresos-->
+                <div class="table-responsive" id="tabla-contenido-egresos">
+                    <table class="table table-danger table-striped">
+                        <thead class="table-dark" id="tabla-head-egresos">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Nota_ID</th>
+                            <th class="col">Tipo</th>
+                            <th class="col">Vendedor</th>
+                            <th class="col">Anulado</th>
+                            <th class="col">Comentario</th>
+                            <th scope="col">Pago_Efectivo</th>
+                            <th scope="col">Pago_Visa</th>
+                            <th scope="col">Pago_BBVA</th>
+                            <th class="col">Pago_BCP</th>
+                            <th scope="col">Pago_Yape</th>
+                            <th class="col">Opciones</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabla-body-egresos">
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>2021-10-10</td>
+                                <td>1</td>
+                                <td>Nota</td>
+                                <td>Jose</td>
+                                <td>False</td>
+                                <td>Comentario</td>
+                                <td>100</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>
+                                    <button class="btn btn-outline-primary">Ver Detalle</button>
+                                    <button class="btn btn-outline-danger">Anular</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
