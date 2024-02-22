@@ -5,13 +5,6 @@ from flask_login import login_user,logout_user,login_required,current_user
 from datetime import timedelta
 auth=Blueprint("auth",__name__)
 
-@auth.before_request
-def before_request():
-    if request.endpoint == 'auth.crear':
-        return
-    if not current_user.is_authenticated:
-        flash('Debes iniciar sesión para acceder a esta página',category='error')
-        return redirect(url_for("auth.login"))
 
 @auth.route('/')
 def index():
@@ -39,6 +32,9 @@ def crear():
 
 @auth.route('/login',methods=["GET","POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(request.referrer or url_for("product.buscar_producto"))
+
     form=Login()
     if form.validate_on_submit():
         username=form.username.data

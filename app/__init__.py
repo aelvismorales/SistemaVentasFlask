@@ -16,6 +16,9 @@ csrf=CSRFProtect()
 migraciones=Migrate()
 
 login_manager.login_view="auth.login"
+login_manager.session_protection = "strong"
+login_manager.login_message="Porfavor Inicia Sesion para acceder a este contenido"
+login_manager.login_message_category = "info"
 
 def create_app(config_name):
     app=Flask(__name__,static_folder=Config.STATIC_FOLDER,template_folder=Config.TEMPLATE_FOLDER)

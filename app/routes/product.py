@@ -3,21 +3,14 @@ from ..forms.formularios import CrearProducto,BuscarProducto,EditarProducto
 from ..models.modelos import Producto
 from ..decorators import administrador_requerido
 from datetime import datetime, timedelta, timezone
-from flask_login import current_user
+from flask_login import current_user,login_required
 from app import db
 
 
 product=Blueprint("product",__name__)
 
-@product.before_request
-def before_request():
-    if request.endpoint == 'auth.crear':
-        return
-    if not current_user.is_authenticated:
-        flash('Debes iniciar sesión para acceder a esta página',category='error')
-        return redirect(url_for("auth.login"))
-
 @product.route('/eliminarproducto/<id>',methods=['GET'])
+@login_required
 @administrador_requerido
 def eliminarproducto(id):
     producto_eliminar=Producto.query.get(id)
@@ -34,6 +27,7 @@ def eliminarproducto(id):
         return jsonify({'message':'El producto no se pudo eliminar intente nuevamente'})
 
 @product.route('/buscar',methods=['GET','POST'])
+@login_required
 def buscar_producto():
     buscar_producto=BuscarProducto()
     productForm=CrearProducto()
@@ -68,6 +62,7 @@ def buscar_producto():
     return render_template('buscar_productos.html',buscar_form=buscar_producto,producto_form=productForm,productos=productos)
 
 @product.route('/editar/<string:id>',methods=['GET','POST'])
+@login_required
 def editar_id(id):
     producto=Producto.query.get(int(id))
     editar_producto=EditarProducto(request.form)

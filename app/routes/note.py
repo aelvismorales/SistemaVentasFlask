@@ -1,6 +1,6 @@
 from decimal import Decimal
 from flask import Blueprint,request,render_template,redirect,url_for,session,flash,jsonify
-from flask_login import current_user
+from flask_login import current_user,login_required
 from ..models.modelos import Comprador,Nota_de_Pedido,Producto,Detalle_Caja
 from ..decorators import administrador_requerido
 from sqlalchemy import asc
@@ -10,15 +10,9 @@ from app import db
 
 note=Blueprint("note",__name__)
 
-@note.before_request
-def beforerequest():
-	if request.endpoint == 'auth.crear':
-		return
-	if not current_user.is_authenticated:
-		flash('Debes iniciar sesión para acceder a esta página',category='error')
-		return redirect(url_for("auth.login"))
 #Utilizando actualmente
 @note.route('/crearnotaventa',methods=['GET','POST'])
+@login_required
 def crear_nota_venta():
 	if request.method=='POST':
 		data= request.get_json()
@@ -95,6 +89,7 @@ def crear_nota_venta():
 
 #Utilizando actualmente
 @note.route('/editarnotaventa/<string:id>',methods=['GET','POST'])
+@login_required
 def editarnotaventa(id=None):
 	nota=Nota_de_Pedido.query.get(id)
 	if nota and request.method=='GET':
@@ -168,6 +163,7 @@ def editarnotaventa(id=None):
 
 #Utilizando actualmente
 @note.route('/vernotapedido/<string:id>',methods=['GET'])
+@login_required
 def vernotapedido(id):
 	nota=Nota_de_Pedido.query.get(id)
 	if nota:
@@ -177,6 +173,7 @@ def vernotapedido(id):
 
 #Utilizando actualmente
 @note.route('/anularnota/<string:id>',methods=["GET"])
+@login_required
 def anularnota(id):
 	nota=Nota_de_Pedido.query.get(id)
 	if nota:
@@ -195,6 +192,7 @@ def anularnota(id):
 
 #Utilizando actualmente
 @note.route('/eliminar-nota-pedido/<string:id>',methods=['GET'])
+@login_required
 @administrador_requerido
 def eliminar_nota_pedido(id):
 	nota=Nota_de_Pedido.query.get(id)
@@ -211,6 +209,7 @@ def eliminar_nota_pedido(id):
 
 #Utilizando actualmente
 @note.route('/ver_notas_pedido',methods=['GET','POST'])
+@login_required
 def ver_notas_pedido():
 	if request.method=='GET':
 		#Verificar la cantidad de argumentos que estoy recibiendo
@@ -531,6 +530,7 @@ def ver_notas_pedido():
 
 #Utilizado actualmente
 @note.route('/validar-deuda/<string:id>',methods=['GET'])
+@login_required
 def validar_deuda(id):
 	nota=Nota_de_Pedido.query.get(id)
 	#Validar si la nota existe
@@ -546,6 +546,7 @@ def validar_deuda(id):
 
 #Utilizando actualmente
 @note.route('/nuevoingresosalida',methods=['POST'])
+@login_required
 def nuevoingresosalida():
 	#Obtener los datos del formulario
 	data = request.get_json()
@@ -667,6 +668,7 @@ def nuevoingresosalida():
 
 #Utilizando actualmente
 @note.route('/imprimire/<string:id>',methods=['GET','POST'])
+@login_required
 def imprimire(id):
 	nota=Nota_de_Pedido.query.get(id)
 	notas= json.loads(nota.get_nombre_producto())
@@ -682,6 +684,7 @@ def imprimire(id):
 
 #Utilizando actualmente
 @note.route('/ver-ingresos-salidas',methods=['GET'])
+@login_required
 def ver_ingresos_salidas():
 
 	# Obteniendo argumentos
