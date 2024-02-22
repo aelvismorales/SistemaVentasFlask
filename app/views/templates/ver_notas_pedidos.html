@@ -64,7 +64,7 @@
 
         <div class="container-sm">
             <div class="row ">     
-                <div class="col-md-2">
+                <div class="col-lg-2">
                     <div class="input-group mb-4">
                         <div class="input-group-text">
                             <input class="form-check-input mt-0" type="checkbox" aria-label="Check para habilitar input ID" id="checkID">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
     
-                <div class="col-md-2">
+                <div class="col-lg-2">
                     <div class="input-group mb-4">
                         <div class="input-group-text">
                             <input type="checkbox" class="form-check-input" value="" aria-label="Check para habilitar input DNI" id="checkDNI">
@@ -82,7 +82,7 @@
                     </div>
                 </div>
     
-                <div class="col-md-3">
+                <div class="col-lg-3">
                     <div class="input-group mb-4">
                         <span class="input-group-text" id="span_estado">Estado:</span>
                         <select class="form-select" aria-label="Estado1" id="inputEstado1">
@@ -100,15 +100,17 @@
                         </select>                    
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="input-group mb-3">
-                        <button class="btn btn-outline-info" type="button" id="boton-limpiar-filtros" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="input-group mb-3">
+                            <button class="btn btn-outline-info" type="button" id="boton-limpiar-filtros" onclick="limpiarFiltros()">Limpiar Filtros</button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="input-group mb-3">
-                        <button class="btn btn-primary" type="button" id="boton-nuevo-ingreso-salida" >Crear Ingreso-Egreso</button>
-                    </div>
+                    <div class="col-lg-2">
+                        <div class="input-group mb-3">
+                            <button class="btn btn-primary" type="button" id="boton-nuevo-ingreso-salida" >Crear Ingreso-Egreso</button>
+                        </div>
+                    </div>    
                 </div>
             </div>
         </div>  
@@ -164,7 +166,7 @@
             
             <div class="col-lg-2 d-flex justify-content-center" style="max-height: 305px;">
                 <!-- Resumen de Ventas Numerico-->
-                <div class="card" style="width: 18rem;" id="resumen-venta-numerico">
+                <div class="card" style="width: 18rem; height: fit-content;" id="resumen-venta-numerico">
                     <div class="card-header">
                         <h5 style="text-align: center; font-weight: bolder;">Total Venta del Dia</h5>
                     </div>
