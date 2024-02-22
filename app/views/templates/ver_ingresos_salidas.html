@@ -229,11 +229,7 @@
 <!-- Inicialiazando Tablas con Filtro de DataTables-->
 <script>
     $(document).ready(function(){
-        new DataTable('#tabla-contenido-ingresos')
-        new DataTable('#tabla-contenido-egresos')
-    })
-
-    $('#tabla-contenido-ingresos').DataTable({
+        $('#tabla-contenido-ingresos').DataTable({
         "autoWidth": false,
         "processing": true,
         "searching": false,
@@ -290,7 +286,7 @@
             }
         }	
     })
-
+    
     $('#tabla-contenido-egresos').DataTable({
         "autoWidth": false,
         "processing": true,
@@ -348,6 +344,9 @@
             }
         }	
     })
+    })
+
+    
 
 </script>
 
