@@ -58,8 +58,8 @@
         <div class="row row-cols-2">
             <div class="col-12 col-xl-8">
                 <!-- Tabla Contenido Resumen Ingresos-->
-                <div class="table-responsive" id="tabla-contenido-ingresos">
-                    <table class="table table-success table-striped">
+                <div class="table-responsive" >
+                    <table class="table table-success table-striped" id="tabla-contenido-ingresos">
                         <thead class="table-dark" id="tabla-head-ingresos">
                         <tr>
                             <th scope="col">#</th>
@@ -102,7 +102,7 @@
             </div>
             <div class="col-12 col-xl-4 order-2  order-xl-1 d-flex justify-content-center" style="max-height: 350px;">
                 <!-- Resumen Ingresos-->
-                <div class="card text-black  mb-3" style="max-width: 18rem;">
+                <div class="card text-black  mb-3" style="max-width: 18rem;" id ="resumen-ingresos">
                     <div class="card-header">Resumen Ingresos</div>
                     <div class="body-resumen">
                         <ul class="list-group list-group-flush">
@@ -118,8 +118,8 @@
             </div>
             <div class="col-12 col-xl-8 order-1 order-xl-2">
                 <!-- Tabla Contenido Resumen Egresos-->
-                <div class="table-responsive" id="tabla-contenido-egresos">
-                    <table class="table table-danger table-striped">
+                <div class="table-responsive" >
+                    <table class="table table-danger table-striped" id="tabla-contenido-egresos">
                         <thead class="table-dark" id="tabla-head-egresos">
                         <tr>
                             <th scope="col">#</th>
@@ -180,5 +180,125 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 
+<!-- Inicialiazando Tablas con Filtro de DataTables-->
+<script>
+    $(document).ready(function(){
+        new DataTable('#tabla-contenido-ingresos')
+        new DataTable('#tabla-contenido-egresos')
+    })
+
+    $('#tabla-contenido-ingresos').DataTable({
+        "autoWidth": true,
+        "processing": true,
+        "searching": true,
+        "dom": 'Blfrtip',
+        "buttons":[
+            {
+                extend:'copy',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'csv',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'excel',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'pdf',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'print',
+                text:'Imprimir',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                },
+                customize: function(win){
+                    var contenidoClonado = $('#resumen-ingresos').clone()
+                    $(win.document.body).append(contenidoClonado);
+                }
+            }
+        ],
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por pagina",
+            "zeroRecords": "No se encontro registros",
+            "info": "Mostrando la pagina _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
+            "search": "Buscar:",
+            "paginate": {
+                "first": "Primero",
+                "last": "Ultimo",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }	
+    })
+
+    $('#tabla-contenido-egresos').DataTable({
+        "autoWidth": true,
+        "processing": true,
+        "searching": true,
+        "dom": 'Blfrtip',
+        "buttons":[
+            {
+                extend:'copy',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'csv',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'excel',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'pdf',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            },
+            {
+                extend:'print',
+                text:'Imprimir',
+                exportOptions: {
+                    columns: [0,1,2,3,4,5,6,7,8,9,10,11]
+                }
+            }
+        ],
+        "language": {
+            "lengthMenu": "Mostrar _MENU_ registros por pagina",
+            "zeroRecords": "No se encontro registros",
+            "info": "Mostrando la pagina _PAGE_ de _PAGES_",
+            "infoEmpty": "No hay registros disponibles",
+            "infoFiltered": "(Filtrado de _MAX_ registros totales)",
+            "search": "Buscar:",
+            "paginate": {
+                "first": "Primero",
+                "last": "Ultimo",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }	
+    })
+
+</script>
 
 {%endblock%}
