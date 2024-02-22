@@ -86,8 +86,11 @@
                                 <td>{{ingreso.tipo}}</td>
                                 <td>{{ingreso.usuario_nombre}}</td>
                                 <td >
-                                    <!--<iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>-->
-                                    {{ingreso.anulado}}
+                                    {% if ingreso.anulado == False %}
+                                    <iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>
+                                    {% else %}
+                                    <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
+                                    {% endif %}
                                 </td>
                                 <td>{{ingreso.comentario}}</td>
                                 <td>{{ingreso.pagoEfectivo}}</td>
@@ -151,11 +154,10 @@
                                 <td>{{egreso.tipo}}</td>
                                 <td>{{egreso.usuario_nombre}}</td>
                                 <td >
-                                    <!--<iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>-->
                                     {% if egreso.anulado == False %}
-                                    <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
-                                    {% else %}
                                     <iconify-icon icon="mdi:close-thick" width="26px" height="26px"  style="color: #cc0000"></iconify-icon>
+                                    {% else %}
+                                    <iconify-icon icon="noto-v1:check-mark" width="26px" height="26px"></iconify-icon>
                                     {% endif %}
                                 </td>
                                 <td>{{egreso.comentario}}</td>
