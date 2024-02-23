@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify,request,render_template,redirect,url_for,session,flash
-from ..forms.formularios import CrearComprador
 from ..models.modelos import Comprador
 from flask_login import current_user,login_required
 
@@ -10,20 +9,30 @@ buyer=Blueprint("buyer",__name__)
 @buyer.route('/crearcomprador',methods=['GET','POST'])
 @login_required
 def crearcomprador():
-	comprador=CrearComprador(request.form)
+	# Obtener los datos del formulario de la peticion
+	# y crear una instancia del formulario de comprador
+	comprador_nombre = request.form.get('nombre_comprador').strip().upper()
+	comprador_dni = request.form.get('dni').strip().upper()
+	comprador_direccion = request.form.get('direccion_comprador').strip().upper()
+	comprador_numero_telefono = request.form.get('numero_telefono_comprador').strip().upper()
+	comprador_tipo = request.form.get('tipo_comprador')
+	if request.method=='POST':
+		# Verificar si el comprador ya existe
+		existe_comprador = Comprador.query.filter_by(dni=comprador_dni).first()
 
-	if request.method=='POST' and comprador.validate():
-		existe_comprador=Comprador.query.filter_by(nombre_comprador=comprador.nombre_comprador.data).first()
 		if existe_comprador is None:
-			nuevo_comprador=Comprador(comprador.nombre_comprador.data,comprador.numero_telefono.data,comprador.direccion_comprador.data,comprador.tipo_comprador.data,comprador.dni.data)
+			nuevo_comprador = Comprador(comprador_nombre,comprador_numero_telefono,comprador_direccion,comprador_dni,comprador_tipo)
 			db.session.add(nuevo_comprador)
-			succes_message='Se creo el usuario {}'.format(nuevo_comprador.nombre_comprador)
+			db.session.commit()
+			succes_message = 'Se creo el usuario {}'.format(nuevo_comprador.nombre_comprador)
 			flash(succes_message,category='message')
+			return redirect(url_for('buyer.vercompradores'))
 		else:
 			error_message='No se puede crear el comprador, este ya se encuentra registrado'
 			flash(error_message,category='error')
-
-	return render_template('crear_comprador.html',form_comprador=comprador)
+			return redirect(url_for('buyer.crearcomprador'))
+	else:
+		return jsonify({'message':'No se puede crear al comprador'},404)
 
 @buyer.route('/editarcomprador/<string:id>',methods=['GET','POST'])
 @login_required
@@ -47,9 +56,9 @@ def editarcomprador(id):
 			success_message='Se actualizo correctamente al comprador {}'.format(comprador_encontrado.nombre_comprador)
 			flash(success_message,category='message')
 
-	return render_template('editar_comprador.html',form_compra=comprador_encontrado)
+	return redirect(url_for('buyer.vercompradores'))
 
-@buyer.route('/eliminarcomprador/<string:id>',methods=['GET','POST'])
+@buyer.route('/eliminarcomprador/<string:id>',methods=['GET','DELETE'])
 @login_required
 def eliminarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)

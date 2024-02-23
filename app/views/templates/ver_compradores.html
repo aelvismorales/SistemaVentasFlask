@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="col-lg-4 col-12">
-                <button type="button" class="btn btn-primary" name="btn-crear-comprador" id="btn-crear-comprador">Crear Comprador</button>
+                <button type="button" class="btn btn-primary" name="btn-crear-comprador" id="btn-crear-comprador" data-bs-toggle="modal" data-bs-target="#modalCrearComprador">Crear Comprador</button>
             </div>
         </div>
     </div>
@@ -36,6 +36,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        <th scope="col">#</th>
                         <th scope="col">Nombre</th>
                         <th scope="col">DNI</th>
                         <th scope="col">Direccion</th>
@@ -46,7 +47,8 @@
                 </thead>
                 <tbody>
                     {% for comprador in compradores %}
-                    <tr>
+                    <tr id="{{comprador.id}}">
+                        <th scope="row">{{comprador.id}}</th>
                         <td>{{comprador.nombre_comprador}}</td>
                         <td>{{comprador.dni}}</td>
                         <td>{{comprador.direccion_comprador}}</td>
@@ -54,8 +56,8 @@
                         <td>{{comprador.tipo_comprador}}</td>
                         <td>
                             <div class='d-flex flex-nowrap gap-2'>
-                                <button type="button" class="btn btn-primary btn-sm" name="btn-editar-comprador" id="btn-editar-comprador" data-id="{{comprador.id}}">Editar</button>
-                                <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}">Eliminar</button>
+                                <button type="button" class="btn btn-primary btn-sm" name="btn-editar-comprador" id="btn-editar-comprador" data-id="{{comprador.id}}" data-nombre="{{comprador.nombre_comprador}}" data-dni="{{comprador.dni}}" data-direcccion="{{comprador.direccion_comprador}}" data-numero="{{comprador.numero_telefono_comprador}}" data-tipo="{{comprador.tipo_comprador}}">Editar</button>
+                                <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}" data-nombre="{{comprador.nombre_comprador}}">Eliminar</button>
                             </div>
                         </td>
                     </tr>
@@ -64,8 +66,207 @@
             </table>
         </div>
     </div>
-
 </div>
 
+<!-- Modal Crear Comprador -->
+<div class="modal fade" id="modalCrearComprador" tabindex="-1" aria-labelledby="modalCrearCompradorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCrearCompradorLabel">Crear Comprador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="form-crear-comprador" method="post" action="{{ url_for('buyer.crearcomprador')}}">
+                        <div class="mb-3">
+                            <label for="nombre_comprador" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre_comprador" name="nombre_comprador" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dni" class="form-label">DNI</label>
+                            <input type="text" class="form-control" id="dni" name="dni" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="direccion_comprador" class="form-label">Direccion</label>
+                            <input type="text" class="form-control" id="direccion_comprador" name="direccion_comprador" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numero_telefono_comprador" class="form-label">Telefono</label>
+                            <input type="text" class="form-control" id="numero_telefono_comprador" name="numero_telefono_comprador" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipo_comprador" class="form-label">Tipo</label>
+                            <select class="form-select" id="tipo_comprador" name="tipo_comprador" required>
+                                <option value="persona" selected>Persona</option>
+                                <option value="empresa">Empresa</option>
+                            </select>
+                    </form>
+                </div>                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary" name="btn-guardar-comprador" id="btn-guardar-comprador" onclick="submitFormCrear()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Modal Editar Comprador -->
+<div class="modal fade" id="modalEditarComprador" tabindex="-1" aria-labelledby="modalEditarCompradorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarCompradorLabel">Editar Comprador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="form-editar-comprador">
+                        <div class="mb-3">
+                            <label for="nombre_comprador_editar" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre_comprador_editar" name="nombre_comprador_editar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dni_editar" class="form-label">DNI</label>
+                            <input type="text" class="form-control" id="dni_editar" name="dni_editar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="direccion_comprador_editar" class="form-label">Direccion</label>
+                            <input type="text" class="form-control" id="direccion_comprador_editar" name="direccion_comprador_editar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="numero_telefono_comprador_editar" class="form-label">Telefono</label>
+                            <input type="text" class="form-control" id="numero_telefono_comprador_editar" name="numero_telefono_comprador_editar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipo_comprador_editar" class="form-label">Tipo</label>
+                            <select class="form-select" id="tipo_comprador_editar" name="tipo_comprador_editar" required>
+                                <option value="persona" selected>Persona</option>
+                                <option value="empresa">Empresa</option>
+                            </select>
+                        </div>
+                    </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" name="btn-actualizar-comprador" id="btn-actualizar-comprador" onclick="submitFormEditar()">Actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal Confirmar Eliminar-->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarModalHeader">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de eliminar <span id="nombreCompradorEliminar"></span><span id="idCompradorEliminar" class="text-white"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarEliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{%endblock%}
+
+{% block scripts %}
+<script>
+    function submitFormCrear() {
+        // Assuming the form has an ID of "form-crear-comprador"
+        document.getElementById("form-crear-comprador").submit();
+    }
+
+    // Abrir modal editar
+    const btnEditarComprador = document.querySelectorAll('#btn-editar-comprador');
+    btnEditarComprador.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            const id = btn.getAttribute('data-id');
+            const nombre = btn.getAttribute('data-nombre');
+            const dni = btn.getAttribute('data-dni');
+            const direccion = btn.getAttribute('data-direcccion');
+            const numero = btn.getAttribute('data-numero');
+            const tipo = btn.getAttribute('data-tipo');
+
+            document.getElementById('nombre_comprador_editar').value = nombre;
+            document.getElementById('dni_editar').value = dni;
+            document.getElementById('direccion_comprador_editar').value = direccion;
+            document.getElementById('numero_telefono_comprador_editar').value = numero;
+            document.getElementById('tipo_comprador_editar').value = tipo;
+            document.getElementById('btn-actualizar-comprador').setAttribute('data-id', id);
+            
+            const modalEditarComprador = new bootstrap.Modal(document.getElementById('modalEditarComprador'));
+            modalEditarComprador.show();
+        })
+    })
+
+    //Formulario editar
+    const submitFormEditar = () => {
+        const id = document.getElementById('btn-actualizar-comprador').getAttribute('data-id');
+        const nombre = document.getElementById('nombre_comprador_editar').value;
+        const dni = document.getElementById('dni_editar').value;
+        const direccion = document.getElementById('direccion_comprador_editar').value;
+        const numero = document.getElementById('numero_telefono_comprador_editar').value;
+        const tipo = document.getElementById('tipo_comprador_editar').value;
+
+        fetch('/editarcomprador/'+id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id,
+                nombre: nombre,
+                dni: dni,
+                direccion: direccion,
+                numero: numero,
+                tipo: tipo
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                window.location.reload();
+            }
+        })
+    }
+    
+
+    //Eliminar comprador
+    const btnEliminarComprador = document.querySelectorAll('#btn-eliminar-comprador');
+    btnEliminarComprador.forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+            const id = btn.getAttribute('data-id');
+            const nombre = btn.getAttribute('data-nombre');
+            document.getElementById('nombreCompradorEliminar').innerText = nombre;
+            document.getElementById('idCompradorEliminar').innerText = id;
+            const modalConfirmarEliminar = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
+            modalConfirmarEliminar.show();
+        })
+    })
+    // '/eliminarcomprador/<string:id>'
+    const confirmarEliminar = document.getElementById('confirmarEliminar');
+    confirmarEliminar.addEventListener('click', ()=>{
+        const id = document.getElementById('idCompradorEliminar').innerText;
+        fetch('/eliminarcomprador/'+id, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                window.location.reload();
+            }
+        })
+    })
+
+
+
+</script>
 {%endblock%}
