@@ -253,9 +253,14 @@
                     `;
                     // Esperar 1 segundo y recargar la pagina
                     setTimeout(()=>{
-                        window.location.reload();
-                    }, 1500);
-                    window.location.reload();
+                        location.reload();
+                    }, 2000);
+                }else{
+                    document.getElementById('messagesLoaderEditar').innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            ${data[0].message}
+                        </div>
+                    `;
                 }
             }
         })
@@ -295,9 +300,14 @@
                     `;
                     // Esperar 1 segundo y recargar la pagina
                     setTimeout(()=>{
-                        window.location.reload();
-                    }, 1500);
-                    window.location.reload();
+                        location.reload();
+                    }, 2000);
+                }else{
+                    document.getElementById('messagesLoaderEliminar').innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            ${data[0]['message'].message}
+                        </div>
+                    `;
                 }
             }
         })

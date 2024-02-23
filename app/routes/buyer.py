@@ -69,13 +69,18 @@ def editarcomprador(id):
 def eliminarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)
 	if comprador_encontrado is not None:
-		nombre_comprador=comprador_encontrado.get_nombre()
-		db.session.delete(comprador_encontrado)
-		success_message='Se elimino correctamente al comprador {}'.format(nombre_comprador)
-		return jsonify({'message':success_message,"status":"ok"},200)
+		try:
+			nombre_comprador = comprador_encontrado.get_nombre()
+			db.session.delete(comprador_encontrado)
+			db.session.commit()
+			success_message = 'Se eliminó correctamente al comprador {}'.format(nombre_comprador)
+			return jsonify({'message': success_message, "status": "ok"}, 200)
+		except Exception as e:
+			db.session.rollback()
+			error_message = 'No se pudo eliminar el comprador: {}'.format(str(e))
+			return jsonify({'message': error_message, "status": "error"}, 500)
 	else:
 		error_message='No se pudo eliminar el comprador'
-		flash(error_message,category='error')
 		return jsonify({'message':error_message,"status":"error"},404)
 
 @buyer.route('/vercompradores',methods=['GET','POST'])
