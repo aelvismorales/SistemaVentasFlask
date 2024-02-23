@@ -182,7 +182,7 @@
                                 <td>{{egreso.pagoYape}}</td>
                                 <td>
                                     <div class='d-flex flex-nowrap gap-2'>
-                                        <button class="btn btn-outline-primary" data-id="{{egreso.id}}" id="btn-egreso-ver-detalle">Ver Detalle</button>
+                                        <!--<button class="btn btn-outline-primary" data-id="{{egreso.id}}" id="btn-egreso-ver-detalle">Ver Detalle</button>-->
                                         <button class="btn btn-outline-danger" data-id="{{egreso.id}}" id="btn-egreso-anular">Anular</button>
                                     </div>
                                 </td>
@@ -398,13 +398,14 @@
         btn.addEventListener('click', function(){
             const id = btn.getAttribute('data-id')
             $('#modal-detalle-id').text(id)
+            // Editar el id de confirmarAnular
             const modalAnular = new bootstrap.Modal(document.getElementById('confirmarAnularModal'))
             modalAnular.show()
         })
     })
 
     // Confirmando Anular Ingreso
-    $('#confirmarAnular').click(function(){
+    $('#confirmarAnularIngreso').click(function(){
         const id = $('#modal-detalle-id').text()
         const url = "/anular-ingreso-salida/"+id
         $.ajax({
@@ -445,7 +446,7 @@
     })
 
     // Confirmando Anular Egreso
-    $('#confirmarAnular').click(function(){
+    $('#confirmarAnularEgreso').click(function(){
         const id = $('#modal-detalle-id').text()
         const url = "/anular-ingreso-salida/"+id
         $.ajax({
