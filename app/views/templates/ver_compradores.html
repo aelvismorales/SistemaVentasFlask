@@ -248,7 +248,7 @@
                 if(data[0]['status']=="ok"){
                     document.getElementById('messagesLoaderEditar').innerHTML = `
                         <div class="alert alert-success" role="alert">
-                            ${data[0].message}
+                            ${data[0]['message']}
                         </div>
                     `;
                     // Esperar 1 segundo y recargar la pagina
@@ -258,7 +258,7 @@
                 }else{
                     document.getElementById('messagesLoaderEditar').innerHTML = `
                         <div class="alert alert-danger" role="alert">
-                            ${data[0].message}
+                            ${data[0]['message']}
                         </div>
                     `;
                 }
@@ -295,7 +295,7 @@
                 if(data[0]['status']=="ok"){
                     document.getElementById('messagesLoaderEliminar').innerHTML = `
                         <div class="alert alert-success" role="alert">
-                            ${data[0]['message'].message}
+                            ${data[0]['message']}
                         </div>
                     `;
                     // Esperar 1 segundo y recargar la pagina
@@ -305,7 +305,7 @@
                 }else{
                     document.getElementById('messagesLoaderEliminar').innerHTML = `
                         <div class="alert alert-danger" role="alert">
-                            ${data[0]['message'].message}
+                            ${data[0]['message']}
                         </div>
                     `;
                 }
