@@ -1,21 +1,14 @@
 from flask import Blueprint, jsonify,request,render_template,redirect,url_for,session,flash
 from ..forms.formularios import CrearComprador
 from ..models.modelos import Comprador
-from flask_login import current_user
+from flask_login import current_user,login_required
 
 from app import db
 
 buyer=Blueprint("buyer",__name__)
 
-@buyer.before_request
-def beforerequest():
-    if request.endpoint == 'auth.crear':
-        return
-    if not current_user.is_authenticated:
-        flash('Debes iniciar sesión para acceder a esta página',category='error')
-        return redirect(url_for("auth.login"))
-
 @buyer.route('/crearcomprador',methods=['GET','POST'])
+@login_required
 def crearcomprador():
 	comprador=CrearComprador(request.form)
 
@@ -23,18 +16,17 @@ def crearcomprador():
 		existe_comprador=Comprador.query.filter_by(nombre_comprador=comprador.nombre_comprador.data).first()
 		if existe_comprador is None:
 			nuevo_comprador=Comprador(comprador.nombre_comprador.data,comprador.numero_telefono.data,comprador.direccion_comprador.data,comprador.tipo_comprador.data,comprador.dni.data)
-		
 			db.session.add(nuevo_comprador)
-			
 			succes_message='Se creo el usuario {}'.format(nuevo_comprador.nombre_comprador)
 			flash(succes_message,category='message')
 		else:
 			error_message='No se puede crear el comprador, este ya se encuentra registrado'
 			flash(error_message,category='error')
 
-	return render_template('crear_comprador.html',form_comprador=comprador,log=loge)
+	return render_template('crear_comprador.html',form_comprador=comprador)
 
 @buyer.route('/editarcomprador/<string:id>',methods=['GET','POST'])
+@login_required
 def editarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)
 	comprador_nombre=request.form.get('nombre_comprador')
@@ -55,9 +47,10 @@ def editarcomprador(id):
 			success_message='Se actualizo correctamente al comprador {}'.format(comprador_encontrado.nombre_comprador)
 			flash(success_message,category='message')
 
-	return render_template('editar_comprador.html',log=loge,form_compra=comprador_encontrado)
+	return render_template('editar_comprador.html',form_compra=comprador_encontrado)
 
 @buyer.route('/eliminarcomprador/<string:id>',methods=['GET','POST'])
+@login_required
 def eliminarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)
 	if comprador_encontrado is not None:
@@ -79,7 +72,8 @@ def vercompradores():
 #		else:
 #			compradores=Comprador.query.filter_by(dni=dni_comprador).all()
 #		return render_template('ver_compradores.html',form_comprador=compradores,log=loge)
-	return render_template('ver_crear_compradores.html')
+	compradores = Comprador.query.all()
+	return render_template('ver_compradores.html',compradores=compradores)
 
 @buyer.route('/buscarcompradorbydni',methods=['GET','POST'])
 def buscarcompradorbydni():

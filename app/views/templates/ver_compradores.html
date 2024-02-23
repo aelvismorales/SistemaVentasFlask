@@ -1,0 +1,69 @@
+{%extends 'base/html' %}
+
+{% block navbar %}
+<li class="nav-iten"><a href="{{url_for('product.buscar_producto')}}" class="nav-link"><strong>Productos</strong></a></li>
+<li class="nav-iten"><a href="{{url_for('note.ver_notas_pedido')}}" class="nav-link"><strong>Ver Notas de Pedido</strong></a></li>
+<li class="nav-iten"><a href="{{url_for('note.ver_ingresos_salidas')}}" class="nav-link"><strong>Ver Detalle Caja</strong></a></li>
+<li class="nav-iten"><a class="nav-link active"><strong>Ver Compradores</strong></a></li>
+<li class="nav-iten"><a href="{{url_for('auth.logout')}}" class="nav-link"><strong>Cerrar Sesion</strong></a></li>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-12">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Buscar comprador" id="inputSearchComprador">
+                    <button class="btn btn-outline-success" name="submit_buscar_comprador" id="submit_buscar_comprador">Buscar</button>
+                </div>
+            </div>
+            <div class="col-lg-4 col-12">
+                <!--Buscar por DNI-->
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" placeholder="Buscar por DNI" id="inputSearchDNI">
+                    <button class="btn btn-outline-success" name="submit_buscar_dni" id="submit_buscar_dni">Buscar</button>
+                </div>
+            </div>
+            <div class="col-lg-4 col-12">
+                <button type="button" class="btn btn-primary" name="btn-crear-comprador" id="btn-crear-comprador">Crear Comprador</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">DNI</th>
+                        <th scope="col">Direccion</th>
+                        <th scope="col">Telefono</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comprador in compradores %}
+                    <tr>
+                        <td>{{comprador.nombre_comprador}}</td>
+                        <td>{{comprador.dni}}</td>
+                        <td>{{comprador.direccion_comprador}}</td>
+                        <td>{{comprador.numero_telefono_comprador}}</td>
+                        <td>{{comprador.tipo_comprador}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm" name="btn-editar-comprador" id="btn-editar-comprador" data-id="{{comprador.id}}">Editar</button>
+                            <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}">Eliminar</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+{%endblock%}
