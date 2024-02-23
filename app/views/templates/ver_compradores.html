@@ -53,8 +53,10 @@
                         <td>{{comprador.numero_telefono_comprador}}</td>
                         <td>{{comprador.tipo_comprador}}</td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm" name="btn-editar-comprador" id="btn-editar-comprador" data-id="{{comprador.id}}">Editar</button>
-                            <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}">Eliminar</button>
+                            <div class='d-flex flex-nowrap gap-2'>
+                                <button type="button" class="btn btn-primary btn-sm" name="btn-editar-comprador" id="btn-editar-comprador" data-id="{{comprador.id}}">Editar</button>
+                                <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}">Eliminar</button>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}

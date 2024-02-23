@@ -105,8 +105,10 @@
                                 <td>{{ingreso.pagoBCP}}</td>
                                 <td>{{ingreso.pagoYape}}</td>
                                 <td>
-                                    <button class="btn btn-outline-primary" data-id="{{ingreso.id}}">Ver Detalle</button>
-                                    <button class="btn btn-outline-danger" data-id="{{ingreso.id}}">Anular</button>
+                                    <div class='d-flex flex-nowrap gap-2'>
+                                        <button class="btn btn-outline-primary" data-id="{{ingreso.id}}">Ver Detalle</button>
+                                        <button class="btn btn-outline-danger" data-id="{{ingreso.id}}">Anular</button>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -179,8 +181,10 @@
                                 <td>{{egreso.pagoBCP}}</td>
                                 <td>{{egreso.pagoYape}}</td>
                                 <td>
-                                    <button class="btn btn-outline-primary" data-id="{{egreso.id}}">Ver Detalle</button>
-                                    <button class="btn btn-outline-danger" data-id="{{egreso.id}}">Anular</button>
+                                    <div class='d-flex flex-nowrap gap-2'>
+                                        <button class="btn btn-outline-primary" data-id="{{egreso.id}}">Ver Detalle</button>
+                                        <button class="btn btn-outline-danger" data-id="{{egreso.id}}">Anular</button>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
