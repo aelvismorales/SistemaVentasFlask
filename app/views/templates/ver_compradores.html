@@ -80,6 +80,7 @@
             <div class="modal-body">
                 <div class="container">
                     <form id="form-crear-comprador" method="post" action="{{ url_for('buyer.crearcomprador')}}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="mb-3">
                             <label for="nombre_comprador" class="form-label">Nombre</label>
                             <input type="text" class="form-control" id="nombre_comprador" name="nombre_comprador" required>
@@ -267,7 +268,6 @@
 
     }
     
-
     //Eliminar comprador
     const btnEliminarComprador = document.querySelectorAll('#btn-eliminar-comprador');
     btnEliminarComprador.forEach(btn=>{
@@ -280,7 +280,7 @@
             modalConfirmarEliminar.show();
         })
     })
-    // '/eliminarcomprador/<string:id>'
+    // '/eliminarcomprador/<string:id>' 
     const confirmarEliminar = document.getElementById('confirmarEliminar');
     confirmarEliminar.addEventListener('click', ()=>{
         const id = document.getElementById('idCompradorEliminar').innerText;
