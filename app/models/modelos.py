@@ -391,7 +391,7 @@ class Detalle_Caja(db.Model):
         if fecha_inicio is None or fecha_fin is None:
             detalles = Detalle_Caja.query.filter_by(tipo=tipo).all()
         else:
-            detalles = Detalle_Caja.query.filter_by(tipo=tipo).filter(Detalle_Caja.fecha_creacion.between(fecha_inicio,fecha_fin)).all()
+            detalles = Detalle_Caja.query.filter_by(tipo=tipo).filter(Detalle_Caja.fecha_creacion.between(fecha_inicio,fecha_fin),Detalle_Caja.anulado==False).all()
 
         if not detalles:
             return {}
