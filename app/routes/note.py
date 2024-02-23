@@ -39,14 +39,15 @@ def crear_nota_venta():
 		
 		existe_comprador=Comprador.query.filter_by(dni=dni).first()
 		estado_nota=estado_nota+"-"+estado_nota_2
+		usuario_id = current_user.get_id()
 		if existe_comprador:
 			datos_producto_json= json.dumps(productos)
 			if acuenta:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=existe_comprador.id
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,usuario_id,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=existe_comprador.id
 						,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE,bool_acuenta=True,bool_deuda=True)
 				nota.comentario="Dejo a cuenta S/ {} soles. ".format(total_pagado)
 			else:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=existe_comprador.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,usuario_id,comprador_id=existe_comprador.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
 				nota.comentario=""
 			# Actualizando stock de productos en la bse de datos
 			for product in productos:
@@ -67,10 +68,10 @@ def crear_nota_venta():
 			db.session.add(comprador_nuevo)
 			db.session.commit()
 			if acuenta:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=comprador_nuevo.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE,bool_acuenta=True,bool_deuda=True)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,usuario_id,deuda=total_venta-total_pagado,acuenta=total_pagado,comprador_id=comprador_nuevo.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE,bool_acuenta=True,bool_deuda=True)
 				nota.comentario="Dejo a cuenta S/ {} soles. ".format(total_pagado)
 			else:
-				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,comprador_id=comprador_nuevo.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
+				nota=Nota_de_Pedido(datos_producto_json,total_venta,nombre,direccion,estado_nota,telefono,dni,usuario_id,comprador_id=comprador_nuevo.id,vuelto=vuelto,pagoVisa=pago_Visa,pagoEfectivo=pago_Efectivo,pagoBBVA=pago_BBVA,pagoBCP=pago_BCP,pagoYape=pago_YAPE)
 				nota.comentario=""
 			# Actualizando stock de productos en la bse de datos
 			for product in productos:

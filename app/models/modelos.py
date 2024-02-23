@@ -28,7 +28,7 @@ class Usuario(UserMixin,db.Model):
     fecha_creacion=db.Column(db.DateTime,default=datetime.now)
     rol_id=db.Column(db.Integer,db.ForeignKey('roles.id',name="fk_rol_usuario"),nullable=False)
     detalles_caja = db.relationship('Detalle_Caja',backref='usuario',lazy='dynamic')
-    notas = db.relationship('Nota_de_Pedido',backref='usuario_nota',lazy='dynamic')
+    notas = db.relationship('Nota_de_Pedido',backref='usuario',lazy='dynamic')
 
     def __init__(self,nombre_usuario,contrasena_usuario,nickname,rol_id=None):
         self.nombre_usuario=nombre_usuario
@@ -287,7 +287,7 @@ class Nota_de_Pedido(db.Model):
         return self.pagoYape
     
     def get_nombre_usuario(self):
-        nombre_usuario = self.usuario_nota.get_nombre()
+        nombre_usuario = Usuario.query.filter_by(id=self.usuario_id).first().get_nickname()
         return nombre_usuario if nombre_usuario is not None else "Usuario no encontrado"
 
     def get_json(self):
@@ -301,7 +301,7 @@ class Nota_de_Pedido(db.Model):
     def get_bool_deuda(self):
         return self.bool_deuda
 
-    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,deuda=0.0,acuenta=0.0,fecha_cancelacion=None,comentario="",comprador_id=None,vuelto=0.00,pagoVisa=0.00,pagoEfectivo=0.00,pagoBBVA=0.00,pagoBCP=0.00,pagoYape=0.00,bool_acuenta=False,bool_deuda=False):
+    def __init__(self,nombre_producto,total_venta,nombre_comprador,direccion_comprador,estado,numero_comprador,dni_comprador,usuario_id,deuda=0.0,acuenta=0.0,fecha_cancelacion=None,comentario="",comprador_id=None,vuelto=0.00,pagoVisa=0.00,pagoEfectivo=0.00,pagoBBVA=0.00,pagoBCP=0.00,pagoYape=0.00,bool_acuenta=False,bool_deuda=False):
 
         self.nombre_comprador=nombre_comprador
         self.direccion_comprador=direccion_comprador
@@ -310,6 +310,7 @@ class Nota_de_Pedido(db.Model):
         self.total_venta=total_venta
         self.estado=estado
         self.nombre_producto=nombre_producto
+        self.usuario_id = usuario_id
 
         self.vuelto=vuelto
         self.pagoVisa=pagoVisa
@@ -377,7 +378,7 @@ class Detalle_Caja(db.Model):
     #def get_nota_dinero(self):
     #    return self.nota_dinero
     def get_json(self):
-        usuario_nombre = Usuario.query.filter_by(id=self.usuario_id).first().get_nombre()
+        usuario_nombre = Usuario.query.filter_by(id=self.usuario_id).first().get_nickname()
         json={"id":self.id,"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'),"nota_id":self.nota_id,"pagoEfectivo":self.pagoEfectivo,"pagoVisa":self.pagoVisa,"pagoBBVA":self.pagoBBVA,"pagoBCP":self.pagoBCP,"pagoYape":self.pagoYape,"tipo":self.tipo,"comentario":self.comentario,"usuario_nombre":usuario_nombre,"anulado":self.anulado}
         return json if json is not None else {}
         
