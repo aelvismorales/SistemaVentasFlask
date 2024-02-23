@@ -237,7 +237,7 @@
         console.log(datos);
 
         fetch('/editarcomprador/'+id, {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -245,7 +245,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            if(data.success){
+            if(data[0].success=="ok"){
                 document.getElementById('messagesLoaderEditar').innerHTML = `
                     <div class="alert alert-success" role="alert">
                         ${data[0].message}
@@ -278,7 +278,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            if(data.success){
+            if(data[0].success=="ok"){
                 document.getElementById('messagesLoaderEliminar').innerHTML = `
                     <div class="alert alert-success" role="alert">
                         ${data[0].message}

@@ -34,7 +34,7 @@ def crearcomprador():
 	else:
 		return jsonify({'message':'No se puede crear al comprador'},404)
 
-@buyer.route('/editarcomprador/<string:id>',methods=['GET','POST'])
+@buyer.route('/editarcomprador/<string:id>',methods=[' PUT'])
 @login_required
 def editarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)
@@ -46,7 +46,7 @@ def editarcomprador(id):
 	comprador_direccion = data.get('direccion')
 	comprador_dni = data.get('dni')
 
-	if request.method=='POST':
+	if request.method=='PUT':
 		if comprador_encontrado is not None:
 			comprador_encontrado.nombre_comprador=comprador_nombre
 			comprador_encontrado.numero_telefono_comprador=comprador_numero_telefono
@@ -57,10 +57,10 @@ def editarcomprador(id):
 			db.session.add(comprador_encontrado)
 			db.session.commit()
 			success_message='Se actualizo correctamente al comprador {}'.format(comprador_encontrado.nombre_comprador)
-			return jsonify({'message':success_message},200)
+			return jsonify({'message':success_message,"status":"ok"},200)
 		else:
 			error_message='No se pudo actualizar el comprador'
-			return jsonify({'message':error_message},404)
+			return jsonify({'message':error_message,"status":"error"},404)
 	else:
 		return jsonify({'message':'No se puede actualizar al comprador'},404)
 	
@@ -72,11 +72,11 @@ def eliminarcomprador(id):
 		nombre_comprador=comprador_encontrado.get_nombre()
 		db.session.delete(comprador_encontrado)
 		success_message='Se elimino correctamente al comprador {}'.format(nombre_comprador)
-		return jsonify({'message':success_message},200)
+		return jsonify({'message':success_message,"status":"ok"},200)
 	else:
 		error_message='No se pudo eliminar el comprador'
 		flash(error_message,category='error')
-		return jsonify({'message':error_message},404)
+		return jsonify({'message':error_message,"status":"error"},404)
 
 @buyer.route('/vercompradores',methods=['GET','POST'])
 @login_required
