@@ -38,11 +38,12 @@ def crearcomprador():
 @login_required
 def editarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)
-	comprador_nombre=request.form.get('nombre_comprador')
-	comprador_numero_telefono=request.form.get('numero_telefono')
-	comprador_tipo_comprador=request.form.get('tipo_comprador')
-	comprador_direccion=request.form.get('direccion_comprador')
-	comprador_dni=request.form.get('dni')
+	data = request.get_json()
+	comprador_nombre = data.get('nombre_comprador')
+	comprador_numero_telefono = data.get('numero_telefono')
+	comprador_tipo_comprador = data.get('tipo_comprador')
+	comprador_direccion = data.get('direccion_comprador')
+	comprador_dni = data.get('dni')
 
 	if request.method=='POST':
 		if comprador_encontrado is not None:
