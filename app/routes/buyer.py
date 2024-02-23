@@ -34,7 +34,7 @@ def crearcomprador():
 	else:
 		return jsonify({'message':'No se puede crear al comprador'},404)
 
-@buyer.route('/editarcomprador/<string:id>',methods=[' PUT'])
+@buyer.route('/editarcomprador/<string:id>',methods=['PUT'])
 @login_required
 def editarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)
