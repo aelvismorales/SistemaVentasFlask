@@ -235,25 +235,24 @@
                 tipo: tipo
             })
         console.log(datos);
-
-        fetch('/editarcomprador/'+id, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: datos
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data[0].success=="ok"){
-                document.getElementById('messagesLoaderEditar').innerHTML = `
-                    <div class="alert alert-success" role="alert">
-                        ${data[0].message}
-                    </div>
-                `;
-                window.location.reload();
+        
+        $.ajax({
+            url: '/editarcomprador/'+id,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: datos,
+            success: function(data){
+                if(data[0].success=="ok"){
+                    document.getElementById('messagesLoaderEditar').innerHTML = `
+                        <div class="alert alert-success" role="alert">
+                            ${data[0].message}
+                        </div>
+                    `;
+                    window.location.reload();
+                }
             }
         })
+
     }
     
 
@@ -273,18 +272,19 @@
     const confirmarEliminar = document.getElementById('confirmarEliminar');
     confirmarEliminar.addEventListener('click', ()=>{
         const id = document.getElementById('idCompradorEliminar').innerText;
-        fetch('/eliminarcomprador/'+id, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data[0].success=="ok"){
-                document.getElementById('messagesLoaderEliminar').innerHTML = `
-                    <div class="alert alert-success" role="alert">
-                        ${data[0].message}
-                    </div>
-                `;
-                window.location.reload();
+
+        $.ajax({
+            url: '/eliminarcomprador/'+id,
+            type: 'DELETE',
+            success: function(data){
+                if(data[0].success=="ok"){
+                    document.getElementById('messagesLoaderEliminar').innerHTML = `
+                        <div class="alert alert-success" role="alert">
+                            ${data[0].message}
+                        </div>
+                    `;
+                    window.location.reload();
+                }
             }
         })
     })
