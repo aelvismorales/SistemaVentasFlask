@@ -39,6 +39,7 @@ def crearcomprador():
 def editarcomprador(id):
 	comprador_encontrado=Comprador.query.get(id)
 	data = request.get_json()
+	print(data)
 	comprador_nombre = data.get('nombre')
 	comprador_numero_telefono = data.get('numero')
 	comprador_tipo_comprador = data.get('tipo')
