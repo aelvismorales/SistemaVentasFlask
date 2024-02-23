@@ -95,8 +95,7 @@
 
               <!--Estado 2-->
               <select class="form-select" name="inputEstado2" id="inputEstado2" aria-label="Estado2" required>
-                <option selected>Seleccione</option>
-                <option value="-">-</option>
+                <option value="-" selected>-</option>
                 <option value="ENTREGADO">ENTREGADO</option>
                 <option value="POR-ENTREGAR">POR ENTREGAR</option>
               </select>
@@ -173,7 +172,8 @@
         <h4 id="hTotal"></h4>
       </div>
       <div class="botones">
-        <button class="btn btn-danger" id="cancelarNotaPedido">Vaciar</button>        
+        <button class="btn btn-danger" id="cancelarNotaPedido">Vaciar</button>
+        <button class="btn btn-primary" id="imprimirNotaPedido" disabled>Imprimir</button>
         <button class="btn btn-success" id="botonDatosComprador" type="submit">Guardar</button>
         
       </div>
@@ -436,6 +436,11 @@
               localStorage.setItem("direccion_comprador", '');
               localStorage.setItem("telefono_comprador", '');
               localStorage.setItem("dni_comprador", '');
+
+              // Activando boton imprimir
+              document.getElementById("imprimirNotaPedido").disabled = false;
+              //Agregar atributo data-id a boton imprimir
+              document.getElementById("imprimirNotaPedido").setAttribute("data-id",response[0].id);
             },
             error:function(xhr,status,error){
               console.error("XHR object:", xhr);
@@ -541,6 +546,19 @@
       vaciarTabla();
       event.preventDefault();
     });
+  
+  
+    // Capturar el evento de imprimir la nota de pedido
+    document.getElementById('imprimirNotaPedido').addEventListener('click', (event) => {
+      event.preventDefault();
+      let id = event.target.getAttribute("data-id");
+      // Abrir una nueva ventana con la ruta para imprimir la nota de pedido
+      url_imprimir = "/imprimirnotaventa/"+id;
+      window.open(url_imprimir, '_blank');
+      // Imprimir la nueva pagina
+      window.print();
+    });
+  
   </script> 
 
   <!--Script para obtener datos de Compradores por DNI o RUC-->
