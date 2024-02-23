@@ -679,7 +679,7 @@ def imprimire(id):
 		telefono_comprador=nota.notasdepedidos.get_telefono()
 		dni_comprador=nota.notasdepedidos.get_dni()
 
-	return render_template('imprimirid.html',nota=nota,notas=notas,telefono=telefono_comprador,dni=dni_comprador)
+	return render_template('imprimirid.html',nota=nota,notas=notas,telefono=telefono_comprador,dni=dni_comprador,vendedor=nota.get_nombre_usuario())
 
 
 #Utilizando actualmente

@@ -33,6 +33,7 @@
         <div>
             <br>
               <div style="text-align: left;"> <em>VENTA DE AGREGADOS Y MATERIALES DE CONSTRUCCION</em></div>
+              <div style="text-align: left;"> <em><strong>Vendedor:</strong> {{vendedor}} </em></div>
                 <div style="text-align: justify;">&nbsp;</div>
                  
                   <div style="text-align: left;"><strong>Sr.(es):</strong>{{nota.get_nombre_comprador()}} &nbsp;<strong>Fecha:</strong> {{nota.get_fecha()}}</div>
@@ -61,10 +62,6 @@
                                   <td colspan="3" align="right" style="font-size:80%;"> <strong>Total:</strong></td>
                                   <td style="font-size:80%;"> <strong>{{nota.total_venta}}</strong></td>
                                 </tr>
-                                        <!--<tr>
-                                          <td colspan="3" align="right" style="font-size: 80%;">Deja a cuenta:</td>
-                                          <td style="font-size:80%;"> <strong>{{nota.get_acuenta()}}</strong></td>
-                                        </tr>>-->
                                </tbody>
                             </table>
                             <p style="width: 100%; height: 25px; font-size: 90%; text-align: center;"><span style="color: #000000;"> DEJO A CUENTA : <strong> S/{{nota.get_acuenta()}}</strong></span>

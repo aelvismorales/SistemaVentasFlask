@@ -28,6 +28,7 @@ class Usuario(UserMixin,db.Model):
     fecha_creacion=db.Column(db.DateTime,default=datetime.now)
     rol_id=db.Column(db.Integer,db.ForeignKey('roles.id',name="fk_rol_usuario"),nullable=False)
     detalles_caja = db.relationship('Detalle_Caja',backref='usuario',lazy='dynamic')
+    notas = db.relationship('Nota_de_Pedido',backref='usuario_nota',lazy='dynamic')
 
     def __init__(self,nombre_usuario,contrasena_usuario,nickname,rol_id=None):
         self.nombre_usuario=nombre_usuario
@@ -223,7 +224,7 @@ class Nota_de_Pedido(db.Model):
     pagoYape=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
 
 
-
+    usuario_id = db.Column(db.Integer,db.ForeignKey('usuario.id'))
     comprador_id=db.Column(db.Integer,db.ForeignKey('comprador.id'))
 
     def get_id(self):
@@ -285,10 +286,14 @@ class Nota_de_Pedido(db.Model):
     def get_pagoYape(self):
         return self.pagoYape
     
+    def get_nombre_usuario(self):
+        nombre_usuario = self.usuario_nota.get_nombre()
+        return nombre_usuario if nombre_usuario is not None else "Usuario no encontrado"
+
     def get_json(self):
         json = {"id":self.id, "fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y'), "nombre_producto":self.nombre_producto, "nombre_comprador":self.nombre_comprador, "direccion_comprador":self.direccion_comprador, "total_venta":self.total_venta, "estado":self.estado, 
                 "fecha_cancelacion":self.fecha_cancelacion.strftime('%d/%m/%Y') if self.fecha_cancelacion is not None else None, "comentario":self.comentario, "numero_comprador":self.numero_comprador, "dni_comprador":self.dni_comprador, "deuda":self.deuda, "acuenta":self.acuenta,
-                "bool_acuenta":self.bool_acuenta,"bool_deuda":self.bool_deuda,"vuelto":self.vuelto, "pagoVisa":self.pagoVisa, "pagoEfectivo":self.pagoEfectivo, "pagoBBVA":self.pagoBBVA, "pagoBCP":self.pagoBCP, "pagoYape":self.pagoYape}
+                "bool_acuenta":self.bool_acuenta,"bool_deuda":self.bool_deuda,"vuelto":self.vuelto, "pagoVisa":self.pagoVisa, "pagoEfectivo":self.pagoEfectivo, "pagoBBVA":self.pagoBBVA, "pagoBCP":self.pagoBCP, "pagoYape":self.pagoYape,"nombre_vendedor":self.get_nombre_usuario()}
 
         return json if json is not None else {}
     def get_deuda(self):
