@@ -154,6 +154,7 @@
             </div>
         </div>
     </div>
+    </div>
 </div>
 
 <!--Modal Confirmar Eliminar-->
@@ -186,7 +187,7 @@
 
     // Abrir modal editar
     const btnEditarComprador = document.querySelectorAll('#btn-editar-comprador');
-    btnEditarComprador.forEach(btn=>{
+    btnEditarComprador.forEach((btn)=>{
         btn.addEventListener('click', ()=>{
             const id = btn.getAttribute('data-id');
             const nombre = btn.getAttribute('data-nombre');
