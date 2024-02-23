@@ -106,8 +106,8 @@
                                 <td>{{ingreso.pagoYape}}</td>
                                 <td>
                                     <div class='d-flex flex-nowrap gap-2'>
-                                        <button class="btn btn-outline-primary" data-id="{{ingreso.id}}">Ver Detalle</button>
-                                        <button class="btn btn-outline-danger" data-id="{{ingreso.id}}">Anular</button>
+                                        <!--<button class="btn btn-outline-primary" data-id="{{ingreso.id}}" id="btn-ingreso-ver-detalle">Ver Detalle</button>-->
+                                        <button class="btn btn-outline-danger" data-id="{{ingreso.id}}" id="btn-ingreso-anular">Anular</button>
                                     </div>
                                 </td>
                             </tr>
@@ -182,8 +182,8 @@
                                 <td>{{egreso.pagoYape}}</td>
                                 <td>
                                     <div class='d-flex flex-nowrap gap-2'>
-                                        <button class="btn btn-outline-primary" data-id="{{egreso.id}}">Ver Detalle</button>
-                                        <button class="btn btn-outline-danger" data-id="{{egreso.id}}">Anular</button>
+                                        <button class="btn btn-outline-primary" data-id="{{egreso.id}}" id="btn-egreso-ver-detalle">Ver Detalle</button>
+                                        <button class="btn btn-outline-danger" data-id="{{egreso.id}}" id="btn-egreso-anular">Anular</button>
                                     </div>
                                 </td>
                             </tr>
@@ -211,6 +211,30 @@
         </div>
     </div>
 </div>
+
+<!--Modal Confirmar Anular-->
+<div class="modal fade" id="confirmarAnularModal" tabindex="-1" aria-labelledby="confirmarAnularModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarModalHeader">Confirmar Anular</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="messagesLoaderAnular">
+
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de anular el detalle # <span id="modal-detalle-id"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" id="confirmarAnular">Anular</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 {%endblock%}
 
@@ -367,5 +391,88 @@
         }
         window.location.href = url
     })
+
+    // Script para Anular Ingresos
+    const btnAnularIngreso = document.querySelectorAll('#btn-ingreso-anular')
+    btnAnularIngreso.forEach(btn => {
+        btn.addEventListener('click', function(){
+            const id = btn.getAttribute('data-id')
+            $('#modal-detalle-id').text(id)
+            const modalAnular = new bootstrap.Modal(document.getElementById('confirmarAnularModal'))
+            modalAnular.show()
+        })
+    })
+
+    // Confirmando Anular Ingreso
+    $('#confirmarAnular').click(function(){
+        const id = $('#modal-detalle-id').text()
+        const url = "/anular-ingreso-salida/"+id
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            headers: {
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            success: function(response){
+                if (response[0]['status']=='success'){
+                    document.getElementById('messagesLoaderAnular').innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert"> 
+                    <strong>Exito!</strong> ${response[0]['message']}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`
+                setTimeout(() => {
+                    location.reload()
+                }, 2000);
+            }
+            else{
+                document.getElementById('messagesLoaderAnular').innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <strong>Error!</strong> ${response[0]['message']}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`
+            }
+        }
+        })
+    })
+
+    // Script para Anular Egresos
+    const btnAnularEgreso = document.querySelectorAll('#btn-egreso-anular')
+    btnAnularEgreso.forEach(btn => {
+        btn.addEventListener('click', function(){
+            const id = btn.getAttribute('data-id')
+            $('#modal-detalle-id').text(id)
+            const modalAnular = new bootstrap.Modal(document.getElementById('confirmarAnularModal'))
+            modalAnular.show()
+        })
+    })
+
+    // Confirmando Anular Egreso
+    $('#confirmarAnular').click(function(){
+        const id = $('#modal-detalle-id').text()
+        const url = "/anular-ingreso-salida/"+id
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            headers: {
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            success: function(response){
+                if (response[0]['status']=='success'){
+                    document.getElementById('messagesLoaderAnular').innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert"> 
+                    <strong>Exito!</strong> ${response[0]['message']}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>`
+                setTimeout(() => {
+                    location.reload()
+                }, 2000);
+            }
+            else{
+                document.getElementById('messagesLoaderAnular').innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                <strong>Error!</strong> ${response[0]['message']}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>`
+            }
+        }
+        })
+    })
+
 </script>
 {%endblock%}

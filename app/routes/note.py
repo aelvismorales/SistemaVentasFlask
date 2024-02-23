@@ -1,5 +1,5 @@
 from decimal import Decimal
-from flask import Blueprint,request,render_template,redirect,url_for,session,flash,jsonify
+from flask import Blueprint,request,render_template,session,flash,jsonify
 from flask_login import current_user,login_required
 from ..models.modelos import Comprador,Nota_de_Pedido,Producto,Detalle_Caja
 from ..decorators import administrador_requerido
@@ -698,3 +698,20 @@ def ver_ingresos_salidas():
 	json_filtrado_ingresos = Detalle_Caja.get_json_filtrado_por_tipo('INGRESO',fecha_inicio_actual,fecha_final_actual)
 	json_filtrado_egresos = Detalle_Caja.get_json_filtrado_por_tipo('EGRESO',fecha_inicio_actual,fecha_final_actual)
 	return render_template('ver_ingresos_salidas.html', ingresos=json_filtrado_ingresos, egresos=json_filtrado_egresos)
+
+#Utilizando actualmente
+@login_required
+@note.route('/anular-ingreso-salida/<string:id>',methods=['PUT'])
+def anular_ingreso_salida(id):
+	#Obtener el detalle de caja
+	detalle=Detalle_Caja.query.get(id)
+	if detalle:
+		detalle.anulado=True
+		db.session.add(detalle)
+		try:
+			db.session.commit()
+			return jsonify({'message':'Se anulo el detalle de caja','status':'success'},200)
+		except:
+			return jsonify({'message':'No se pudo anular el detalle de caja','status':'error'},400)
+	else:
+		return jsonify({'message':'No se pudo encontrar el detalle de caja','status':'error'},400)
