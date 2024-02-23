@@ -553,10 +553,8 @@
       event.preventDefault();
       let id = event.target.getAttribute("data-id");
       // Abrir una nueva ventana con la ruta para imprimir la nota de pedido
-      url_imprimir = "/imprimirnotaventa/"+id;
+      url_imprimir = "/imprimire/"+id;
       window.open(url_imprimir, '_blank');
-      // Imprimir la nueva pagina
-      window.print();
     });
   
   </script> 
