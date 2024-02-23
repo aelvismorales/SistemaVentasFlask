@@ -241,8 +241,11 @@
             type: 'PUT',
             contentType: 'application/json',
             data: datos,
+            headers:{
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
             success: function(data){
-                if(data[0].success=="ok"){
+                if(data[0]['status']=="ok"){
                     document.getElementById('messagesLoaderEditar').innerHTML = `
                         <div class="alert alert-success" role="alert">
                             ${data[0].message}
@@ -276,11 +279,14 @@
         $.ajax({
             url: '/eliminarcomprador/'+id,
             type: 'DELETE',
+            headers:{
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
             success: function(data){
-                if(data[0].success=="ok"){
+                if(data[0]['status']=="ok"){
                     document.getElementById('messagesLoaderEliminar').innerHTML = `
                         <div class="alert alert-success" role="alert">
-                            ${data[0].message}
+                            ${data[0]['message'].message}
                         </div>
                     `;
                     window.location.reload();

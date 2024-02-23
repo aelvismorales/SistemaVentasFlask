@@ -45,7 +45,7 @@ def editarcomprador(id):
 	comprador_tipo_comprador = data.get('tipo')
 	comprador_direccion = data.get('direccion')
 	comprador_dni = data.get('dni')
-
+	print(comprador_nombre,comprador_numero_telefono,comprador_tipo_comprador,comprador_direccion,comprador_dni)
 	if request.method=='PUT':
 		if comprador_encontrado is not None:
 			comprador_encontrado.nombre_comprador=comprador_nombre
