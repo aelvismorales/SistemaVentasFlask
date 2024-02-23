@@ -228,12 +228,33 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-warning" id="confirmarAnular">Anular</button>
+                <button type="button" class="btn btn-warning" id="confirmarAnularIngreso">Anular</button>
             </div>
         </div>
     </div>
 </div>
 
+<!--Modal Confirmar Anular-->
+<div class="modal fade" id="confirmarAnularModalEgreso" tabindex="-1" aria-labelledby="confirmarAnularModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarModalHeader">Confirmar Anular</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="messagesLoaderAnularEgreso">
+
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de anular el detalle # <span id="modal-detalle-id-egreso"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" id="confirmarAnularEgreso">Anular</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 {%endblock%}
@@ -439,15 +460,15 @@
     btnAnularEgreso.forEach(btn => {
         btn.addEventListener('click', function(){
             const id = btn.getAttribute('data-id')
-            $('#modal-detalle-id').text(id)
-            const modalAnular = new bootstrap.Modal(document.getElementById('confirmarAnularModal'))
+            $('#modal-detalle-id-egreso').text(id)
+            const modalAnular = new bootstrap.Modal(document.getElementById('confirmarAnularModalEgreso'))
             modalAnular.show()
         })
     })
 
     // Confirmando Anular Egreso
     $('#confirmarAnularEgreso').click(function(){
-        const id = $('#modal-detalle-id').text()
+        const id = $('#modal-detalle-id-egreso').text()
         const url = "/anular-ingreso-salida/"+id
         $.ajax({
             type: 'PUT',
@@ -457,7 +478,7 @@
             },
             success: function(response){
                 if (response[0]['status']=='success'){
-                    document.getElementById('messagesLoaderAnular').innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert"> 
+                    document.getElementById('messagesLoaderAnularEgreso').innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert"> 
                     <strong>Exito!</strong> ${response[0]['message']}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>`
@@ -466,7 +487,7 @@
                 }, 2000);
             }
             else{
-                document.getElementById('messagesLoaderAnular').innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert"> 
+                document.getElementById('messagesLoaderAnularEgreso').innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert"> 
                 <strong>Error!</strong> ${response[0]['message']}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>`
