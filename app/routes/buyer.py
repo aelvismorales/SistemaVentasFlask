@@ -55,6 +55,7 @@ def editarcomprador(id):
 			comprador_encontrado.dni=comprador_dni
 
 			db.session.add(comprador_encontrado)
+			db.session.commit()
 			success_message='Se actualizo correctamente al comprador {}'.format(comprador_encontrado.nombre_comprador)
 			flash(success_message,category='message')
 
