@@ -64,6 +64,7 @@ def eliminarcomprador(id):
 	return redirect(url_for('buyer.vercompradores'))
 
 @buyer.route('/vercompradores',methods=['GET','POST'])
+@login_required
 def vercompradores():
 #	dni_comprador=request.form.get('dni_comprador')
 #	if dni_comprador and request.method=='POST':
