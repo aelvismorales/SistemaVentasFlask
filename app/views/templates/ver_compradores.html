@@ -220,12 +220,7 @@
         const numero = document.getElementById('numero_telefono_comprador_editar').value;
         const tipo = document.getElementById('tipo_comprador_editar').value;
 
-        fetch('/editarcomprador/'+id, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        datos=JSON.stringify({
                 id: id,
                 nombre: nombre,
                 dni: dni,
@@ -233,6 +228,14 @@
                 numero: numero,
                 tipo: tipo
             })
+        console.log(datos);
+        
+        fetch('/editarcomprador/'+id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: datos
         })
         .then(response => response.json())
         .then(data => {
