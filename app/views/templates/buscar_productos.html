@@ -311,13 +311,9 @@
         });
         if (response.ok){
             //Eliminar filta de la tabla
-            const filaEliminar = document.getElementById(id);
-            if (filaEliminar) {
-                filaEliminar.remove();
-            }else
-            {
-                console.log('No se encontro el elemento a eliminar');
-            }
+            const table = $('#tabla-de-contenido-productos').DataTable();
+            const row = table.row(`#${id}`);
+            row.remove().draw();
             location.reload();
         } else{
             console.log(response.message);
