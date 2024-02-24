@@ -521,10 +521,11 @@
             const id=boton.getAttribute('data-id');
 
             const nombre_producto=boton.getAttribute('data-nombre');
+            let precio_venta_producto;
             if (switchPrecioFerreteria.checked){
-                const precio_venta_producto= parseFloat(boton.getAttribute('data-ferreteria'));
+                precio_venta_producto= parseFloat(boton.getAttribute('data-ferreteria'));
             }else{
-                const precio_venta_producto= parseFloat(boton.getAttribute('data-precio'));
+                precio_venta_producto= parseFloat(boton.getAttribute('data-precio'));
             }
             const cantidad= parseFloat( boton.getAttribute('data-cantidad'));
             // Check if a product with the same id already exists in the array
