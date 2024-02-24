@@ -310,10 +310,6 @@
             method:'GET'
         });
         if (response.ok){
-            //Eliminar filta de la tabla
-            const table = $('#tabla-de-contenido-productos').DataTable();
-            const row = table.row(`#${id}`);
-            row.remove().draw();
             location.reload();
         } else{
             console.log(response.message);

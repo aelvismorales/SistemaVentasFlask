@@ -17,8 +17,12 @@ def eliminarproducto(id):
         nombre_elimninar=producto_eliminar.get_str_nombre()
         db.session.delete(producto_eliminar)
         db.session.commit()
+        # Actualizar la lista de resultados en la sesión después de la eliminación
+        product = Producto.query.filter(Producto.nombre_producto.like('%'+session.get('name_search', '')+'%')).all()
+        session['search_results'] = [product.get_json() for product in product]        
         succes_message='Se elimino el producto "{}" satisfactoriamente'.format(nombre_elimninar)
         flash(succes_message,category='message')
+
         return jsonify({'message':'Se elimino el producto "{}" satisfactoriamente'.format(nombre_elimninar)})
     else:
         error_message='El producto no se pudo eliminar intente nuevamente'
@@ -48,6 +52,7 @@ def buscar_producto():
     elif 'submit_buscar' in request.form and buscar_producto.validate_on_submit():
         productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data.upper()+'%')).all()
         if productos:
+           session['name_search'] = buscar_producto.nombreproducto.data
            # Store the search results in the session so they can be accessed after the redirect
            session['search_results'] = [product.get_json() for product in productos]
            return redirect(url_for('product.buscar_producto'))
