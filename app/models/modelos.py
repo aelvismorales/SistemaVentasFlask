@@ -141,7 +141,7 @@ class Producto(db.Model):
         self.stock=stock
     
     def __repr__(self) -> str:
-        return '<Producto %r, precio_venta: %.2f, precio_costo: %.2f>' % (self.nombre_producto,self.precio_venta_producto,self.precio_costo_producto)
+        return '<Producto %r, precio_venta: %.2f, precio_costo: %.2f, precio_ferreteria: %.2f>' % (self.nombre_producto,self.precio_venta_producto,self.precio_costo_producto,self.precio_venta_ferreteria)
             
     
     def get_fecha_actualizacion_producto(self):
@@ -157,15 +157,17 @@ class Producto(db.Model):
         return self.stock
 
     def get_json(self):
-        json={"id":self.id,"nombre_producto":self.nombre_producto,"precio_costo_producto":self.precio_costo_producto,"precio_venta_producto":self.precio_venta_producto,"precio_venta_ferreteria":self.precio_venta_ferreteria,"stock":self.stock,"fecha_actualizacion_producto":self.fecha_actualizacion_producto.strftime('%d/%m/%Y'),"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y')}
+        json={"id":self.id,"nombre_producto":self.nombre_producto,"precio_costo_producto":self.precio_costo_producto,"precio_venta_producto":self.precio_venta_producto,"precio_venta_ferreteria":self.precio_venta_ferreteria,
+        "stock":self.get_stock(),"fecha_actualizacion_producto":self.fecha_actualizacion_producto.strftime('%d/%m/%Y'),"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y')}
         return json if json is not None else {}
     
     @staticmethod
     def from_dict(data):
-        producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['stock'],data['precio_venta_ferreteria'])
-        producto.id=data['id']
-        producto.fecha_creacion=data['fecha_creacion']
-        producto.fecha_actualizacion_producto=data['fecha_actualizacion_producto']
+        #producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['stock'],data['previo_venta_ferreteria'])
+        #producto.id=data['id']
+        #producto.fecha_creacion=data['fecha_creacion']
+        #producto.fecha_actualizacion_producto=data['fecha_actualizacion_producto']
+        producto = Producto.query.filter_by(id=data['id']).first()
         return producto
 
 class Comprador(db.Model):
