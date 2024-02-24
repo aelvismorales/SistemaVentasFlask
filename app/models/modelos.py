@@ -162,7 +162,7 @@ class Producto(db.Model):
     
     @staticmethod
     def from_dict(data):
-        producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['precio_venta_ferreteria'],data['stock'])
+        producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['stock'],data['precio_venta_ferreteria'])
         producto.id=data['id']
         producto.fecha_creacion=data['fecha_creacion']
         producto.fecha_actualizacion_producto=data['fecha_actualizacion_producto']
