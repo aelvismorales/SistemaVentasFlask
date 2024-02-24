@@ -151,7 +151,11 @@
                                         <button type="button" class="btn btn-outline-primary btn-sm" id="btn-ver" data-id="{{nota.id}}">Ver</button>
                                         <button type="button" class="btn btn-outline-info btn-sm" id="btn-editar" data-id="{{nota.id}}">Editar</button>
                                         <button type="button" class="btn btn-outline-warning btn-sm" id="btn-anular" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" data-estado="{{nota.estado}}">Anular</button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" >Eliminar</button>
+                                        {% if not current_user.is_admin() %}
+                                            <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}" disabled>Eliminar</button>
+                                        {% else %}
+                                            <button type="button" class="btn btn-outline-danger btn-sm" id="btn-eliminar" data-id="{{nota.id}}" data-comprador="{{nota.nombre_comprador}}">Eliminar</button>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

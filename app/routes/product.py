@@ -11,7 +11,6 @@ product=Blueprint("product",__name__)
 
 @product.route('/eliminarproducto/<id>',methods=['GET'])
 @login_required
-@administrador_requerido
 def eliminarproducto(id):
     producto_eliminar=Producto.query.get(id)
     if producto_eliminar:

@@ -194,7 +194,6 @@ def anularnota(id):
 #Utilizando actualmente
 @note.route('/eliminar-nota-pedido/<string:id>',methods=['GET'])
 @login_required
-@administrador_requerido
 def eliminar_nota_pedido(id):
 	nota=Nota_de_Pedido.query.get(id)
 	if nota:

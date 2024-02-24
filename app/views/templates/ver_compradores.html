@@ -57,7 +57,11 @@
                         <td>
                             <div class='d-flex flex-nowrap gap-2'>
                                 <button type="button" class="btn btn-primary btn-sm" name="btn-editar-comprador" id="btn-editar-comprador" data-id="{{comprador.id}}" data-nombre="{{comprador.nombre_comprador}}" data-dni="{{comprador.dni}}" data-direcccion="{{comprador.direccion_comprador}}" data-numero="{{comprador.numero_telefono_comprador}}" data-tipo="{{comprador.tipo_comprador}}">Editar</button>
-                                <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}" data-nombre="{{comprador.nombre_comprador}}">Eliminar</button>
+                                {% if not current_user.is_admin() %}
+                                    <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}" data-nombre="{{comprador.nombre_comprador}}" disabled>Eliminar</button>
+                                {% else %}
+                                    <button type="button" class="btn btn-danger btn-sm" name="btn-eliminar-comprador" id="btn-eliminar-comprador" data-id="{{comprador.id}}" data-nombre="{{comprador.nombre_comprador}}">Eliminar</button>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
