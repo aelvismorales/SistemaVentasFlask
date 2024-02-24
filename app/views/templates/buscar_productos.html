@@ -310,6 +310,14 @@
             method:'GET'
         });
         if (response.ok){
+            //Eliminar filta de la tabla
+            const filaEliminar = document.getElementById(id);
+            if (filaEliminar) {
+                filaEliminar.remove();
+            }else
+            {
+                console.log('No se encontro el elemento a eliminar');
+            }
             location.reload();
         } else{
             console.log(response.message);
