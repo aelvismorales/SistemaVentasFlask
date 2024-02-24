@@ -49,7 +49,6 @@ def buscar_producto():
         productos=Producto.query.filter(Producto.nombre_producto.like('%'+buscar_producto.nombreproducto.data.upper()+'%')).all()
         if productos:
            # Store the search results in the session so they can be accessed after the redirect
-           session.pop('search_results', None)
            session['search_results'] = [product.get_json() for product in productos]
            return redirect(url_for('product.buscar_producto'))
         else:
