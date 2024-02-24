@@ -281,7 +281,7 @@ def ver_notas_pedido():
 						total_pago_bbva+=nota['pagoBBVA']
 						# Suma por Yape
 						total_pago_yape+=nota['pagoYape']
-					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
@@ -342,7 +342,7 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
 						# Suma por Efectivo
@@ -356,7 +356,7 @@ def ver_notas_pedido():
 						# Suma por Yape
 						total_pago_yape+=nota['pagoYape']
 						
-					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
@@ -407,7 +407,7 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
 						# Suma por Efectivo
@@ -421,7 +421,7 @@ def ver_notas_pedido():
 						# Suma por Yape
 						total_pago_yape+=nota['pagoYape']
 
-					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
@@ -470,7 +470,7 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
 						# Suma por Efectivo
@@ -484,7 +484,7 @@ def ver_notas_pedido():
 						# Suma por Yape
 						total_pago_yape+=nota['pagoYape']
 
-					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
@@ -533,7 +533,7 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
 						# Suma por Efectivo
@@ -547,7 +547,7 @@ def ver_notas_pedido():
 						# Suma por Yape
 						total_pago_yape+=nota['pagoYape']
 					
-					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+					if (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
@@ -571,7 +571,7 @@ def ver_notas_pedido():
 			if nota:
 				json_notas_pedidos_actual=[nota.get_json()]
 				for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 							# Suma general
 							total_venta_resumen+=nota['total_venta']
 							# Suma por Efectivo
@@ -590,7 +590,7 @@ def ver_notas_pedido():
 							if nota['pagoYape']:
 								total_pago_yape+=nota['pagoYape']
 						
-						if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+						if (nota['estado'] in ['POR-CANCELAR--'] and nota['bool_acuenta']):
 							# Suma general
 							total_venta_resumen+=nota['acuenta']
 							# Suma por Efectivo
