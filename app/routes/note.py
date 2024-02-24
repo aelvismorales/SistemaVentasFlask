@@ -791,12 +791,84 @@ def anular_ingreso_salida(id):
 	#Obtener el detalle de caja
 	detalle=Detalle_Caja.query.get(id)
 	if detalle:
-		detalle.anulado=True
-		db.session.add(detalle)
-		try:
-			db.session.commit()
-			return jsonify({'message':'Se anulo el detalle de caja','status':'success'},200)
-		except:
-			return jsonify({'message':'No se pudo anular el detalle de caja','status':'error'},400)
+		if detalle.nota_id:
+			nota=Nota_de_Pedido.query.get(detalle.nota_id)
+			if nota:
+				if detalle.tipo=="INGRESO":
+					if nota.bool_deuda:
+						nota.acuenta -= detalle.get_monto_total()
+						nota.deuda += detalle.get_monto_total()
+						nota.pagoEfectivo -= detalle.pagoEfectivo
+						nota.pagoVisa -= detalle.pagoVisa
+						nota.pagoBCP -= detalle.pagoBCP
+						nota.pagoBBVA -= detalle.pagoBBVA
+						nota.pagoYape -= detalle.pagoYape
+
+						nota.comentario = "Se anulo el ingreso de la nota de pedido por el usuario: "+current_user.nickname
+						db.session.add(nota)
+						#Anular el detalle de caja
+						detalle.anulado=True
+						db.session.add(detalle)
+						try:
+							db.session.commit()
+							return jsonify({'message':'Se anulo el detalle de caja','status':'success'},200)
+						except:
+							return jsonify({'message':'No se pudo anular el detalle de caja','status':'error'},400)
+					else:
+						#Agregando logica en que si la nota de pedido no tiene deuda, se puede anular el ingreso dado que atraves de este ingreso se anulo anteriormente
+						nota.acuenta -= detalle.get_monto_total()
+						nota.deuda += detalle.get_monto_total()
+						nota.bool_deuda = True
+						nota.bool_acuenta = True
+						nota.pagoEfectivo -= detalle.pagoEfectivo
+						nota.pagoVisa -= detalle.pagoVisa
+						nota.pagoBCP -= detalle.pagoBCP
+						nota.pagoBBVA -= detalle.pagoBBVA
+						nota.pagoYape -= detalle.pagoYape
+						nota.comentario = "Se anulo el ingreso de la nota de pedido por el usuario: "+current_user.nickname
+						# Si el estado de la nota contenia CANCELADO se CAMBIA POR-CANCELAR--
+						if nota.estado in ['CANCELADO-','CANCELADO--','CANCELADO-POR-ENTREGAR','CANCELADO-ENTREGADO']:
+							nota.estado = "POR-CANCELAR--"
+						db.session.add(nota)
+						#Anular el detalle de caja
+						detalle.anulado=True
+						db.session.add(detalle)
+						try:
+							db.session.commit()
+							return jsonify({'message':'Se anulo el detalle de caja','status':'success'},200)
+						except:
+							return jsonify({'message':'No se pudo anular el detalle de caja','status':'error'},400)
+				elif detalle.tipo=="EGRESO":
+					nota.total_venta += detalle.get_monto_total()
+					nota.acuenta += detalle.get_monto_total()
+					nota.pagoEfectivo += detalle.pagoEfectivo
+					nota.pagoVisa += detalle.pagoVisa
+					nota.pagoBCP += detalle.pagoBCP
+					nota.pagoBBVA += detalle.pagoBBVA
+					nota.pagoYape += detalle.pagoYape
+
+					nota.comentario = "Se anulo el egreso de la nota de pedido por el usuario: "+current_user.nickname
+					db.session.add(nota)
+					#Anular el detalle de caja
+					detalle.anulado=True
+					db.session.add(detalle)
+					try:
+						db.session.commit()
+						return jsonify({'message':'Se anulo el detalle de caja','status':'success'},200)
+					except:
+						return jsonify({'message':'No se pudo anular el detalle de caja','status':'error'},400)
+				else:
+					return jsonify({'message':'No se pudo encontrar el tipo de ingreso o egreso','status':'error'},400)
+			else:
+				return jsonify({'message':'No se pudo encontrar la nota de pedido','status':'error'},400)
+		else:
+			#Anular el detalle de caja
+			detalle.anulado=True
+			db.session.add(detalle)
+			try:
+				db.session.commit()
+				return jsonify({'message':'Se anulo el detalle de caja','status':'success'},200)
+			except:
+				return jsonify({'message':'No se pudo anular el detalle de caja','status':'error'},400)
 	else:
 		return jsonify({'message':'No se pudo encontrar el detalle de caja','status':'error'},400)

@@ -381,6 +381,9 @@ class Detalle_Caja(db.Model):
         return self.usuario_id
     def get_nota_id(self):
         return self.nota_id
+    def get_monto_total(self):
+        total=self.pagoEfectivo+self.pagoVisa+self.pagoBBVA+self.pagoBCP+self.pagoYape
+        return total
     #def get_nota_dinero(self):
     #    return self.nota_dinero
     def get_json(self):
@@ -397,16 +400,16 @@ class Detalle_Caja(db.Model):
         if fecha_inicio is None or fecha_fin is None:
             detalles = Detalle_Caja.query.filter_by(tipo=tipo).all()
         else:
-            detalles = Detalle_Caja.query.filter_by(tipo=tipo).filter(Detalle_Caja.fecha_creacion.between(fecha_inicio,fecha_fin),Detalle_Caja.anulado==False).all()
+            detalles = Detalle_Caja.query.filter_by(tipo=tipo).filter(Detalle_Caja.fecha_creacion.between(fecha_inicio,fecha_fin)).all()
 
         if not detalles:
             return {}
         
-        sum_pago_efectivo = sum([detalle.pagoEfectivo for detalle in detalles])
-        sum_pago_visa = sum([detalle.pagoVisa for detalle in detalles])
-        sum_pago_bbva = sum([detalle.pagoBBVA for detalle in detalles])
-        sum_pago_bcp = sum([detalle.pagoBCP for detalle in detalles])
-        sum_pago_yape = sum([detalle.pagoYape for detalle in detalles])
+        sum_pago_efectivo = sum([detalle.pagoEfectivo if detalle.anulado ==False else 0  for detalle in detalles])
+        sum_pago_visa = sum([detalle.pagoVisa if detalle.anulado ==False else 0 for detalle in detalles])
+        sum_pago_bbva = sum([detalle.pagoBBVA if detalle.anulado ==False else 0 for detalle in detalles])
+        sum_pago_bcp = sum([detalle.pagoBCP if detalle.anulado ==False else 0 for detalle in detalles])
+        sum_pago_yape = sum([detalle.pagoYape if detalle.anulado ==False else 0 for detalle in detalles])
         sum_general = sum_pago_efectivo + sum_pago_visa + sum_pago_bbva + sum_pago_bcp + sum_pago_yape
 
         filtered_json = {"tipo":tipo,"detalles": [detalle.get_json() for detalle in detalles],"sum_general":sum_general,"sum_pago_efectivo":sum_pago_efectivo,"sum_pago_visa":sum_pago_visa,"sum_pago_bbva":sum_pago_bbva,"sum_pago_bcp":sum_pago_bcp,"sum_pago_yape":sum_pago_yape}
