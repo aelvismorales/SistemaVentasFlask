@@ -72,11 +72,12 @@ def editar_id(id):
         producto.nombre_producto=editar_producto.nombre_producto.data
         producto.precio_costo_producto=editar_producto.precio_costo_producto.data
         producto.precio_venta_producto=editar_producto.precio_venta_producto.data
+        producto.precio_venta_ferreteria=editar_producto.precio_venta_ferreteria.data
         producto.stock=editar_producto.stock.data
         producto.fecha_actualizacion_producto=datetime.now(timezone.utc)-timedelta(hours=5)
         db.session.add(producto)
         db.session.commit()
         succes_message='Se actualizo el producto {}'.format(producto.nombre_producto)
         flash(succes_message,category='message')
-    return render_template('editar_producto_id.html',editar_form=editar_producto,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv(),product_stock=producto.get_stock())
+    return render_template('editar_producto_id.html',editar_form=editar_producto,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv(),product_stock=producto.get_stock(),product_pv_ferreteria=producto.get_str_pv_ferreteria())
 

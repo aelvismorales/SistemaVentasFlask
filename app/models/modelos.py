@@ -153,6 +153,8 @@ class Producto(db.Model):
         return str(self.precio_costo_producto)
     def get_str_pv(self):
         return str(self.precio_venta_producto)
+    def get_str_pv_ferreteria(self):
+        return str(self.precio_venta_ferreteria)
     def get_stock(self):
         return self.stock
 

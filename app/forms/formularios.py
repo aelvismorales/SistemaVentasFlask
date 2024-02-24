@@ -41,6 +41,7 @@ class EditarProducto(FlaskForm):
     nombre_producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido")])
     precio_costo_producto=FloatField('Precio costo producto')
     precio_venta_producto=FloatField('Precio venta producto')
+    precio_venta_ferreteria=FloatField('Precio venta ferreteria',validators=[DataRequired(message='El precio de venta es requerido')])
     stock=FloatField('Stock',validators=[DataRequired('Ingrese el stock')])
 class CrearNotaPedido(FlaskForm):
     nombre_comprador=StringField('Comprador',validators=[Length(max=200,message="Ingrese un direccion valida"),DataRequired(message="Se necesita una direccion")])
