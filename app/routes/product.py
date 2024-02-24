@@ -57,7 +57,6 @@ def buscar_producto():
             flash(error_message,category='error')
             return redirect(url_for('product.buscar_producto'))
     # Retrieve the search results from the session
-    print(session.get('search_results', []))
     productos=[Producto.from_dict(product) for product in session.get('search_results', [])]
     
     return render_template('buscar_productos.html',buscar_form=buscar_producto,producto_form=productForm,productos=productos)
