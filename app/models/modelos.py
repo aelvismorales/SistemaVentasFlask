@@ -130,12 +130,14 @@ class Producto(db.Model):
     fecha_actualizacion_producto=db.Column(db.DateTime,default=datetime.now(timezone.utc)-timedelta(hours=5))
     precio_costo_producto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
     precio_venta_producto=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
+    precio_venta_ferreteria=db.Column(db.Numeric(precision=10,scale=2),nullable=False,default=0.00)
     stock=db.Column(db.Numeric(precision=10,scale=2),nullable=False)
 
-    def __init__(self,nombre_producto,precio_costo_producto,precio_venta_producto,stock):
+    def __init__(self,nombre_producto,precio_costo_producto,precio_venta_producto,stock,precio_venta_ferreteria=0.00):
         self.nombre_producto=nombre_producto
         self.precio_costo_producto=precio_costo_producto
         self.precio_venta_producto=precio_venta_producto
+        self.precio_venta_ferreteria=precio_venta_ferreteria
         self.stock=stock
     
     def __repr__(self) -> str:
@@ -155,12 +157,12 @@ class Producto(db.Model):
         return self.stock
 
     def get_json(self):
-        json={"id":self.id,"nombre_producto":self.nombre_producto,"precio_costo_producto":self.precio_costo_producto,"precio_venta_producto":self.precio_venta_producto,"stock":self.stock,"fecha_actualizacion_producto":self.fecha_actualizacion_producto.strftime('%d/%m/%Y'),"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y')}
+        json={"id":self.id,"nombre_producto":self.nombre_producto,"precio_costo_producto":self.precio_costo_producto,"precio_venta_producto":self.precio_venta_producto,"precio_venta_ferreteria":self.precio_venta_ferreteria,"stock":self.stock,"fecha_actualizacion_producto":self.fecha_actualizacion_producto.strftime('%d/%m/%Y'),"fecha_creacion":self.fecha_creacion.strftime('%d/%m/%Y')}
         return json if json is not None else {}
     
     @staticmethod
     def from_dict(data):
-        producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['stock'])
+        producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['precio_venta_ferreteria'],data['stock'])
         producto.id=data['id']
         producto.fecha_creacion=data['fecha_creacion']
         producto.fecha_actualizacion_producto=data['fecha_actualizacion_producto']

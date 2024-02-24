@@ -39,7 +39,7 @@ def buscar_producto():
             flash(error_message,category='error')
         else:
             precio_venta=productForm.precio_venta_producto.data
-            producto=Producto(productForm.nombre_producto.data.upper(),productForm.precio_costo_producto.data,precio_venta,productForm.stock.data)
+            producto=Producto(productForm.nombre_producto.data.upper(),productForm.precio_costo_producto.data,precio_venta,productForm.stock.data,productForm.precio_venta_ferreteria.data)
             db.session.add(producto)
             db.session.commit()
             succes_message='Se creo el producto "{}"'.format(productForm.nombre_producto.data)

@@ -19,6 +19,7 @@ class CrearProducto(FlaskForm):
     nombre_producto=StringField('Nombre producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])
     precio_costo_producto=FloatField('Precio costo producto',validators=[DataRequired(message='El precio de costo es requerido')])
     precio_venta_producto=FloatField('Precio venta producto',validators=[DataRequired(message='El precio de venta es requerido')])
+    precio_venta_ferreteria=FloatField('Precio venta ferreteria',validators=[DataRequired(message='El precio de venta es requerido')])
     stock=FloatField('Stock',validators=[DataRequired('Ingrese el stock')])
 class BuscarProducto(FlaskForm):
     nombreproducto=SearchField('Buscar producto',validators=[Length(max=200,message="Ingrese un nombre de producto valido"),DataRequired(message="El nombre del producto es requerido")])

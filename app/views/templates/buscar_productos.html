@@ -39,7 +39,7 @@
     <div class="container-fluid">
         <!--Contendor de Buscar y Crear Producto Modal-->
         <div class="row">
-            <div class="col-sm-8 col-12">
+            <div class="col-lg-6 col-12">
                 <form id="buscarForm" method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                     <div class="input-group mb-3">
@@ -48,8 +48,14 @@
                     </div>
                 </form>
             </div>
-            <div class="col-sm-4 col-12">
+            <div class="col-lg-2 col-12">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearProductoModal">Crear Producto </button>
+            </div>
+            <div class="col-lg-2 col-12">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="tooglePrecioFerreteria">
+                    <label class="form-check-label" for="tooglePrecioFerreteria">Precios Ferreteria</label>
+                </div>
             </div>
         </div>
     </div>
@@ -65,6 +71,7 @@
                                 <th scope="col">Nombre Producto</th>
                                 <th scope="col">Precio Costo</th>
                                 <th scope="col">Precio Venta</th>
+                                <th scope="col">Precio Ferreteria</th>
                                 <th scope="col">Fecha Actualizacion</th>
                                 <th scope="col">Stock</th>
                                 <th></th>
@@ -77,11 +84,12 @@
                                 <td>{{producto.nombre_producto}}</td>
                                 <td>{{producto.precio_costo_producto}}</td>
                                 <td>{{producto.precio_venta_producto}}</td>
+                                <td>{{producto.precio_venta_ferreteria}}</td>
                                 <td>{{producto.fecha_actualizacion_producto}}</td>
                                 <td>{{producto.get_stock()}}</td>
                                 <td>                 
                                     <div class='d-flex flex-nowrap gap-2'>
-                                        <button type="button" id="agregarProducto" class="btn btn-success btn-sm mb-1" data-id={{producto.id}} data-nombre="{{producto.nombre_producto}}" data-precio="{{producto.precio_venta_producto}}" data-cantidad="1.00">Agregar </button>
+                                        <button type="button" id="agregarProducto" class="btn btn-success btn-sm mb-1" data-id={{producto.id}} data-nombre="{{producto.nombre_producto}}" data-precio="{{producto.precio_venta_producto}}" data-cantidad="1.00" data-ferreteria="{{producto.precio_venta_ferreteria}}">Agregar </button>
                                         <button type="button" class="btn btn-info mb-1 text-light editar-btn" data-id={{producto.id}} >Editar </button>
                                         <button class="btn btn-danger mb-1 eliminar-btn" data-id="{{ producto.id }}"  data-nombre="{{producto.nombre_producto}}" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</button>
                                     </div>
@@ -139,6 +147,10 @@
                             <div class="mb-3">
                                 {{ producto_form.precio_venta_producto.label(class="form-label")}}
                                 {{ producto_form.precio_venta_producto(class="form-control",placeholder="0.00")}}
+                            </div>
+                            <div class="mb-3">
+                                {{ producto_form.precio_venta_ferreteria.label(class="form-label")}}
+                                {{ producto_form.precio_venta_ferreteria(class="form-control",placeholder="0.00")}}
                             </div>
                             <div class="mb-3">
                                 {{ producto_form.stock.label(class="form-label")}}
@@ -502,13 +514,18 @@
     });
 
     // Ahora, el evento click para agregar productos
+    const switchPrecioFerreteria=document.getElementById('tooglePrecioFerreteria');
     botonesAgregar.forEach((boton) => {
         boton.addEventListener('click', (event) => {
             
             const id=boton.getAttribute('data-id');
 
             const nombre_producto=boton.getAttribute('data-nombre');
-            const precio_venta_producto= parseFloat(boton.getAttribute('data-precio'));
+            if (switchPrecioFerreteria.checked){
+                const precio_venta_producto= parseFloat(boton.getAttribute('data-ferreteria'));
+            }else{
+                const precio_venta_producto= parseFloat(boton.getAttribute('data-precio'));
+            }
             const cantidad= parseFloat( boton.getAttribute('data-cantidad'));
             // Check if a product with the same id already exists in the array
             var productosJSON = localStorage.getItem('productos');
