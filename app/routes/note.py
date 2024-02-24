@@ -281,6 +281,20 @@ def ver_notas_pedido():
 						total_pago_bbva+=nota['pagoBBVA']
 						# Suma por Yape
 						total_pago_yape+=nota['pagoYape']
+					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+						# Suma general
+						total_venta_resumen+=nota['acuenta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+
 				return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
 			else:
 				flash('No se pudo encontrar ninguna nota de pedido','error')
@@ -328,9 +342,23 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+						
+					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+						# Suma general
+						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
 						total_pago_efectivo+=nota['pagoEfectivo']
 						# Suma por Visa
@@ -379,9 +407,23 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+
+					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+						# Suma general
+						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
 						total_pago_efectivo+=nota['pagoEfectivo']
 						# Suma por Visa
@@ -428,9 +470,23 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+
+					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+						# Suma general
+						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
 						total_pago_efectivo+=nota['pagoEfectivo']
 						# Suma por Visa
@@ -477,9 +533,23 @@ def ver_notas_pedido():
 			if notas_pedidos_actual:
 				json_notas_pedidos_actual=[nota.get_json() for nota in notas_pedidos_actual]
 				for nota in json_notas_pedidos_actual:
-					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+					if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
 						# Suma general
 						total_venta_resumen+=nota['total_venta']
+						# Suma por Efectivo
+						total_pago_efectivo+=nota['pagoEfectivo']
+						# Suma por Visa
+						total_pago_visa+=nota['pagoVisa']
+						# Suma por BCP
+						total_pago_bcp+=nota['pagoBCP']
+						# Suma por BBVA
+						total_pago_bbva+=nota['pagoBBVA']
+						# Suma por Yape
+						total_pago_yape+=nota['pagoYape']
+					
+					if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+						# Suma general
+						total_venta_resumen+=nota['acuenta']
 						# Suma por Efectivo
 						total_pago_efectivo+=nota['pagoEfectivo']
 						# Suma por Visa
@@ -501,7 +571,7 @@ def ver_notas_pedido():
 			if nota:
 				json_notas_pedidos_actual=[nota.get_json()]
 				for nota in json_notas_pedidos_actual:
-						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO']:
+						if nota['estado'] in ['CANCELADO-','CANCELADO--','CANCELADO-POR-RECOGER','CANCELADO-ENTREGADO'] or (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
 							# Suma general
 							total_venta_resumen+=nota['total_venta']
 							# Suma por Efectivo
@@ -519,6 +589,20 @@ def ver_notas_pedido():
 							# Suma por Yape
 							if nota['pagoYape']:
 								total_pago_yape+=nota['pagoYape']
+						
+						if (nota['estado'] in ['POR-CANCELAR-'] and nota['bool_acuenta']):
+							# Suma general
+							total_venta_resumen+=nota['acuenta']
+							# Suma por Efectivo
+							total_pago_efectivo+=nota['pagoEfectivo']
+							# Suma por Visa
+							total_pago_visa+=nota['pagoVisa']
+							# Suma por BCP
+							total_pago_bcp+=nota['pagoBCP']
+							# Suma por BBVA
+							total_pago_bbva+=nota['pagoBBVA']
+							# Suma por Yape
+							total_pago_yape+=nota['pagoYape']
 				return render_template('ver_notas_pedidos.html',nota_pedido=json_notas_pedidos_actual,total_venta_resumen=total_venta_resumen,total_pago_efectivo=total_pago_efectivo,total_pago_visa=total_pago_visa,total_pago_bcp=total_pago_bcp,total_pago_bbva=total_pago_bbva,total_pago_yape=total_pago_yape)
 			else:
 				flash('No se pudo encontrar la nota de pedido con el ID: {}'.format(id),'error')
@@ -586,6 +670,7 @@ def nuevoingresosalida():
 						notapedido.pagoBCP += pagoBCP
 						notapedido.pagoBBVA += pagoBBVA
 						notapedido.pagoYape += pagoYAPE
+						notapedido.estado = "CANCELADO--"
 
 						db.session.add(notapedido)
 						# Creado el detalle
