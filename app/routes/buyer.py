@@ -93,3 +93,16 @@ def vercompradores():
 	dni = request.args.get('dni',default=None,type=str)
 	compradores = Comprador.get_compradores_filtrados(nombre,dni)
 	return render_template('ver_compradores.html',compradores=compradores)
+
+@buyer.route('/buscarcompradorbydni',methods=['GET','POST'])
+def buscarcompradorbydni():
+	data=request.get_json()
+	dni=data['dni_comprador']
+	if dni and request.method=='POST':
+		comprador=Comprador.query.filter_by(dni=dni).first()
+		if comprador:
+			return jsonify({'message':'Se obtuvo el comprador correctamente','nombre_comprador':comprador.get_nombre(),'direccion_comprador':comprador.get_direccion()
+				   ,'dni_comprador':comprador.get_dni(),'telefono_comprador':comprador.get_telefono()
+				   },200)
+		else:
+			return jsonify({'message':'El comprador no existe porfavor cree uno'},404)
