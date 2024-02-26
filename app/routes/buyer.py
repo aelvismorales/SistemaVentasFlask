@@ -89,7 +89,7 @@ def vercompradores():
 
 	# Agregar queries para recibir dni o nombre de comprador.
 	# request.args.get('dni_comprador',default='*',type=str)
-	nombre = request.args.get('submit_buscar_comprador',default=None,type=str)
-	dni = request.args.get('submit_buscar_dni',default=None,type=str)
+	nombre = request.args.get('nombre',default=None,type=str)
+	dni = request.args.get('dni',default=None,type=str)
 	compradores = Comprador.get_compradores_filtrados(nombre,dni)
 	return render_template('ver_compradores.html',compradores=compradores)
