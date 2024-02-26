@@ -203,9 +203,9 @@ class Comprador(db.Model):
     
     # Procedimiento para obtener a todos los compradores, filtrador por nombre o dni
     @staticmethod
-    def get_compradores_filtrados(nombre_comprador,dni_comprador):
-        if nombre_comprador is not None:
-            compradores = Comprador.query.filter(nombre_comprador.like('%'+nombre_comprador +'%')).all()
+    def get_compradores_filtrados(comprador,dni_comprador):
+        if comprador is not None:
+            compradores = Comprador.nombre_comprador.like('%'+comprador +'%').all()
         elif dni_comprador is not None:
             compradores = Comprador.query.filter_by(dni=dni_comprador).first()
         else:
