@@ -329,15 +329,6 @@
                         </div>
                     </div>
 
-                    <!-- Input Dinero Devolver Opcion Egreso-->
-                    <!-- Para hacerlo visible o invisible agregar el estilo display :none o no-->
-                    <!--<div class="mb-3 row" id="contenedorDineroDevolver" style="display: none;">
-                        <label for="inputDineroDevolver" class="col-sm-2 col-form-label">Dinero Egreso:</label>
-                        <div class="col-sm-10">
-                            <input type="number" class="form-control" name="inputDineroDevolver" id="inputDineroDevolver" placeholder="S/0.00">
-                        </div>
-                    </div>-->
-
                     <div class="mb-3">
                         <h5>Formas de pago:</h3>
                     </div>
@@ -787,13 +778,8 @@
         let params = new URLSearchParams(url.search);
 
         params.set('estado', this.value);
-
-        //params.delete('estado2');
         params.delete('id');
-        //params.delete('fecha_inicio');
-        //params.delete('fecha_final');
-        //params.delete('comprador');
-        //params.delete('dni');
+
 
         url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
         window.location.href = url.toString();
@@ -806,12 +792,7 @@
         let params = new URLSearchParams(url.search);
 
         params.set('estado2', this.value);
-
         params.delete('id');
-        //params.delete('fecha_inicio');
-        //params.delete('fecha_final');
-        //params.delete('comprador');
-        //params.delete('dni');
 
         url.search=params.toString(); //actualiza la cadena de consulta de la URL con los nuevos parámetros.
         window.location.href = url.toString();
@@ -1073,7 +1054,9 @@
 
 <!-- Funciones para Crear nuevo SalidaIngreso-->
 <script>
-    document.getElementById("inputFechaSalida").value = new Date().toISOString().split('T')[0];
+    var presente = new Date();
+    presente.setHours(presente.getHours() - 5);
+    document.getElementById("inputFechaSalida").value = presente.toISOString().split('T')[0];
 
     // Activacion de modal
     const btnModalIngreso = document.getElementById('boton-nuevo-ingreso-salida');

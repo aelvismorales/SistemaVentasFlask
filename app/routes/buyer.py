@@ -11,10 +11,10 @@ buyer=Blueprint("buyer",__name__)
 def crearcomprador():
 	# Obtener los datos del formulario de la peticion
 	# y crear una instancia del formulario de comprador
-	comprador_nombre = request.form.get('nombre_comprador').strip().upper()
-	comprador_dni = request.form.get('dni').strip().upper()
-	comprador_direccion = request.form.get('direccion_comprador').strip().upper()
-	comprador_numero_telefono = request.form.get('numero_telefono_comprador').strip().upper()
+	comprador_nombre = request.form.get('nombre_comprador').strip().upper() or 'VARIOS'
+	comprador_dni = request.form.get('dni').strip().upper() or '*'
+	comprador_direccion = request.form.get('direccion_comprador').strip().upper() or '*'
+	comprador_numero_telefono = request.form.get('numero_telefono_comprador').strip().upper() or '*'
 	comprador_tipo = request.form.get('tipo_comprador')
 	if request.method=='POST':
 		# Verificar si el comprador ya existe
@@ -86,26 +86,10 @@ def eliminarcomprador(id):
 @buyer.route('/vercompradores',methods=['GET','POST'])
 @login_required
 def vercompradores():
-#	dni_comprador=request.form.get('dni_comprador')
-#	if dni_comprador and request.method=='POST':
-#		if dni_comprador=='*':
-#			compradores=Comprador.query.all()
-#		else:
-#			compradores=Comprador.query.filter_by(dni=dni_comprador).all()
-#		return render_template('ver_compradores.html',form_comprador=compradores,log=loge)
-	compradores = Comprador.query.all()
-	return render_template('ver_compradores.html',compradores=compradores)
 
-@buyer.route('/buscarcompradorbydni',methods=['GET','POST'])
-def buscarcompradorbydni():
-	data=request.get_json()
-	dni=data['dni_comprador']
-	if dni and request.method=='POST':
-		comprador=Comprador.query.filter_by(dni=dni).first()
-		if comprador:
-			return jsonify({'message':'Se obtuvo el comprador correctamente','nombre_comprador':comprador.get_nombre(),'direccion_comprador':comprador.get_direccion()
-				   ,'dni_comprador':comprador.get_dni(),'telefono_comprador':comprador.get_telefono()
-				   },200)
-		else:
-			return jsonify({'message':'El comprador no existe porfavor cree uno'},404)
-	
+	# Agregar queries para recibir dni o nombre de comprador.
+	# request.args.get('dni_comprador',default='*',type=str)
+	nombre = request.args.get('submit_buscar_comprador',default=None,type=str)
+	dni = request.args.get('submit_buscar_dni',default=None,type=str)
+	compradores = Comprador.get_compradores_filtrados(nombre,dni)
+	return render_template('ver_compradores.html',compradores=compradores)

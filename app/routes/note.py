@@ -807,6 +807,7 @@ def anular_ingreso_salida(id):
 						db.session.add(nota)
 						#Anular el detalle de caja
 						detalle.anulado=True
+						detalle.comentario = "Se anulo el ingreso por el usuario: "+current_user.nickname
 						db.session.add(detalle)
 						try:
 							db.session.commit()
@@ -831,6 +832,7 @@ def anular_ingreso_salida(id):
 						db.session.add(nota)
 						#Anular el detalle de caja
 						detalle.anulado=True
+						detalle.comentario = "Se anulo el ingreso por el usuario: "+current_user.nickname
 						db.session.add(detalle)
 						try:
 							db.session.commit()
@@ -850,6 +852,7 @@ def anular_ingreso_salida(id):
 					db.session.add(nota)
 					#Anular el detalle de caja
 					detalle.anulado=True
+					detalle.comentario = "Se anulo el egreso por el usuario: "+current_user.nickname
 					db.session.add(detalle)
 					try:
 						db.session.commit()
@@ -863,6 +866,7 @@ def anular_ingreso_salida(id):
 		else:
 			#Anular el detalle de caja
 			detalle.anulado=True
+			detalle.comentario = "Se anulo el detalle por el usuario: "+current_user.nickname
 			db.session.add(detalle)
 			try:
 				db.session.commit()

@@ -201,6 +201,17 @@ class Comprador(db.Model):
     def get_tipo(self):
         return self.tipo_comprador
     
+    # Procedimiento para obtener a todos los compradores, filtrador por nombre o dni
+    @staticmethod
+    def get_compradores_filtrados(nombre_comprador,dni_comprador):
+        if nombre_comprador is not None:
+            compradores = Comprador.query.filter(nombre_comprador.like('%'+nombre_comprador +'%')).all()
+        elif dni_comprador is not None:
+            compradores = Comprador.query.filter_by(dni=dni_comprador).first()
+        else:
+            compradores = Comprador.query.all()
+        return compradores if compradores is not None else []
+
 #TODO COLUMNAS DE INPUTS DE PAGO Y DEUDA
 class Nota_de_Pedido(db.Model):
     __tablename__="notapedido"

@@ -87,7 +87,7 @@
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="mb-3">
                             <label for="nombre_comprador" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre_comprador" name="nombre_comprador" required>
+                            <input type="text" class="form-control" id="nombre_comprador" name="nombre_comprador" required maxlength="40">
                         </div>
                         <div class="mb-3">
                             <label for="dni" class="form-label">DNI</label>
@@ -99,7 +99,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="numero_telefono_comprador" class="form-label">Telefono</label>
-                            <input type="text" class="form-control" id="numero_telefono_comprador" name="numero_telefono_comprador" required>
+                            <input type="text" class="form-control" id="numero_telefono_comprador" name="numero_telefono_comprador" required minlength="1" maxlength="9">
                         </div>
                         <div class="mb-3">
                             <label for="tipo_comprador" class="form-label">Tipo</label>
@@ -317,6 +317,51 @@
         })
     })
 
+    //Buscar comprador
+    const inputSearchComprador = document.getElementById('inputSearchComprador');
+    const submitBuscarComprador = document.getElementById('submit_buscar_comprador');
+
+    submitBuscarComprador.addEventListener('click', ()=>{
+        const nombre = inputSearchComprador.value;
+        // Obtener la ruta actual y agregarle argumentos
+        const url = new URL(window.location.href);
+
+        let parametros = new URLSearchParams(url.search);
+        if (nombre != ''){
+            parametros.delete('dni');
+            parametros.set('nombre', nombre);
+        }
+        else{
+            parametros.delete('nombre');
+            parametros.delete('dni');
+        }
+
+        url.search = parametros.toString();
+        window.location.href = url.toString();
+    }) 
+
+    //Buscar por DNI
+    const inputSearchDNI = document.getElementById('inputSearchDNI');
+    const submitBuscarDNI = document.getElementById('submit_buscar_dni');
+
+    submitBuscarDNI.addEventListener('click', ()=>{
+        const dni = inputSearchDNI.value;
+        // Obtener la ruta actual y agregarle argumentos
+        const url = new URL(window.location.href);
+
+        let parametros = new URLSearchParams(url.search);
+        if (dni != ''){
+            parametros.delete('nombre');
+            parametros.set('dni', dni);
+        }            
+        else{
+            parametros.delete('dni');
+            parametros.delete('nombre');
+        }
+
+        url.search = parametros.toString();
+        window.location.href = url.toString();
+    })
 
 
 </script>
