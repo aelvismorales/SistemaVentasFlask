@@ -204,7 +204,6 @@
                     </div>
                     <div class="container-body">
                         <div class="container-principal-info" style="overflow: auto;">
-                            <div style="text-align: left;"> <em>VENTA DE AGREGADOS Y MATERIALES DE CONSTRUCCION</em></div>
                             <div style="text-align: left;">&nbsp;Av San Mart&iacute;n Mz. "G5" lote 04 C.P.Peralvillo
                                 <table style="width: 28.4084%; border-collapse: collapse; float: right; height: 47px;" border="2">
                                 <tbody>
@@ -212,7 +211,7 @@
                                     <td style="width: 100%; height: 18px; text-align: center;"><strong>NOTA DE PEDIDO</strong></td>
                                     </tr>
                                     <tr >
-                                    <td style="width: 100%; text-align: justify; height: 29px; text-align: center;">N°: 1555</td>
+                                    <td style="width: 100%; text-align: justify; height: 29px; text-align: center;" id="modal-id"></td>
                                     </tr>
                                     <tr >
                                     <td style="width: 100%; text-align: justify; height: 18px; text-align: center;"><strong>ESTADO:</strong></td>
@@ -229,6 +228,7 @@
                                 </tbody>
                                 </table>
                             </div>
+                            <div style="text-align: left;"> <em>VENTA DE AGREGADOS Y MATERIALES DE CONSTRUCCION</em></div>
                             <div style="text-align: left;">(al costado del estadio Peralvillo)</div>
                             <div style="text-align: left;"><span style="text-align: center;">Celular(Yape): 981 193 256</span></div>
                             <br>
@@ -821,6 +821,7 @@
             const modalVendedor=verModalElemento.querySelector('#modal-vendedor');
             const modalACuenta=verModalElemento.querySelector('#modal-acuenta');
             const modalDeuda=verModalElemento.querySelector('#modal-deuda');
+            const modalID = verModalElemento.querySelector('#modal-id');
 
             //Obteniendo datos desde llamada GET
             fetch(`{{url_for('note.vernotapedido', id='')}}${id}`)
@@ -834,6 +835,7 @@
                     modalTelefono.innerHTML='<strong>Telefono:</strong>'+ ' ' + data[0].numero_comprador;
                     modalDireccion.innerHTML='<strong>Direcci&oacute;n:</strong>'+ ' ' + data[0].direccion_comprador;
                     modalDNI.innerHTML='<strong>DNI:</strong>'+ ' ' + data[0].dni_comprador;
+                    modalID.innerHTML = 'Nro: '+data[0].id;
                     tablaProductos.innerHTML='';
                     const productosNota = data[0].nombre_producto;
                     let productosNotaArray = JSON.parse(productosNota);
