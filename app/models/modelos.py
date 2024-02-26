@@ -205,7 +205,7 @@ class Comprador(db.Model):
     @staticmethod
     def get_compradores_filtrados(comprador,dni_comprador):
         if comprador is not None:
-            compradores = Comprador.nombre_comprador.like('%'+comprador +'%').all()
+            compradores = Comprador.query.filter(Comprador.nombre_comprador.like('%'+comprador +'%')).all()
         elif dni_comprador is not None:
             compradores = Comprador.query.filter_by(dni=dni_comprador).first()
         else:
