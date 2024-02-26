@@ -207,7 +207,7 @@ class Comprador(db.Model):
         if comprador is not None:
             compradores = Comprador.query.filter(Comprador.nombre_comprador.like('%'+comprador +'%')).all()
         elif dni_comprador is not None:
-            compradores = Comprador.query.filter_by(dni=dni_comprador).first()
+            compradores = Comprador.query.filter_by(dni=dni_comprador).all()
         else:
             compradores = Comprador.query.all()
         return compradores if compradores is not None else []
