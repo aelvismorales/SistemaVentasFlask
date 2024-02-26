@@ -1,79 +1,4 @@
-2024-02-23 20:50:52,373 ERROR: Exception on /buscar [GET] [in /var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py:828]
-Traceback (most recent call last):
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 1463, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 872, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 870, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 855, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask_login/utils.py", line 290, in decorated_view
-    return current_app.ensure_sync(func)(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 63, in buscar_producto
-    productos=[Producto.from_dict(product) for product in session.get('search_results', [])]
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 63, in <listcomp>
-    productos=[Producto.from_dict(product) for product in session.get('search_results', [])]
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/models/modelos.py", line 165, in from_dict
-    producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['stock'],data['precio_venta_ferreteria'])
-                                                                                                          ~~~~^^^^^^^^^
-KeyError: 'stock'
-2024-02-23 20:51:50,092 ERROR: Exception on /buscar [GET] [in /var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py:828]
-Traceback (most recent call last):
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 1463, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 872, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 870, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 855, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask_login/utils.py", line 290, in decorated_view
-    return current_app.ensure_sync(func)(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 63, in buscar_producto
-    productos=[Producto.from_dict(product) for product in session.get('search_results', [])]
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 63, in <listcomp>
-    productos=[Producto.from_dict(product) for product in session.get('search_results', [])]
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/models/modelos.py", line 165, in from_dict
-    producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['stock'],data['precio_venta_ferreteria'])
-                                                                                                          ~~~~^^^^^^^^^
-KeyError: 'stock'
-2024-02-23 20:53:05,730 ERROR: Exception on /buscar [GET] [in /var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py:828]
-Traceback (most recent call last):
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 1463, in wsgi_app
-    response = self.full_dispatch_request()
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 872, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 870, in full_dispatch_request
-    rv = self.dispatch_request()
-         ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 855, in dispatch_request
-    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask_login/utils.py", line 290, in decorated_view
-    return current_app.ensure_sync(func)(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 62, in buscar_producto
-    print(sessiong.get('search_results',[]))
-          ^^^^^^^^
-NameError: name 'sessiong' is not defined
-2024-02-23 20:53:21,922 ERROR: Exception on /buscar [GET] [in /var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py:828]
+2024-02-23 20:54:51,121 ERROR: Exception on /buscar [GET] [in /var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py:828]
 Traceback (most recent call last):
   File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 1463, in wsgi_app
     response = self.full_dispatch_request()
@@ -96,7 +21,91 @@ Traceback (most recent call last):
   File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 64, in <listcomp>
     productos=[Producto.from_dict(product) for product in session.get('search_results', [])]
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/var/www/html/SistemaVentasFlask/app/models/modelos.py", line 165, in from_dict
-    producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'])
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-TypeError: __init__() missing 1 required positional argument: 'stock'
+  File "/var/www/html/SistemaVentasFlask/app/models/modelos.py", line 166, in from_dict
+    producto=Producto(data['nombre_producto'],data['precio_costo_producto'],data['precio_venta_producto'],data['stock'],data['previo_venta_ferreteria'])
+                                                                                                          ~~~~^^^^^^^^^
+KeyError: 'stock'
+2024-02-24 10:43:49,564 ERROR: Exception on /buscar [GET] [in /var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py:828]
+Traceback (most recent call last):
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask_login/utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 62, in buscar_producto
+    return render_template('buscar_productos.html',buscar_form=buscar_producto,producto_form=productForm,productos=productos)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/jinja2/environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/jinja2/environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/html/SistemaVentasFlask/app/views/templates/buscar_productos.html", line 1, in top-level template code
+    {%extends 'base.html' %}
+  File "/var/www/html/SistemaVentasFlask/app/views/templates/base.html", line 66, in top-level template code
+    {% block content %} {%endblock%}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/app/views/templates/buscar_productos.html", line 89, in block 'content'
+    <td>{{producto.get_stock()}}</td>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/jinja2/utils.py", line 83, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'None' has no attribute 'get_stock'
+2024-02-24 10:49:24,033 ERROR: Exception on /buscar [GET] [in /var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py:828]
+Traceback (most recent call last):
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 1463, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 872, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 870, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/app.py", line 855, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask_login/utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/app/routes/product.py", line 61, in buscar_producto
+    return render_template('buscar_productos.html',buscar_form=buscar_producto,producto_form=productForm,productos=productos)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/jinja2/environment.py", line 1301, in render
+    self.environment.handle_exception()
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/jinja2/environment.py", line 936, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/var/www/html/SistemaVentasFlask/app/views/templates/buscar_productos.html", line 1, in top-level template code
+    {%extends 'base.html' %}
+  File "/var/www/html/SistemaVentasFlask/app/views/templates/base.html", line 66, in top-level template code
+    {% block content %} {%endblock%}
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/app/views/templates/buscar_productos.html", line 89, in block 'content'
+    <td>{{producto.get_stock()}}</td>
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/html/SistemaVentasFlask/env/lib/python3.11/site-packages/jinja2/utils.py", line 83, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jinja2.exceptions.UndefinedError: 'None' has no attribute 'get_stock'
