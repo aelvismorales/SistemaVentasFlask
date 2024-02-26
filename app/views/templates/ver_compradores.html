@@ -12,21 +12,24 @@
 <div class="container-fluid mt-3">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-4 col-12">
+            <div class="col-lg-3 col-12">
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="Buscar comprador" id="inputSearchComprador">
                     <button class="btn btn-outline-success" name="submit_buscar_comprador" id="submit_buscar_comprador">Buscar</button>
                 </div>
             </div>
-            <div class="col-lg-4 col-12">
+            <div class="col-lg-3 col-12">
                 <!--Buscar por DNI-->
                 <div class="input-group mb-3">
                     <input type="text" class="form-control" placeholder="Buscar por DNI" id="inputSearchDNI">
                     <button class="btn btn-outline-success" name="submit_buscar_dni" id="submit_buscar_dni">Buscar</button>
                 </div>
             </div>
-            <div class="col-lg-4 col-12">
+            <div class="col-lg-3 col-12">
                 <button type="button" class="btn btn-primary" name="btn-crear-comprador" id="btn-crear-comprador" data-bs-toggle="modal" data-bs-target="#modalCrearComprador">Crear Comprador</button>
+            </div>
+            <div class="col-lg-3 col-12">
+                <a href="{{url_for('buyer.ver_compradores')}}" class="btn btn-primary">Limpiar Filtros</a>
             </div>
         </div>
     </div>
