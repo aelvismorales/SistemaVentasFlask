@@ -24,13 +24,13 @@ def create_app(config_name):
     app=Flask(__name__,static_folder=Config.STATIC_FOLDER,template_folder=Config.TEMPLATE_FOLDER)
     app.config.from_object(config.get(config_name,"default")) 
     db.init_app(app)
-    migraciones.init_app(app,db,directory="/var/www/html/SistemaVentasFlask/migrations")
+    migraciones.init_app(app,db)
     csrf.init_app(app)
 
     with app.app_context():
         db.create_all()
         Role.insertar_roles()
-        if os.path.exists("/var/www/html/SistemaVentasFlask/migrations"):
+        if os.path.exists("migrations"):
             upgrade()
         else:
             init()
@@ -38,7 +38,7 @@ def create_app(config_name):
     login_manager.init_app(app)
 
     #Agregando manejador de Logs
-    log_dir = "/var/www/html/SistemaVentasFlask/logs"
+    log_dir = "logs"
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 

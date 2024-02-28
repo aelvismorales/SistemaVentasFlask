@@ -2,13 +2,12 @@ from flask import Blueprint,url_for,redirect,send_file
 from ..models.modelos import *
 import pandas as pd
 from app import db
-
 database=Blueprint('database',__name__)
 
 @database.route('/llenarproductos')
 def llenarproductos():
 	try:
-		prd=pd.read_csv('/var/www/html/SistemaVentasFlask/lista_productos.csv')
+		prd=pd.read_csv('.../lista_productos.csv')
 		#Lista para almacenar las instancias de los productos
 		productos=[]
 		#Llenar la lista con las instancias de los productos
