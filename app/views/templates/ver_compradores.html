@@ -5,7 +5,7 @@
 <li class="nav-iten"><a href="{{url_for('note.ver_notas_pedido')}}" class="nav-link"><strong>Ver Notas de Pedido</strong></a></li>
 <li class="nav-iten"><a href="{{url_for('note.ver_ingresos_salidas')}}" class="nav-link"><strong>Ver Detalle Caja</strong></a></li>
 <li class="nav-iten"><a class="nav-link active"><strong>Ver Compradores</strong></a></li>
-<li class="nav-iten"><a href="{{url_for('auth.logout')}}" class="nav-link"><strong>Cerrar Sesion</strong></a></li>
+<li class="nav-iten"><a href="{{url_for('auth.logout')}}" onclick="limpiarLocalStorage()" class="nav-link"><strong>Cerrar Sesion</strong></a></li>
 {% endblock %}
 
 {% block content %}
@@ -196,6 +196,12 @@
 {%endblock%}
 
 {% block scripts %}
+<!--Script para Limpiar el localstorage existente al cerrar sesion-->
+<script>
+    function limpiarLocalStorage(){
+        localStorage.clear();
+    }
+</script>
 <script>
     function submitFormCrear() {
         // Assuming the form has an ID of "form-crear-comprador"

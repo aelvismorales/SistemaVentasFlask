@@ -20,7 +20,7 @@
     <a class="nav-link" href="{{ url_for('buyer.vercompradores') }}" aria-current="page"><strong>Ver Compradores</strong></a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{{url_for('auth.logout')}}"> <strong>Cerrar Sesion</strong></a>
+    <a class="nav-link" href="{{url_for('auth.logout')}}" onclick="limpiarLocalStorage()"><strong>Cerrar Sesion</strong></a>
 </li>
 {% endblock %}
 
@@ -506,6 +506,13 @@
                 },
                 {
                     extend: 'print',
+                    autoPrint:false,
+                    title:function(){
+                        // Recuperando fechas de Local Storage
+                        let fechaInicio = localStorage.getItem('fechaInicio');
+                        let fechaFin = localStorage.getItem('fechaFin');
+                        return `Resumen del Dia ${fechaInicio ? ''+fechaInicio : ''}`;
+                    },
                     text:'Imprimir',
                     exportOptions: {
                         columns: [0,1,2,3,4,5,6,7]
@@ -536,6 +543,13 @@
 
 </script>
 
+<!--Script para Limpiar el localstorage existente al cerrar sesion-->
+<script>
+    function limpiarLocalStorage(){
+        localStorage.clear();
+    }
+</script>
+
 <script >
     // DoomLoaded
     document.addEventListener('DOMContentLoaded', function(){ 
@@ -560,6 +574,19 @@
         document.getElementById('inputDNI').value = dni;
         document.getElementById('inputEstado1').value = estado;
         document.getElementById('inputEstado2').value = estado2;
+
+        // Actualizando o creando en localstorage las fechas de busqueda
+        if (fechaInicio){
+            localStorage.setItem('fechaInicio', fechaInicio);
+        } else {
+            localStorage.removeItem('fechaInicio');
+        }
+
+        if (fechaFin){
+            localStorage.setItem('fechaFin', fechaFin);
+        } else {
+            localStorage.removeItem('fechaFin');
+        }
 
         // Si el input ID tiene un valor, se activa el check
         if (id){
@@ -1257,39 +1284,21 @@
         const checkBoxNotaID = document.getElementById('checkNotaID');
 
         const contenedorDineroIngreso = document.getElementById('contenedorDineroIngreso');
-        //const inputDineroIngreso = document.getElementById('inputDineroIngreso');
 
-        //const contenedorDineroDevolver = document.getElementById('contenedorDineroDevolver');
-        //const inputDineroDevolver = document.getElementById('inputDineroDevolver');
-
-        //const inputDineroCantidad = document.getElementById('inputDinero');
 
         console.log(inputTipoSalida.value);
         if (inputTipoSalida.value =='INGRESO'){
             if (checkBoxNotaID.checked){
-                // Verificar si los contenedores estan visibles o no
-                //if (contenedorDineroDevolver.style.display === 'flex'){
-                //    contenedorDineroDevolver.style.display = 'none';
-                    //inputDineroDevolver.value = '';
-                //}
 
                 if (contenedorDineroIngreso.style.display === 'none'){
                     contenedorDineroIngreso.style.display = 'flex';
                 }
-
-                //inputDineroCantidad.disabled = true;
             } else {
 
                 if (contenedorDineroIngreso.style.display === 'flex'){
                     contenedorDineroIngreso.style.display = 'none';
-                    //inputDineroIngreso.value = '';
                 }
-                //if (contenedorDineroDevolver.style.display === 'flex'){
-                //    contenedorDineroDevolver.style.display = 'none';
-                    //inputDineroDevolver.value = '';
-                //}
-                //inputDineroCantidad.value = '';
-                //inputDineroCantidad.disabled = false;
+
 
             }
         } else {
@@ -1297,27 +1306,13 @@
                 // Verificar si los contenedores estan visibles o no
                 if (contenedorDineroIngreso.style.display === 'flex'){
                     contenedorDineroIngreso.style.display = 'none';
-                    //inputDineroDevolver.value = '';
                 }
 
-                //if (contenedorDineroDevolver.style.display === 'none'){
-                //    contenedorDineroDevolver.style.display = 'flex';
-                //}
-                
-                //inputDineroCantidad.disabled = true;
             } else {
 
                 if (contenedorDineroIngreso.style.display === 'flex'){
                     contenedorDineroIngreso.style.display = 'none';
-                    //inputDineroIngreso.value = '';
                 }
-                //if (contenedorDineroDevolver.style.display === 'flex'){
-                //    contenedorDineroDevolver.style.display = 'none';
-                    //inputDineroDevolver.value = '';
-                //}
-                //inputDineroCantidad.value = '';
-                //inputDineroCantidad.disabled = false;
-
             }
         }
     }

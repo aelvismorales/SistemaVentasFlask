@@ -70,17 +70,19 @@ def buscar_producto():
 def editar_id(id):
     producto=Producto.query.get(int(id))
     editar_producto=EditarProducto(request.form)
-
-    if editar_producto.validate_on_submit(): 	
-        producto.nombre_producto=editar_producto.nombre_producto.data
-        producto.precio_costo_producto=editar_producto.precio_costo_producto.data
-        producto.precio_venta_producto=editar_producto.precio_venta_producto.data
-        producto.precio_venta_ferreteria=editar_producto.precio_venta_ferreteria.data
-        producto.stock=editar_producto.stock.data
+    if request.method == 'POST':
+        data_json=request.get_json()
+        producto.nombre_producto=data_json['nombre_producto']
+        producto.precio_costo_producto=data_json['precio_costo_producto']
+        producto.precio_venta_producto=data_json['precio_venta_producto']
+        producto.precio_venta_ferreteria=data_json['precio_venta_ferreteria']
+        producto.stock=data_json['stock']
         producto.fecha_actualizacion_producto=datetime.now(timezone.utc)-timedelta(hours=5)
         db.session.add(producto)
         db.session.commit()
         succes_message='Se actualizo el producto {}'.format(producto.nombre_producto)
         flash(succes_message,category='message')
+        return jsonify({'message':'Se actualizo el producto {}'.format(producto.nombre_producto)})
+    
     return render_template('editar_producto_id.html',editar_form=editar_producto,product_name=producto.get_str_nombre(),product_pc=producto.get_str_pc(),product_pv=producto.get_str_pv(),product_stock=producto.get_stock(),product_pv_ferreteria=producto.get_str_pv_ferreteria())
 
